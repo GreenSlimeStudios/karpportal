@@ -46,7 +46,6 @@ dependencies:
   shared_preferences: ^2.0.13
   url_launcher: ^6.0.20
   path_provider: ^2.0.9
-  media_scanner: ^2.0.0
   image_downloader: ^0.31.0
   # image_downloader: ^0.31.0
 

@@ -13,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/Database.dart';
 import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
-import 'package:media_scanner/media_scanner.dart';
+// import 'package:media_scanner/media_scanner.dart';
 // import 'package:flutter_media_scanner/flutter_media_scanner.dart';
 
 import 'globals.dart' as globals;
