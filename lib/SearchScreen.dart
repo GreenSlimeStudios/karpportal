@@ -174,9 +174,7 @@ class _SearchPageState extends State<SearchPage> {
     //   },
     // );
 
-    String chatRoomId = getChatRoomId(
-        '${data['fullName']} ${data['nickname']} ${data['uid']}',
-        '${loggedInUser.fullName} ${loggedInUser.nickname} ${loggedInUser.uid}');
+    String chatRoomId = getChatRoomId('${data['uid']}', '${loggedInUser.uid}');
 
     List<String> users = [data['fullName'], loggedInUser.fullName!];
     //users.sort();

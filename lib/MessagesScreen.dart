@@ -125,9 +125,8 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   void createChatRoom(Map<String, dynamic> data) async {
-    String chatRoomId = getChatRoomId(
-        '${data['fullName']} ${data['nickname']} ${data['uid']}',
-        '${globals.myUser!.fullName} ${globals.myUser!.nickname} ${globals.myUser!.uid}');
+    String chatRoomId =
+        getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
     List<String> users = [data['fullName'], globals.myUser!.fullName!];
     //users.sort();

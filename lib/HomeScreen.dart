@@ -64,8 +64,13 @@ class _HomePageState extends State<HomePage> {
         setState(() {});
       },
     );
+    if (globals.myUser!.newMessages != [] ||
+        globals.myUser!.newMessages != null) {
+      hasNewMessages = true;
+    }
   }
 
+  bool hasNewMessages = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,8 +272,7 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
             BottomNavigationBarItem(
                 icon: FaIcon(FontAwesomeIcons.fish), label: 'karp'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.comment), label: 'messages'),
+            BottomNavigationBarItem(icon: pickIcon(), label: 'messages'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle), label: 'profile'),
           ],
@@ -310,6 +314,19 @@ class _HomePageState extends State<HomePage> {
       return Icon(
         Icons.account_circle,
         size: 120,
+        color: Colors.white,
+      );
+  }
+
+  Widget pickIcon() {
+    if (!globals.myUser!.newMessages!.isEmpty) {
+      return Icon(
+        Icons.comment,
+        color: Colors.deepOrange.shade600,
+      );
+    } else
+      return Icon(
+        Icons.comment,
         color: Colors.white,
       );
   }
