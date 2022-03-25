@@ -252,7 +252,12 @@ class _ProfilePageState extends State<ProfilePage> {
   void changeSurName() {}
 
   void updateKarpportal() {
-    launch(
-        'https://drive.google.com/file/d/1p4C2rfIsIHSQbkxtieRhLnPeLT-JcWr8/view?usp=sharing');
+    if (Platform.isIOS) {
+      launch(
+          'https://drive.google.com/drive/folders/1WgqMYXzfzDirmRJv7616Mb6MFBgUF9uM?usp=sharing');
+    } else {
+      launch(
+          'https://drive.google.com/file/d/1p4C2rfIsIHSQbkxtieRhLnPeLT-JcWr8/view?usp=sharing');
+    }
   }
 }
