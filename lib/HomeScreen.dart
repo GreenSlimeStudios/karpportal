@@ -319,15 +319,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget pickIcon() {
-    if (!globals.myUser!.newMessages!.isEmpty) {
-      return Icon(
-        Icons.comment,
-        color: Colors.deepOrange.shade600,
-      );
-    } else
+    if (globals.myUser!.newMessages != null) {
+      if (!globals.myUser!.newMessages!.isEmpty) {
+        return Icon(
+          Icons.comment,
+          color: Colors.deepOrange.shade600,
+        );
+      } else
+        return Icon(
+          Icons.comment,
+          color: Colors.white,
+        );
+    } else {
       return Icon(
         Icons.comment,
         color: Colors.white,
       );
+    }
   }
 }

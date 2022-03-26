@@ -9,6 +9,7 @@ class UserModel {
   String? nickname;
   String? avatarUrl;
   String? fullName;
+  String? dateCreated;
   List<dynamic>? newMessages;
 
   UserModel(
@@ -19,7 +20,8 @@ class UserModel {
       this.nickname,
       this.avatarUrl,
       this.fullName,
-      this.newMessages});
+      this.newMessages,
+      this.dateCreated});
 
   // receiving data from server
   factory UserModel.fromMap(map) {
@@ -33,6 +35,7 @@ class UserModel {
         nickname: map['nickname'],
         avatarUrl: map['avatarUrl'],
         newMessages: map['newMessages'],
+        dateCreated: map['dateCreated'],
         fullName: map['fullName']);
   }
 
@@ -46,6 +49,7 @@ class UserModel {
       'nickname': nickname,
       'avatarUrl': avatarUrl,
       'newMessages': newMessages,
+      'dateCreated': dateCreated,
       'fullName': '${firstName} ${secondName}',
     };
   }

@@ -331,6 +331,7 @@ class _SingUpPageState extends State<SingUpPage> {
     userModel.firstName = nameController.text;
     userModel.secondName = surnameController.text;
     userModel.nickname = nicknameController.text;
+    userModel.dateCreated = DateTime.now().toString();
     userModel.avatarUrl =
         'https://firebasestorage.googleapis.com/v0/b/karp-portal.appspot.com/o/AvatarImages%2Fpidgeon.jpg?alt=media&token=263b59b7-beea-46c8-8ed4-4a9e94ae4a39';
 

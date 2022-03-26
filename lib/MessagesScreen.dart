@@ -198,6 +198,8 @@ class _MessagesPageState extends State<MessagesPage> {
     //uids.sort();
 
     Map<String, dynamic> chatRoomMap = {
+      "time": DateTime.now(),
+      "time2": DateTime.now().millisecond,
       "users": users,
       "uids": uids,
       "chatRoomId": chatRoomId,

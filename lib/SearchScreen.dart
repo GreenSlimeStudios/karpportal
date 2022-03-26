@@ -182,6 +182,8 @@ class _SearchPageState extends State<SearchPage> {
     //uids.sort();
 
     Map<String, dynamic> chatRoomMap = {
+      "time": DateTime.now(),
+      "time2": DateTime.now().millisecond,
       "users": users,
       "uids": uids,
       "chatRoomId": chatRoomId,

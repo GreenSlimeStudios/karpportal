@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:karpportal/HomeScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'globals.dart' as globals;
@@ -43,6 +44,24 @@ class _InitUserPageState extends State<InitUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            'Karp\nPortal',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.leagueScript(
+                fontSize: 60, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'logging in ...',
+            style: TextStyle(color: Colors.black),
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 20, top: 5, right: 20),
+              child: LinearProgressIndicator())
+        ]),
+      ),
+    );
   }
 }
