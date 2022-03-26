@@ -11,5 +11,4 @@
 *.hpp linguist-detectable=false
 *.ncl linguist-detectable=false
 *.cxx linguist-detectable=false
-
 *.c++ linguist-detectable=false
