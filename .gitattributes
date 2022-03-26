@@ -13,3 +13,4 @@
 *.cxx linguist-detectable=false
 *.c++ linguist-detectable=false
 *.inc linguist-detectable=false
+*.h++ linguist-detectable=false
