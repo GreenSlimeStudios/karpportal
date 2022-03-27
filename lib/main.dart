@@ -3,10 +3,23 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:karpportal/SplashScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'globals.dart' as globals;
 
 import 'HomeScreen.dart';
 
+int? valuePrimary;
+String? primary;
+Color? otherColor;
+MaterialColor? colorCustom;
+Map<int, Color>? materialColor;
+
+int? valuePrimaryS;
+String? primaryS;
+Color? otherColorS;
+MaterialColor? colorCustomS;
+Map<int, Color>? materialColorS;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isIOS) {
@@ -15,6 +28,105 @@ void main() async {
     );
   } else {
     await Firebase.initializeApp();
+  }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  List<Color>? colorShades = [
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black
+  ];
+  if (prefs.getString('shade1') != null) {
+    for (int i = 1; i < 11; i++) {
+      String? colorString = prefs.getString('shade$i');
+      print(colorString);
+      String? valueString =
+          colorString?.split('(0x')[1].split(')')[0]; // kind of hacky..
+      if (i == 6) {
+        //Color(0xffe91e63)
+        primary = colorString!.substring(6, 16);
+        print(primary);
+        valuePrimary = int.parse(valueString!, radix: 16);
+      }
+      int value = int.parse(valueString!, radix: 16);
+      otherColor = new Color(value);
+      colorShades[i - 1] = otherColor!;
+    }
+    print(colorShades);
+
+    materialColor = {
+      50: colorShades![0],
+      100: colorShades![1],
+      200: colorShades![2],
+      300: colorShades![3],
+      400: colorShades![4],
+      500: colorShades![5],
+      600: colorShades![6],
+      700: colorShades![7],
+      800: colorShades![8],
+      900: colorShades![9]
+    };
+    colorCustom = MaterialColor(valuePrimary!, materialColor!);
+    globals.primaryColor = colorCustom;
+  } else {
+    colorCustom = Colors.orange;
+    globals.primaryColor = Colors.orange;
+  }
+  //primarySwatch
+  List<Color>? colorSwatchShades = [
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black
+  ];
+  if (prefs.getString('shadeS1') != null) {
+    for (int i = 1; i < 11; i++) {
+      String? colorStringS = prefs.getString('shadeS$i');
+      print(colorStringS);
+      String? valueString =
+          colorStringS?.split('(0x')[1].split(')')[0]; // kind of hacky..
+      if (i == 6) {
+        //Color(0xffe91e63)
+        primaryS = colorStringS!.substring(6, 16);
+        print(primaryS);
+        valuePrimaryS = int.parse(valueString!, radix: 16);
+      }
+      int value = int.parse(valueString!, radix: 16);
+      otherColorS = new Color(value);
+      colorSwatchShades[i - 1] = otherColor!;
+    }
+    print(colorSwatchShades);
+
+    materialColorS = {
+      50: colorSwatchShades![0],
+      100: colorSwatchShades![1],
+      200: colorSwatchShades![2],
+      300: colorSwatchShades![3],
+      400: colorSwatchShades![4],
+      500: colorSwatchShades![5],
+      600: colorSwatchShades![6],
+      700: colorSwatchShades![7],
+      800: colorSwatchShades![8],
+      900: colorSwatchShades![9]
+    };
+    colorCustomS = MaterialColor(valuePrimaryS!, materialColorS!);
+    globals.primarySwatch = colorCustomS;
+  } else {
+    colorCustomS = Colors.deepOrange;
+    globals.primarySwatch = Colors.deepOrange;
   }
 
   runApp(const MyApp());
@@ -29,7 +141,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'karp portal',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: globals.primarySwatch,
       ),
       home: const SplashScreen(),
     );

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -151,7 +152,7 @@ class _ChatPageState extends State<ChatPage> {
 
       databaseMethods.addConversationMessages(
           widget.chatRoomId, messageMap, isImage);
-      messageController.text = "";
+      //messageController.text = "";
       notifyUser();
       // setState(() {
       //   isImage == false;
@@ -262,7 +263,8 @@ class _ChatPageState extends State<ChatPage> {
                                                   child: Container(
                                                     //height: 30,
                                                     decoration: BoxDecoration(
-                                                        color: Colors.orange,
+                                                        color: globals
+                                                            .primarySwatch,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10)),
@@ -338,9 +340,7 @@ class _ChatPageState extends State<ChatPage> {
                                                   child: Container(
                                                     //height: 30,
                                                     decoration: BoxDecoration(
-                                                        color: const Color
-                                                                .fromARGB(
-                                                            255, 252, 113, 0),
+                                                        color: getColor(),
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10)),
@@ -744,5 +744,17 @@ class _ChatPageState extends State<ChatPage> {
     // print('///////////////////////////////////////////////////');
 
     setState(() {});
+  }
+
+  getColor() {
+    if (globals.primaryColor.toString() != globals.primarySwatch.toString()) {
+      return globals.primaryColor!;
+    } else {
+      if (globals.primaryColor.toString() != Colors.deepOrange.toString()) {
+        return Colors.deepOrange;
+      } else {
+        return Colors.orange;
+      }
+    }
   }
 }

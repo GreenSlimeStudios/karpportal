@@ -12,6 +12,7 @@ import 'package:karpportal/Screen1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'globals.dart' as globals;
 
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             DrawerHeader(
               child: Center(child: setIcon()),
-              decoration: BoxDecoration(color: Colors.orange),
+              decoration: BoxDecoration(color: globals.primaryColor),
             ),
             ListTile(
                 title: Container(
@@ -116,7 +117,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Colors.orange),
+                      border: Border.all(
+                          width: 1, color: globals.primaryColor as Color),
                       borderRadius: BorderRadius.circular(10),
                       color: drawerBackColor(0)),
                   height: 40,
@@ -146,7 +148,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.orange),
+                    border: Border.all(
+                        width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(1)),
                 height: 40,
@@ -175,7 +178,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.orange),
+                    border: Border.all(
+                        width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(2)),
                 height: 40,
@@ -204,7 +208,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.orange),
+                    border: Border.all(
+                        width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(3)),
                 height: 40,
@@ -233,7 +238,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.orange),
+                    border: Border.all(
+                        width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(4)),
                 height: 40,
@@ -245,6 +251,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context);
               }),
             ),
+
             //Text('s'),
           ],
         ),
@@ -259,9 +266,9 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`
-            canvasColor: Color.fromARGB(255, 255, 136, 56),
+            canvasColor: globals.primaryColor,
             // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-            primaryColor: Color.fromARGB(255, 244, 130, 54),
+            primaryColor: globals.primaryColor,
             textTheme: Theme.of(context)
                 .textTheme
                 .copyWith(caption: const TextStyle(color: Colors.yellow))),
@@ -288,7 +295,7 @@ class _HomePageState extends State<HomePage> {
 
   drawerTextColor(int i) {
     if (globals.index == i) {
-      return Colors.orange;
+      return globals.primaryColor;
     } else
       return Colors.white;
   }
@@ -297,25 +304,16 @@ class _HomePageState extends State<HomePage> {
     if (globals.index == i) {
       return Colors.white;
     } else
-      return Colors.orange;
+      return globals.primaryColor;
   }
 
   setIcon() {
-    if (globals.image != null)
-      return ClipOval(
-        child: Image.file(
-          globals.image!,
-          width: 120,
-          height: 120,
-          fit: BoxFit.cover,
-        ),
-      );
-    else
-      return Icon(
-        Icons.account_circle,
-        size: 120,
-        color: Colors.white,
-      );
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: Image.network(
+        globals.myUser!.avatarUrl!,
+      ),
+    );
   }
 
   Widget pickIcon() {
@@ -323,7 +321,7 @@ class _HomePageState extends State<HomePage> {
       if (!globals.myUser!.newMessages!.isEmpty) {
         return Icon(
           Icons.comment,
-          color: Colors.deepOrange.shade600,
+          color: globals.primaryColor!.shade800,
         );
       } else
         return Icon(
@@ -336,5 +334,63 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
       );
     }
+  }
+
+  void change(MaterialColor color) async {
+    globals.primaryColor = color;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Color shade50 = color.shade50;
+    Color shade100 = color.shade100;
+    Color shade200 = color.shade200;
+    Color shade300 = color.shade300;
+    Color shade400 = color.shade400;
+    Color shade500 = color.shade500;
+    Color shade600 = color.shade600;
+    Color shade700 = color.shade700;
+    Color shade800 = color.shade800;
+    Color shade900 = color.shade900;
+
+    prefs.setString('shade1', shade50.toString());
+    prefs.setString('shade2', shade100.toString());
+    prefs.setString('shade3', shade200.toString());
+    prefs.setString('shade4', shade300.toString());
+    prefs.setString('shade5', shade400.toString());
+    prefs.setString('shade6', shade500.toString());
+    prefs.setString('shade7', shade600.toString());
+    prefs.setString('shade8', shade700.toString());
+    prefs.setString('shade9', shade800.toString());
+    prefs.setString('shade10', shade900.toString());
+
+    prefs.setString('primaryColor', color.toString());
+    // print(color.shade100.toString());
+  }
+
+  void changeSwatch(MaterialColor color) async {
+    globals.primarySwatch = color;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Color shade50 = color.shade50;
+    Color shade100 = color.shade100;
+    Color shade200 = color.shade200;
+    Color shade300 = color.shade300;
+    Color shade400 = color.shade400;
+    Color shade500 = color.shade500;
+    Color shade600 = color.shade600;
+    Color shade700 = color.shade700;
+    Color shade800 = color.shade800;
+    Color shade900 = color.shade900;
+
+    prefs.setString('shadeS1', shade50.toString());
+    prefs.setString('shadeS2', shade100.toString());
+    prefs.setString('shadeS3', shade200.toString());
+    prefs.setString('shadeS4', shade300.toString());
+    prefs.setString('shadeS5', shade400.toString());
+    prefs.setString('shadeS6', shade500.toString());
+    prefs.setString('shadeS7', shade600.toString());
+    prefs.setString('shadeS8', shade700.toString());
+    prefs.setString('shadeS9', shade800.toString());
+    prefs.setString('shadeS10', shade900.toString());
+
+    prefs.setString('primaryColor', color.toString());
+    // print(color.shade100.toString());
   }
 }

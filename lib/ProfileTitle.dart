@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'globals.dart' as globals;
 
 class ProfileTitle extends StatefulWidget {
   const ProfileTitle(
@@ -19,10 +20,10 @@ class _ProfileTitleState extends State<ProfileTitle> {
     return GestureDetector(
       onTap: widget.func,
       child: Container(
-        margin: EdgeInsets.only(left: 10, right: 10, bottom: 5),
+        margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
         width: double.infinity,
         child: Padding(
-          padding: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
+          padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +45,7 @@ class _ProfileTitleState extends State<ProfileTitle> {
                   widget.title,
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: Colors.orange.shade300,
+                      color: globals.primaryColor!.shade300,
                       fontSize: 15,
                       fontStyle: FontStyle.italic,
                       fontFamily: 'Calibri'),

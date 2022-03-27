@@ -8,6 +8,7 @@ class UserModel {
   String? secondName;
   String? nickname;
   String? avatarUrl;
+  String? backgroundUrl;
   String? fullName;
   String? dateCreated;
   List<dynamic>? newMessages;
@@ -19,6 +20,7 @@ class UserModel {
       this.secondName,
       this.nickname,
       this.avatarUrl,
+      this.backgroundUrl,
       this.fullName,
       this.newMessages,
       this.dateCreated});
@@ -34,6 +36,7 @@ class UserModel {
         secondName: map['secondName'],
         nickname: map['nickname'],
         avatarUrl: map['avatarUrl'],
+        backgroundUrl: map['backgroundUrl'],
         newMessages: map['newMessages'],
         dateCreated: map['dateCreated'],
         fullName: map['fullName']);
@@ -48,6 +51,7 @@ class UserModel {
       'secondName': secondName,
       'nickname': nickname,
       'avatarUrl': avatarUrl,
+      'backgroundUrl': backgroundUrl,
       'newMessages': newMessages,
       'dateCreated': dateCreated,
       'fullName': '${firstName} ${secondName}',
