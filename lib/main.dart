@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:karpportal/SplashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+
+import 'package:hive/hive.dart';
+
 import 'globals.dart' as globals;
 
 import 'HomeScreen.dart';
@@ -27,7 +30,9 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } else {
-    await Firebase.initializeApp();
+    if (!Platform.isLinux) {
+      await Firebase.initializeApp();
+    }
   }
   SharedPreferences prefs = await SharedPreferences.getInstance();
 

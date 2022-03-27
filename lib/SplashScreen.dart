@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:karpportal/HomeScreen.dart';
 import 'package:karpportal/InitUserScreen.dart';
+import 'package:karpportal/LinuxLoadScreen.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/Screen1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:firedart/firedart.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -16,8 +20,16 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
     changeScreen();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // changeScreen();
     return Scaffold(
       body: Center(
         child: Text(
@@ -35,30 +47,35 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void changeScreen() async {
-    final _auth = FirebaseAuth.instance;
+    if (!Platform.isLinux) {
+      final _auth = FirebaseAuth.instance;
 
-    //WidgetsFlutterBinding.ensureInitialized();
-    List<String> logindetailstouse;
+      //WidgetsFlutterBinding.ensureInitialized();
+      List<String> logindetailstouse;
 
-    final prefs = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
-    if (await prefs.getStringList('logindetails') != null) {
-      logindetailstouse =
-          await prefs.getStringList('logindetails') as List<String>;
+      if (await prefs.getStringList('logindetails') != null) {
+        logindetailstouse =
+            await prefs.getStringList('logindetails') as List<String>;
 
-      try {
-        _auth.signInWithEmailAndPassword(
-            email: logindetailstouse[0], password: logindetailstouse[1]);
+        try {
+          _auth.signInWithEmailAndPassword(
+              email: logindetailstouse[0], password: logindetailstouse[1]);
 
-        Navigator.push(await context,
-            MaterialPageRoute(builder: (context) => InitUserPage()));
-      } on FirebaseAuthException catch (error) {
+          Navigator.push(await context,
+              MaterialPageRoute(builder: (context) => InitUserPage()));
+        } on FirebaseAuthException catch (error) {
+          Navigator.push(await context,
+              MaterialPageRoute(builder: (context) => LoginPage()));
+        }
+      } else {
         Navigator.push(await context,
             MaterialPageRoute(builder: (context) => LoginPage()));
       }
     } else {
       Navigator.push(
-          await context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context, MaterialPageRoute(builder: (context) => LinuxLoadPage()));
     }
   }
 }
