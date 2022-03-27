@@ -76,8 +76,8 @@ void main() async {
     colorCustom = MaterialColor(valuePrimary!, materialColor!);
     globals.primaryColor = colorCustom;
   } else {
-    colorCustom = Colors.orange;
-    globals.primaryColor = Colors.orange;
+    colorCustom = Colors.deepOrange;
+    globals.primaryColor = Colors.deepOrange;
   }
   //primarySwatch
   List<Color>? colorSwatchShades = [
@@ -125,8 +125,8 @@ void main() async {
     colorCustomS = MaterialColor(valuePrimaryS!, materialColorS!);
     globals.primarySwatch = colorCustomS;
   } else {
-    colorCustomS = Colors.deepOrange;
-    globals.primarySwatch = Colors.deepOrange;
+    colorCustomS = Colors.orange;
+    globals.primarySwatch = Colors.orange;
   }
 
   runApp(const MyApp());

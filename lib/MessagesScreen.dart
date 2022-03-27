@@ -64,6 +64,7 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        backgroundColor: globals.primarySwatch,
         onPressed: refresh,
         child: Icon(
           Icons.refresh,
@@ -103,7 +104,7 @@ class _MessagesPageState extends State<MessagesPage> {
                         } else if (snapshot.hasError) {
                           return Text(snapshot.error.toString());
                         } else {
-                          return CircularProgressIndicator();
+                          return Center(child: CircularProgressIndicator());
                         }
                       },
                     ),

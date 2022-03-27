@@ -455,6 +455,7 @@ class _ChatPageState extends State<ChatPage> {
                     height: 50,
                     width: 50,
                     child: FloatingActionButton(
+                      backgroundColor: globals.primarySwatch,
                       onPressed: sendMessage,
                       child: const Icon(
                         Icons.send,
