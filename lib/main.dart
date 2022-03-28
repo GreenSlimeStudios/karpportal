@@ -36,7 +36,7 @@ void main() async {
   }
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  List<Color>? colorShades = [
+  List<Color> colorShades = [
     Colors.black,
     Colors.black,
     Colors.black,
@@ -67,16 +67,16 @@ void main() async {
     print(colorShades);
 
     materialColor = {
-      50: colorShades![0],
-      100: colorShades![1],
-      200: colorShades![2],
-      300: colorShades![3],
-      400: colorShades![4],
-      500: colorShades![5],
-      600: colorShades![6],
-      700: colorShades![7],
-      800: colorShades![8],
-      900: colorShades![9]
+      50: colorShades[0],
+      100: colorShades[1],
+      200: colorShades[2],
+      300: colorShades[3],
+      400: colorShades[4],
+      500: colorShades[5],
+      600: colorShades[6],
+      700: colorShades[7],
+      800: colorShades[8],
+      900: colorShades[9]
     };
     colorCustom = MaterialColor(valuePrimary!, materialColor!);
     globals.primaryColor = colorCustom;
@@ -85,7 +85,7 @@ void main() async {
     globals.primaryColor = Colors.deepOrange;
   }
   //primarySwatch
-  List<Color>? colorSwatchShades = [
+  List<Color> colorSwatchShades = [
     Colors.black,
     Colors.black,
     Colors.black,
@@ -116,16 +116,16 @@ void main() async {
     print(colorSwatchShades);
 
     materialColorS = {
-      50: colorSwatchShades![0],
-      100: colorSwatchShades![1],
-      200: colorSwatchShades![2],
-      300: colorSwatchShades![3],
-      400: colorSwatchShades![4],
-      500: colorSwatchShades![5],
-      600: colorSwatchShades![6],
-      700: colorSwatchShades![7],
-      800: colorSwatchShades![8],
-      900: colorSwatchShades![9]
+      50: colorSwatchShades[0],
+      100: colorSwatchShades[1],
+      200: colorSwatchShades[2],
+      300: colorSwatchShades[3],
+      400: colorSwatchShades[4],
+      500: colorSwatchShades[5],
+      600: colorSwatchShades[6],
+      700: colorSwatchShades[7],
+      800: colorSwatchShades[8],
+      900: colorSwatchShades[9]
     };
     colorCustomS = MaterialColor(valuePrimaryS!, materialColorS!);
     globals.primarySwatch = colorCustomS;

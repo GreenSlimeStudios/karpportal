@@ -12,6 +12,7 @@ class UserModel {
   String? fullName;
   String? dateCreated;
   List<dynamic>? newMessages;
+  List<dynamic>? recentRooms;
 
   UserModel(
       {this.uid,
@@ -23,6 +24,7 @@ class UserModel {
       this.backgroundUrl,
       this.fullName,
       this.newMessages,
+      this.recentRooms,
       this.dateCreated});
 
   // receiving data from server
@@ -38,6 +40,7 @@ class UserModel {
         avatarUrl: map['avatarUrl'],
         backgroundUrl: map['backgroundUrl'],
         newMessages: map['newMessages'],
+        recentRooms: map['recentRooms'],
         dateCreated: map['dateCreated'],
         fullName: map['fullName']);
   }
@@ -53,6 +56,7 @@ class UserModel {
       'avatarUrl': avatarUrl,
       'backgroundUrl': backgroundUrl,
       'newMessages': newMessages,
+      'recentRooms': recentRooms,
       'dateCreated': dateCreated,
       'fullName': '${firstName} ${secondName}',
     };

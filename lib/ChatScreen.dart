@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,7 @@ import 'package:karpportal/Database.dart';
 import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:photo_view/photo_view.dart';
 // import 'package:media_scanner/media_scanner.dart';
 // import 'package:flutter_media_scanner/flutter_media_scanner.dart';
@@ -32,6 +34,7 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
+bool isLink = false;
 String time3 = "";
 TextEditingController messageController = new TextEditingController();
 
@@ -98,6 +101,26 @@ class _ChatPageState extends State<ChatPage> {
   bool isImage = false;
 
   void sendMessage() {
+    isLink = false;
+    if (messageController.text.startsWith('https://')) {
+      isLink = true;
+      // if (messageController.text.endsWith('.png') ||
+      //     messageController.text.endsWith('.jpg') ||
+      //     messageController.text.endsWith('.webp') ||
+      //     messageController.text.endsWith('.svg') ||
+      //     messageController.text.endsWith('.pjp') ||
+      //     messageController.text.endsWith('.pjpeg') ||
+      //     messageController.text.endsWith('.jfif') ||
+      //     messageController.text.endsWith('.avif') ||
+      //     messageController.text.endsWith('.apng') ||
+      //     messageController.text.endsWith('.jpeg') ||
+      //     messageController.text.endsWith('.gif')) {
+      //   isImage = true;
+      // }
+    }
+
+    if (isImage) isLink = true;
+
     String? hour;
     if (DateTime.now().hour.toString().characters.length == 1) {
       hour = '0${DateTime.now().hour}';
@@ -133,6 +156,7 @@ class _ChatPageState extends State<ChatPage> {
           "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
           "time3": time3,
           "isImage": isImage,
+          "isLink": isLink,
         };
         databaseMethods.addConversationMessages(
             widget.chatRoomId, messageMap, isImage);
@@ -150,6 +174,7 @@ class _ChatPageState extends State<ChatPage> {
         "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
         "time3": time3,
         "isImage": isImage,
+        "isLink": isLink,
       };
 
       databaseMethods.addConversationMessages(
@@ -424,7 +449,7 @@ class _ChatPageState extends State<ChatPage> {
                     margin: EdgeInsets.only(top: 10),
                     width: 50,
                     child: TextButton(
-                      onPressed: pickImage,
+                      onPressed: sendImage,
                       child: Icon(Icons.image),
                     ),
                   ),
@@ -542,10 +567,7 @@ class _ChatPageState extends State<ChatPage> {
   generateMessage(data) {
     if (data["isImage"] != null) {
       return (data["isImage"] == false)
-          ? Text(
-              data["message"],
-              style: const TextStyle(color: Colors.white),
-            )
+          ? pureText(data)
           : GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -557,6 +579,30 @@ class _ChatPageState extends State<ChatPage> {
               child: Padding(
                   padding: EdgeInsets.only(top: 5, bottom: 5),
                   child: Image.network(data["message"])),
+            );
+    } else {
+      return pureText(data);
+    }
+  }
+
+  Widget pureText(data) {
+    if (data["isLink"] != null) {
+      return (data["isLink"] == true)
+          ? GestureDetector(
+              onTap: () {
+                launch(data['message']);
+              },
+              child: Text(
+                data["message"],
+                style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Color.fromARGB(255, 0, 102, 255),
+                    decoration: TextDecoration.underline),
+              ),
+            )
+          : Text(
+              data["message"],
+              style: const TextStyle(color: Colors.white),
             );
     } else {
       return Text(
@@ -765,5 +811,82 @@ class _ChatPageState extends State<ChatPage> {
         return Colors.orange;
       }
     }
+  }
+
+  Future sendImage() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          //title: Text('what do you?'),
+          content: Container(
+            height: 100,
+            child: Column(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    pickImage();
+                    Navigator.pop(context);
+                  },
+                  child: Text('image from gallery'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    //copyMessage(data,"");
+                    pickImageUrl();
+                    //Navigator.pop(context);
+                  },
+                  child: Text('image from url'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AlertDialog(
+                  actions: [
+                    TextButton(
+                        onPressed: pickImage,
+                        child: Text('image from gallery')),
+                    TextButton(
+                        onPressed: pickImageUrl, child: Text('image from url')),
+                  ],
+                )));
+    //pickImage();
+  }
+
+  TextEditingController urlController = TextEditingController();
+
+  Future pickImageUrl() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          //title: Text('what do you?'),
+          content: Container(
+            height: 100,
+            child: Column(
+              children: [
+                TextField(controller: urlController),
+                ElevatedButton(
+                  onPressed: () async {
+                    imageUrl = urlController.text;
+                    isImage = true;
+                    sendMessage();
+                    isImage = false;
+                    Navigator.pop(context);
+                  },
+                  child: Text('accept'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
