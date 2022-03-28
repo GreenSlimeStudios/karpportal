@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/Database.dart';
 import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
+// import 'package:photo_view/photo_view.dart';
 // import 'package:media_scanner/media_scanner.dart';
 // import 'package:flutter_media_scanner/flutter_media_scanner.dart';
 
@@ -512,6 +514,11 @@ class _ChatPageState extends State<ChatPage> {
       if (image == null) return;
 
       imageTemporary = File(image.path);
+      if (imageTemporary!.lengthSync() > 5000000) {
+        Fluttertoast.showToast(
+            msg: 'bruh are you tryin to fuck up my cloud storage?');
+        return;
+      }
 
       globals.image = imageTemporary;
     } on PlatformException catch (e) {
@@ -544,7 +551,8 @@ class _ChatPageState extends State<ChatPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Image.network(data["message"])));
+                        builder: (context) =>
+                            PinchZoom(child: Image.network(data["message"]))));
               },
               child: Padding(
                   padding: EdgeInsets.only(top: 5, bottom: 5),

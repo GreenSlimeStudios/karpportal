@@ -6,7 +6,7 @@ import 'package:karpportal/SplashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
-import 'package:hive/hive.dart';
+// import 'package:hive/hive.dart';
 
 import 'globals.dart' as globals;
 

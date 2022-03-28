@@ -343,6 +343,11 @@ class _ProfilePageState extends State<ProfilePage> {
       if (image == null) return;
 
       imageTemporary = File(image.path);
+      if (imageTemporary!.lengthSync() > 5000000) {
+        Fluttertoast.showToast(
+            msg: 'bruh are you tryin to fuck up my cloud storage?');
+        return;
+      }
       setState(() {
         globals.image = imageTemporary;
       });
@@ -538,6 +543,11 @@ class _ProfilePageState extends State<ProfilePage> {
       if (image == null) return;
 
       imageTemporary = File(image.path);
+      if (imageTemporary!.lengthSync() > 5000000) {
+        Fluttertoast.showToast(
+            msg: 'bruh are you tryin to fuck up my cloud storage?');
+        return;
+      }
       setState(() {
         globals.image = imageTemporary;
       });
