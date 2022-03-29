@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +19,8 @@ import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:http/http.dart' as http;
 // import 'package:photo_view/photo_view.dart';
 // import 'package:media_scanner/media_scanner.dart';
 // import 'package:flutter_media_scanner/flutter_media_scanner.dart';
@@ -51,14 +55,14 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
-      (value) {
-        loggedInUser = UserModel.fromMap(value.data());
+    // FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
+    //   (value) {
+    //     loggedInUser = UserModel.fromMap(value.data());
 
-        setState(() {});
-      },
-    );
-    scrollToBottom();
+    //     setState(() {});
+    //   },
+    // );
+    // scrollToBottom();
     removePing();
   }
 
@@ -104,19 +108,21 @@ class _ChatPageState extends State<ChatPage> {
     isLink = false;
     if (messageController.text.startsWith('https://')) {
       isLink = true;
-      // if (messageController.text.endsWith('.png') ||
-      //     messageController.text.endsWith('.jpg') ||
-      //     messageController.text.endsWith('.webp') ||
-      //     messageController.text.endsWith('.svg') ||
-      //     messageController.text.endsWith('.pjp') ||
-      //     messageController.text.endsWith('.pjpeg') ||
-      //     messageController.text.endsWith('.jfif') ||
-      //     messageController.text.endsWith('.avif') ||
-      //     messageController.text.endsWith('.apng') ||
-      //     messageController.text.endsWith('.jpeg') ||
-      //     messageController.text.endsWith('.gif')) {
-      //   isImage = true;
-      // }
+      if (messageController.text.endsWith('.png') ||
+          messageController.text.endsWith('.jpg') ||
+          messageController.text.endsWith('.webp') ||
+          messageController.text.endsWith('.svg') ||
+          messageController.text.endsWith('.pjp') ||
+          messageController.text.endsWith('.pjpeg') ||
+          messageController.text.endsWith('.jfif') ||
+          messageController.text.endsWith('.avif') ||
+          messageController.text.endsWith('.apng') ||
+          messageController.text.endsWith('.jpeg') ||
+          messageController.text.endsWith('.gif')) {
+        isImage = true;
+        imageUrl = messageController.text;
+        messageController.text = "";
+      }
     }
 
     if (isImage) isLink = true;
@@ -186,6 +192,7 @@ class _ChatPageState extends State<ChatPage> {
       //   //scrollToBottom();
       // });
     }
+    isImage = false;
   }
 
   scroll() {
@@ -203,13 +210,6 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             onPressed: () {
               //setState(() {});
-              r();
-            },
-            icon: const Icon(Icons.refresh),
-          ),
-          IconButton(
-            onPressed: () {
-              //setState(() {});
               scroll();
             },
             icon: const Icon(Icons.arrow_downward_rounded),
@@ -224,12 +224,32 @@ class _ChatPageState extends State<ChatPage> {
               Text(widget.chatUserData["fullName"]),
               const Padding(padding: const EdgeInsets.only(right: 10)),
               ClipOval(
-                child: Image.network(
-                  widget.chatUserData['avatarUrl'],
+                child: CachedNetworkImage(
+                  imageUrl: widget.chatUserData['avatarUrl'],
                   width: 40,
                   height: 40,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
+
+                //   widget.chatUserData['avatarUrl'],
+                //   width: 40,
+                //   height: 40,
+                //   fit: BoxFit.cover,
+                //   loadingBuilder: (BuildContext context, Widget child,
+                //       ImageChunkEvent? loadingProgress) {
+                //     if (loadingProgress == null) return child;
+                //     return Center(
+                //       child: CircularProgressIndicator(
+                //         value: loadingProgress.expectedTotalBytes != null
+                //             ? loadingProgress.cumulativeBytesLoaded /
+                //                 loadingProgress.expectedTotalBytes!
+                //             : null,
+                //       ),
+                //     );
+                //   },
+                // ),
               ),
             ],
           ),
@@ -502,21 +522,61 @@ class _ChatPageState extends State<ChatPage> {
   MessageImage(data) {
     if (data['sendBy'] == globals.myUser!.fullName) {
       return ClipOval(
-        child: Image.network(
-          globals.myUser!.avatarUrl!,
+        child: CachedNetworkImage(
+          imageUrl: globals.myUser!.avatarUrl!,
           width: 35,
           height: 35,
           fit: BoxFit.cover,
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) => Icon(Icons.error),
         ),
+        // Image.network(
+        //   globals.myUser!.avatarUrl!,
+        //   width: 35,
+        //   height: 35,
+        //   fit: BoxFit.cover,
+        //   loadingBuilder: (BuildContext context, Widget child,
+        //       ImageChunkEvent? loadingProgress) {
+        //     if (loadingProgress == null) return child;
+        //     return Center(
+        //       child: CircularProgressIndicator(
+        //         value: loadingProgress.expectedTotalBytes != null
+        //             ? loadingProgress.cumulativeBytesLoaded /
+        //                 loadingProgress.expectedTotalBytes!
+        //             : null,
+        //       ),
+        //     );
+        //   },
+        // ),
       );
     } else {
       return ClipOval(
-        child: Image.network(
-          widget.chatUserData['avatarUrl'],
+        child: CachedNetworkImage(
+          imageUrl: widget.chatUserData['avatarUrl'],
           width: 35,
           height: 35,
           fit: BoxFit.cover,
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) => Icon(Icons.error),
         ),
+        // child: Image.network(
+        //   widget.chatUserData['avatarUrl'],
+        //   width: 35,
+        //   height: 35,
+        //   fit: BoxFit.cover,
+        //   loadingBuilder: (BuildContext context, Widget child,
+        //       ImageChunkEvent? loadingProgress) {
+        //     if (loadingProgress == null) return child;
+        //     return Center(
+        //       child: CircularProgressIndicator(
+        //         value: loadingProgress.expectedTotalBytes != null
+        //             ? loadingProgress.cumulativeBytesLoaded /
+        //                 loadingProgress.expectedTotalBytes!
+        //             : null,
+        //       ),
+        //     );
+        //   },
+        // ),
       );
     }
   }
@@ -539,7 +599,7 @@ class _ChatPageState extends State<ChatPage> {
       if (image == null) return;
 
       imageTemporary = File(image.path);
-      if (imageTemporary!.lengthSync() > 5000000) {
+      if (imageTemporary!.lengthSync() > 20000000) {
         Fluttertoast.showToast(
             msg: 'bruh are you tryin to fuck up my cloud storage?');
         return;
@@ -571,14 +631,33 @@ class _ChatPageState extends State<ChatPage> {
           : GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PinchZoom(child: Image.network(data["message"]))));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PinchZoom(
+                      child: CachedNetworkImage(
+                        imageUrl: data["message"],
+                        //fit: BoxFit.fill,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                );
               },
               child: Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 5),
-                  child: Image.network(data["message"])),
+                padding: EdgeInsets.only(top: 5, bottom: 5),
+                child: CachedNetworkImage(
+                  imageUrl: data["message"],
+                  fit: BoxFit.fill,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(
+                          value: downloadProgress.progress),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
             );
     } else {
       return pureText(data);
@@ -618,25 +697,6 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   downloadImage(Map<String, dynamic> data, String url) async {
-    // final Reference ref = FirebaseStorage.instance.ref(
-    //     'ChatImages/${loggedInUser.uid} ${data["time3"]} ${widget.chatUserData['uid']}');
-    // final result = await ref.getDownloadURL();
-    // final dir = await getApplicationDocumentsDirectory();
-    // File file = File('${dir.path}/${ref.name}');
-    // await ref.writeToFile(file);
-    // print('///////////////////////////////////////////');
-    // print(result);
-    // print('///////////////////////////////////////////');
-    // // await downloadFile(ref);
-    // // Navigator.push(
-    // //     context, MaterialPageRoute(builder: (context) => Image.file(file)));
-    // Image.file(file);
-
-    // print(dir.path);
-    // await ref.writeToFile(file);
-    // print(file.toString());
-    // await MediaScanner.loadMedia(path: dir.path);
-
     try {
       await ImageDownloader.downloadImage(url,
           destination: AndroidDestinationType.directoryDownloads
@@ -711,20 +771,11 @@ class _ChatPageState extends State<ChatPage> {
         .collection('ChatRoom')
         .doc(widget.chatRoomId)
         .get();
-    // print('///////////////////////////////////////////////////');
-    // print(roomData.toString());
-    // print(roomData["users"][1]);
-    // print('///////////////////////////////////////////////////');
 
     bool isAlready = false;
     UserModel targetUserModel = UserModel();
 
     if (roomData["uids"][0] != loggedInUser.uid) {
-      // targetUserData = await FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(roomData["uids"][0])
-      //     .get();
-
       await FirebaseFirestore.instance
           .collection("users")
           .doc(roomData["uids"][0])
@@ -758,45 +809,10 @@ class _ChatPageState extends State<ChatPage> {
       targetUserModel.newMessages = [widget.chatRoomId];
     }
 
-    // await FirebaseFirestore.instance
-    //     .collection("users")
-    //     .doc(roomData["uids"][0])
-    //     .get()
-    //     .then(
-    //   (value) {
-    //     targetUserModel = UserModel.fromMap(value.data());
-    //     //setState(() {});
-    //   },
-    // );
-
-    // bool hasAlready = false;
-    // List<String> newMessages;
-    // if (targetUserData["newMessages"] != null) {
-    //   newMessages = targetUserData["newMessages"] as List<String>;
-    //   newMessages.forEach(
-    //     (element) {
-    //       if (element == widget.chatRoomId) {
-    //         hasAlready = true;
-    //       }
-    //     },
-    //   );
-    //   if (hasAlready == false) {
-    //     newMessages.add(widget.chatRoomId);
-    //   }
-    // } else {
-    //   newMessages = [widget.chatRoomId];
-    // }
-
-    //targetUserData["newMessages"] = newMessages;
-
     await firebaseFirestore
         .collection("users")
         .doc(targetUserModel.uid)
         .set(targetUserModel.toMap());
-
-    // print('///////////////////////////////////////////////////');
-    // print(targetUserModel.toMap());
-    // print('///////////////////////////////////////////////////');
 
     setState(() {});
   }
@@ -844,18 +860,6 @@ class _ChatPageState extends State<ChatPage> {
         );
       },
     );
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AlertDialog(
-                  actions: [
-                    TextButton(
-                        onPressed: pickImage,
-                        child: Text('image from gallery')),
-                    TextButton(
-                        onPressed: pickImageUrl, child: Text('image from url')),
-                  ],
-                )));
     //pickImage();
   }
 
@@ -888,5 +892,32 @@ class _ChatPageState extends State<ChatPage> {
         );
       },
     );
+  }
+}
+
+void sendPushMessage(String token, String body, String title) async {
+  try {
+    await http.post(
+      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization':
+            'key=AAAA9xPglTQ:APA91bEuI1Hg2Mw6dLpBuh2bDvJfgcYOUm_rEUhq3glaPRzICYtTUQEG6iFF1r_EeWx3B_wC9sTDVxk0x1PYgcSh-N9Di4qG-GNF3LVDjhc9F5B_cfEqvdky-Rc1ILwdAc1oqtB5Ho8v',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{'body': body, 'title': title},
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          "to": token,
+        },
+      ),
+    );
+  } catch (e) {
+    print("error push notification");
   }
 }

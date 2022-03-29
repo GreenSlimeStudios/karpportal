@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:karpportal/SplashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 // import 'package:hive/hive.dart';
 
@@ -23,6 +24,7 @@ String? primaryS;
 Color? otherColorS;
 MaterialColor? colorCustomS;
 Map<int, Color>? materialColorS;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isIOS) {
@@ -139,8 +141,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
+// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

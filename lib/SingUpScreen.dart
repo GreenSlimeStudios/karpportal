@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -324,6 +325,7 @@ class _SingUpPageState extends State<SingUpPage> {
     User? user = _auth.currentUser;
 
     UserModel userModel = UserModel();
+    String? token = await FirebaseMessaging.instance.getToken();
 
     // writing all the values
     userModel.email = user!.email;
@@ -331,6 +333,7 @@ class _SingUpPageState extends State<SingUpPage> {
     userModel.firstName = nameController.text;
     userModel.secondName = surnameController.text;
     userModel.nickname = nicknameController.text;
+    userModel.token = token;
     userModel.dateCreated = DateTime.now().toString();
     userModel.avatarUrl =
         'https://firebasestorage.googleapis.com/v0/b/karp-portal.appspot.com/o/AvatarImages%2Fpidgeon.jpg?alt=media&token=263b59b7-beea-46c8-8ed4-4a9e94ae4a39';

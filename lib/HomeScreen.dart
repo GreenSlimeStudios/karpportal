@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,29 +29,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var screens = [Page1(), SearchPage(), Page1(), MessagesPage(), ProfilePage()];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    //makeUserGlobal();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   //makeUserGlobal();
+  // }
 
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
-  makeUserGlobal() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then(
-      (value) {
-        loggedInUser = UserModel.fromMap(value.data());
-        globals.myUser = loggedInUser;
+  // makeUserGlobal() async {
+  //   await FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc(user!.uid)
+  //       .get()
+  //       .then(
+  //     (value) {
+  //       loggedInUser = UserModel.fromMap(value.data());
+  //       globals.myUser = loggedInUser;
 
-        setState(() {});
-      },
-    );
-  }
+  //       setState(() {});
+  //     },
+  //   );
+  // }
 
   refresh() async {
     await FirebaseFirestore.instance
@@ -310,8 +311,11 @@ class _HomePageState extends State<HomePage> {
   setIcon() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(30),
-      child: Image.network(
-        globals.myUser!.avatarUrl!,
+      child: CachedNetworkImage(
+        imageUrl: globals.myUser!.avatarUrl!,
+        progressIndicatorBuilder: (context, url, downloadProgress) =>
+            CircularProgressIndicator(value: downloadProgress.progress),
+        errorWidget: (context, url, error) => Icon(Icons.error),
       ),
     );
   }

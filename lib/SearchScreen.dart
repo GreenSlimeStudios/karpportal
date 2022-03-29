@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:karpportal/ChatScreen.dart';
 import 'package:karpportal/Database.dart';
 import 'package:karpportal/MyClipper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'UserModel.dart';
 
@@ -32,17 +33,17 @@ class _SearchPageState extends State<SearchPage> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = new UserModel();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
-      (value) {
-        loggedInUser = UserModel.fromMap(value.data());
-        //setState(() {});
-      },
-    );
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
+  //     (value) {
+  //       loggedInUser = UserModel.fromMap(value.data());
+  //       //setState(() {});
+  //     },
+  //   );
+  // }
 
   // setup() async {
   //   FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
@@ -58,39 +59,37 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       body: Column(children: [
         Container(
-          margin: EdgeInsets.only(left: 20, right: 20),
+          margin: const EdgeInsets.only(left: 20, right: 20),
           //child: Form(
           child: Container(
             child: TextFormField(
-              decoration: InputDecoration(hintText: 'find user'),
+              decoration: const InputDecoration(hintText: 'find user'),
               controller: searchController,
               onChanged: (val) {
                 setState(() {
-                  if (val != null)
+                  if (val != null) {
                     name = val;
-                  else
+                  } else {
                     name = "";
+                  }
                 });
               },
             ),
           ),
         ),
-        Padding(padding: EdgeInsets.only(top: 10)),
+        const Padding(padding: EdgeInsets.only(top: 10)),
         //for (int i = 0; i < 4; i++)
         StreamBuilder<QuerySnapshot>(
           stream: (name != '' && name != null)
               ? FirebaseFirestore.instance
                   .collection("users")
                   .where('fullName', isGreaterThanOrEqualTo: name)
-                  //.where('secondName', isLessThanOrEqualTo: name)
-                  // .where('nickname', isGreaterThanOrEqualTo: name)
-                  // .where('email', isGreaterThanOrEqualTo: name)
                   .snapshots()
               : FirebaseFirestore.instance.collection("users").snapshots(),
           builder: (context, snapshot) {
             return (snapshot.connectionState == ConnectionState.waiting)
-                ? Center(
-                    child: CircularProgressIndicator(),
+                ? const Center(
+                    child: const CircularProgressIndicator(),
                   )
                 : Expanded(
                     child: ListView.builder(
@@ -99,13 +98,16 @@ class _SearchPageState extends State<SearchPage> {
                       itemBuilder: (context, index) {
                         var data = snapshot.data!.docs[index].data()
                             as Map<String, dynamic>;
-                        if (data != null)
+                        print((snapshot.data!.docs[index].metadata.isFromCache)
+                            ? "NOT FROM NETWORK"
+                            : "FROM NETWORK");
+                        if (data != null) {
                           return GestureDetector(
                             onTap: () {
                               createChatRoom(data);
                             },
                             child: Container(
-                              padding: EdgeInsets.only(top: 10),
+                              padding: const EdgeInsets.only(top: 10),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -119,29 +121,33 @@ class _SearchPageState extends State<SearchPage> {
                                         Text(data['fullName']),
                                         Text(
                                           data['nickname'],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.w300),
                                         ),
                                       ],
                                     ),
                                     leading: ClipOval(
                                       //clipper: MyClipper(),
-                                      child: Image.network(
-                                        data['avatarUrl'],
+                                      child: CachedNetworkImage(
+                                        imageUrl: data['avatarUrl'],
                                         width: 55,
                                         height: 55,
                                         fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
                                       ),
                                     ),
-                                    trailing: Icon(Icons.message),
+                                    trailing: const Icon(Icons.message),
                                   ),
                                 ],
                               ),
                             ),
                           );
-                        else {
+                        } else {
                           return Container(
-                            child: Text('null'),
+                            child: const Text('null'),
                           );
                         }
                       },
@@ -174,11 +180,12 @@ class _SearchPageState extends State<SearchPage> {
     //   },
     // );
 
-    String chatRoomId = getChatRoomId('${data['uid']}', '${loggedInUser.uid}');
+    String chatRoomId =
+        getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
-    List<String> users = [data['fullName'], loggedInUser.fullName!];
+    List<String> users = [data['fullName'], globals.myUser!.fullName!];
     //users.sort();
-    List<String> uids = [data['uid'], loggedInUser.uid!];
+    List<String> uids = [data['uid'], globals.myUser!.uid!];
     //uids.sort();
 
     Map<String, dynamic> chatRoomMap = {

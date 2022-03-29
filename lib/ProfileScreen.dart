@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,20 +29,20 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
+  //UserModel loggedInUser = UserModel();
   String? url;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
-      (value) {
-        this.loggedInUser = UserModel.fromMap(value.data());
-        setState(() {});
-      },
-    );
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
+  //     (value) {
+  //       this.loggedInUser = UserModel.fromMap(value.data());
+  //       setState(() {});
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +53,13 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            child: Image.network(
-              getBackroundUrl(),
+            child: CachedNetworkImage(
+              imageUrl: getBackroundUrl(),
               colorBlendMode: BlendMode.clear,
               fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                  width: 50, height: 50, child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
           ListView(
@@ -83,13 +88,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Row(children: [
                       const Padding(padding: EdgeInsets.only(left: 10)),
-                      if (loggedInUser.avatarUrl != null)
+                      if (globals.myUser!.avatarUrl != null)
                         ClipOval(
-                          child: Image.network(
-                            loggedInUser.avatarUrl!,
+                          child: CachedNetworkImage(
+                            imageUrl: globals.myUser!.avatarUrl!,
                             width: 120,
                             height: 120,
                             fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
                         )
                       else
@@ -105,14 +114,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           Text(
                             //'big fat and very very moch of a long text',
-                            loggedInUser.firstName!,
+                            globals.myUser!.firstName!,
                             style: const TextStyle(
                                 fontSize: 30,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            loggedInUser.secondName!,
+                            globals.myUser!.secondName!,
                             style: const TextStyle(
                                 fontSize: 30, color: Colors.black),
                           ),
@@ -147,19 +156,19 @@ class _ProfilePageState extends State<ProfilePage> {
                       const Padding(padding: const EdgeInsets.only(top: 15)),
                       ProfileTitle(
                           title: 'First name',
-                          param: loggedInUser.firstName!,
+                          param: globals.myUser!.firstName!,
                           func: changeName),
                       ProfileTitle(
                           title: 'Last name',
-                          param: loggedInUser.secondName!,
+                          param: globals.myUser!.secondName!,
                           func: changeSurName),
                       ProfileTitle(
                           title: 'Email',
-                          param: loggedInUser.email!,
+                          param: globals.myUser!.email!,
                           func: changeEmail),
                       ProfileTitle(
                           title: 'Nickname',
-                          param: loggedInUser.nickname!,
+                          param: globals.myUser!.nickname!,
                           func: changeNickname),
                       Container(
                         // margin: EdgeInsets.only(left: 20),
@@ -241,17 +250,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: signOut,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
+                              children: const [
+                                Icon(
                                   Icons.groups_rounded,
                                   color: Colors.pinkAccent,
                                 ),
-                                const Padding(
-                                    padding: EdgeInsets.only(right: 5)),
-                                const Text(
+                                Padding(padding: EdgeInsets.only(right: 5)),
+                                Text(
                                   'Sign Out',
-                                  style:
-                                      const TextStyle(color: Colors.pinkAccent),
+                                  style: TextStyle(color: Colors.pinkAccent),
                                 ),
                               ],
                             ),
@@ -278,19 +285,52 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: updateKarpportal,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
+                              children: const [
+                                Icon(
                                   Icons.upload,
-                                  color:
-                                      const Color.fromARGB(255, 64, 255, 105),
+                                  color: Color.fromARGB(255, 64, 255, 105),
                                 ),
-                                const Padding(
-                                    padding: const EdgeInsets.only(right: 5)),
-                                const Text(
+                                Padding(padding: EdgeInsets.only(right: 5)),
+                                Text(
                                   'Update Karpportal (google drive)',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
-                                          255, 64, 255, 105)),
+                                      color: Color.fromARGB(255, 64, 255, 105)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.only(top: 10)),
+                        Container(
+                          margin: EdgeInsets.only(left: 5, right: 5),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: TextButton(
+                            onPressed: setToken,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.upload,
+                                  color: Color.fromARGB(255, 64, 255, 239),
+                                ),
+                                Padding(padding: EdgeInsets.only(right: 5)),
+                                Text(
+                                  'set Token',
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 64, 255, 239)),
                                 ),
                               ],
                             ),
@@ -301,7 +341,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: changeBackgroundImage,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                               Text(
                                 'change background image ',
                                 style: TextStyle(color: Colors.white),
@@ -357,19 +397,19 @@ class _ProfilePageState extends State<ProfilePage> {
     //final ref = FirebaseStorage
     var snapshot = await _storage
         .ref()
-        .child('AvatarImages/${loggedInUser.uid}avatar')
+        .child('AvatarImages/${globals.myUser!.uid}avatar')
         .putFile(imageTemporary!);
 
     var downloadurl = await snapshot.ref.getDownloadURL();
     setState(() {
       imageUrl = downloadurl;
     });
-    loggedInUser.avatarUrl = imageUrl;
+    globals.myUser!.avatarUrl = imageUrl;
 
     await firebaseFirestore
         .collection("users")
-        .doc(loggedInUser.uid)
-        .set(loggedInUser.toMap());
+        .doc(globals.myUser!.uid)
+        .set(globals.myUser!.toMap());
     Fluttertoast.showToast(
         msg: "Account updated successfully :) ",
         textColor: Colors.black,
@@ -557,19 +597,19 @@ class _ProfilePageState extends State<ProfilePage> {
     //final ref = FirebaseStorage
     var snapshot = await _storage
         .ref()
-        .child('BackgroundImages/${loggedInUser.uid}-background')
+        .child('BackgroundImages/${globals.myUser!.uid}-background')
         .putFile(imageTemporary!);
 
     var downloadurl = await snapshot.ref.getDownloadURL();
     setState(() {
       imageUrl = downloadurl;
     });
-    loggedInUser.backgroundUrl = imageUrl;
+    globals.myUser!.backgroundUrl = imageUrl;
 
     await firebaseFirestore
         .collection("users")
-        .doc(loggedInUser.uid)
-        .set(loggedInUser.toMap());
+        .doc(globals.myUser!.uid)
+        .set(globals.myUser!.toMap());
     Fluttertoast.showToast(
         msg: "Account updated successfully :) ",
         textColor: Colors.black,
@@ -583,5 +623,30 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       return 'https://c4.wallpaperflare.com/wallpaper/500/442/354/outrun-vaporwave-hd-wallpaper-preview.jpg';
     }
+  }
+
+  void saveToken(String token) async {
+    UserModel myUser = UserModel();
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then(
+      (value) {
+        myUser = UserModel.fromMap(value.data());
+      },
+    );
+    myUser.token = token;
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .set(myUser.toMap());
+
+    Fluttertoast.showToast(msg: 'token created succesfully');
+  }
+
+  Future<void> setToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    saveToken(token!);
   }
 }

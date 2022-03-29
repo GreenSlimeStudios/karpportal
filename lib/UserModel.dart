@@ -7,6 +7,7 @@ class UserModel {
   String? firstName;
   String? secondName;
   String? nickname;
+  String? token;
   String? avatarUrl;
   String? backgroundUrl;
   String? fullName;
@@ -20,6 +21,7 @@ class UserModel {
       this.firstName,
       this.secondName,
       this.nickname,
+      this.token,
       this.avatarUrl,
       this.backgroundUrl,
       this.fullName,
@@ -37,6 +39,7 @@ class UserModel {
         firstName: map['firstName'],
         secondName: map['secondName'],
         nickname: map['nickname'],
+        token: map['token'],
         avatarUrl: map['avatarUrl'],
         backgroundUrl: map['backgroundUrl'],
         newMessages: map['newMessages'],
@@ -53,6 +56,7 @@ class UserModel {
       'firstName': firstName,
       'secondName': secondName,
       'nickname': nickname,
+      'token': token,
       'avatarUrl': avatarUrl,
       'backgroundUrl': backgroundUrl,
       'newMessages': newMessages,
