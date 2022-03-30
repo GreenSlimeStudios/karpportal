@@ -60,19 +60,20 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then(
       (value) {
+        print(value.metadata.isFromCache);
         loggedInUser = UserModel.fromMap(value.data());
         globals.myUser = loggedInUser;
 
         setState(() {});
       },
     );
-    if (globals.myUser!.newMessages != [] ||
-        globals.myUser!.newMessages != null) {
-      hasNewMessages = true;
-    }
+    // if (globals.myUser!.newMessages != [] ||
+    //     globals.myUser!.newMessages != null) {
+    //   hasNewMessages = true;
+    // }
   }
 
-  bool hasNewMessages = false;
+  // bool hasNewMessages = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

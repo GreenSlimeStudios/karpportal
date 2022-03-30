@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -232,11 +233,13 @@ class _MessagesPageState extends State<MessagesPage> {
               ),
               leading: ClipOval(
                 //clipper: MyClipper(),
-                child: Image.network(
-                  targetUserModel.avatarUrl!,
+                child: CachedNetworkImage(
+                  imageUrl: targetUserModel.avatarUrl!,
                   width: 55,
                   height: 55,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
               trailing: Icon(Icons.message),

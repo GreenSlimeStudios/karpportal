@@ -29,17 +29,25 @@ class _InitUserPageState extends State<InitUserPage> {
         .doc(user!.uid)
         .get()
         .then(
-      (value) {
+      (value) async {
         loggedInUser = UserModel.fromMap(value.data());
         globals.myUser = loggedInUser;
         print('//////////////////////////////////////////////////');
         print(globals.myUser!.toMap());
+        print('HEY!!!!!!!!!!!!');
         print('////////////////////////////////////////////////');
 
-        Navigator.push(
+        await Navigator.push(
             context, MaterialPageRoute(builder: (context) => HomePage()));
+        goToHomePage();
       },
     );
+  }
+
+  goToHomePage() async {
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HomePage()));
+    goToHomePage();
   }
 
   @override
