@@ -133,7 +133,8 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       try {
         await _auth
-            .signInWithEmailAndPassword(email: email, password: password)
+            .signInWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text)
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
                   prefs.setStringList('logindetails', loginDetailsToSave),
@@ -143,7 +144,8 @@ class _LoginPageState extends State<LoginPage> {
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":
-            errorMessage = "Your email address appears to be malformed.";
+            errorMessage =
+                "Your email address appears to be malformed. make sure there is no space after the email";
 
             break;
           case "wrong-password":

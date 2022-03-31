@@ -270,12 +270,15 @@ class _SingUpPageState extends State<SingUpPage> {
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
+        print('///////////////////////////STARTING????????????????????????');
         await _auth
-            .createUserWithEmailAndPassword(email: email, password: password)
+            .createUserWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text)
             .then((value) => {postDetailsToFirestore()})
             .catchError((e) {
-          Fluttertoast.showToast(msg: e!.createChatRoom);
+          Fluttertoast.showToast(msg: e.toString());
         });
+        print('///////////////////////////ENDING????????????????????????');
 
         // Fluttertoast.showToast(
         //     msg: 'succesfully created account',
@@ -286,7 +289,8 @@ class _SingUpPageState extends State<SingUpPage> {
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":
-            errorMessage = "Your email address appears to be malformed.";
+            errorMessage =
+                "Your email address appears to be malformed. chack if you have a space after the email";
             break;
           case "wrong-password":
             errorMessage = "Your password is wrong.";
