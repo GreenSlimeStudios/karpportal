@@ -39,6 +39,8 @@ class _InitUserPageState extends State<InitUserPage> {
           print('HEY!!!!!!!!!!!!');
           print('////////////////////////////////////////////////');
 
+          //User? authUser = await FirebaseAuth.instance.currentUser;
+          globals.authUser = user;
           await Navigator.push(
               context, MaterialPageRoute(builder: (context) => HomePage()));
           goToHomePage();

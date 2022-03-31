@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -431,7 +432,67 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void changeName() {}
 
-  void changeEmail() {}
+  TextEditingController newEmailController = new TextEditingController();
+  void changeEmail() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('reset email'),
+          content: Container(
+            height: 100,
+            child: Column(
+              children: [
+                TextField(
+                  controller: newEmailController,
+                ),
+                ElevatedButton(
+                    onPressed: changeToNewEmail, child: Text('resetEmail'))
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  changeToNewEmail() async {
+    // EmailAuthProvider.getCredential(email: 'email', password: 'password');
+    Fluttertoast.showToast(
+        msg:
+            'if you restart the app and the email changed it means it worked :)');
+    var authUser = await FirebaseAuth.instance.currentUser;
+    try {
+      await authUser
+          ?.updateEmail(newEmailController.text)
+          .then((value) => updateEmailInFirestore());
+      print('bruh');
+    } on FirebaseAuthException {
+      print(e.toString());
+    }
+  }
+
+  updateEmailInFirestore() async {
+    UserModel loggedInUser = UserModel();
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) async {
+      loggedInUser = UserModel.fromMap(value.data());
+
+      User? user = FirebaseAuth.instance.currentUser;
+
+      loggedInUser.email = user!.email;
+      globals.myUser = loggedInUser;
+      globals.authUser = user;
+
+      await firebaseFirestore
+          .collection("users")
+          .doc(globals.myUser!.uid)
+          .set(globals.myUser!.toMap());
+    });
+  }
 
   void changeNickname() {}
 
