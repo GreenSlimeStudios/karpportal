@@ -52,15 +52,6 @@ class _MessagesPageState extends State<MessagesPage> {
     };
   }
 
-  // setup() async {
-  //   FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
-  //     (value) {
-  //       this.loggedInUser = UserModel.fromMap(value.data());
-  //       setState(() {});
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +70,7 @@ class _MessagesPageState extends State<MessagesPage> {
           child: Container(
             margin: EdgeInsets.only(top: 10),
             child: Text(
-              'New Messages',
+              'Recent Messages',
               style: TextStyle(
                   fontSize: 20,
                   fontStyle: FontStyle.italic,
@@ -93,11 +84,12 @@ class _MessagesPageState extends State<MessagesPage> {
         Expanded(
           child: ListView(
             children: [
-              if (globals.myUser!.newMessages != null)
-                if (globals.myUser!.newMessages != [])
-                  for (int i = 0; i < globals.myUser!.newMessages!.length; i++)
+              if (globals.myUser!.recentRooms != null)
+                if (globals.myUser!.recentRooms != [])
+                  for (int i = 0; i < globals.myUser!.recentRooms!.length; i++)
                     FutureBuilder(
-                      future: getRecentRooms(globals.myUser!.newMessages![i]),
+                      future: getRecentRooms(
+                          globals.myUser!.recentRooms!.reversed.toList()[i]),
                       builder: (BuildContext context,
                           AsyncSnapshot<dynamic> snapshot) {
                         if (snapshot.hasData) {
@@ -109,6 +101,7 @@ class _MessagesPageState extends State<MessagesPage> {
                         }
                       },
                     ),
+
               // getRecentRooms(globals.myUser!.newMessages![i])
             ],
           ),
@@ -166,11 +159,6 @@ class _MessagesPageState extends State<MessagesPage> {
     print('///////////////////////////////////////////////////');
 
     if (roomData["uids"][0] != globals.myUser!.uid) {
-      // targetUserData = await FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(roomData["uids"][0])
-      //     .get();
-
       await FirebaseFirestore.instance
           .collection("users")
           .doc(roomData["uids"][0])
@@ -191,6 +179,7 @@ class _MessagesPageState extends State<MessagesPage> {
         },
       );
     }
+
     print('///////////////////////////////////////////////////');
     print(targetUserModel.toMap());
     print('///////////////////////////////////////////////////');
@@ -224,7 +213,10 @@ class _MessagesPageState extends State<MessagesPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(targetUserModel.fullName!),
+                  Text(
+                    targetUserModel.fullName!,
+                    style: getRoomTextStyle(targetUserModel, chatRoomId),
+                  ),
                   Text(
                     targetUserModel.nickname!,
                     style: TextStyle(fontWeight: FontWeight.w300),
@@ -263,6 +255,25 @@ class _MessagesPageState extends State<MessagesPage> {
         setState(() {});
       },
     );
+  }
+
+  getRoomTextStyle(UserModel targetUserModel, String chatRoomId) {
+    bool isNew = false;
+
+    if (targetUserModel.newMessages != null &&
+        targetUserModel.newMessages != []) {
+      for (int i = 0; i < targetUserModel.newMessages!.length; i++) {
+        if (targetUserModel.newMessages![i] == chatRoomId) {
+          isNew = true;
+          break;
+        }
+      }
+    }
+    if (!isNew) {
+      return TextStyle(fontWeight: FontWeight.w800);
+    } else {
+      return TextStyle(fontWeight: FontWeight.w400);
+    }
   }
 }
 

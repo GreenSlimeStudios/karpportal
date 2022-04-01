@@ -775,6 +775,16 @@ class _ChatPageState extends State<ChatPage> {
     bool isAlready = false;
     UserModel targetUserModel = UserModel();
 
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(globals.myUser!.uid)
+        .get()
+        .then(
+      (value) {
+        globals.myUser = UserModel.fromMap(value.data());
+      },
+    );
+
     if (roomData["uids"][0] != loggedInUser.uid) {
       await FirebaseFirestore.instance
           .collection("users")
@@ -808,11 +818,37 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       targetUserModel.newMessages = [widget.chatRoomId];
     }
+    //Make room most recent in both users
+    if (targetUserModel.recentRooms != null) {
+      for (int i = 0; i < targetUserModel.recentRooms!.length; i++) {
+        if (targetUserModel.recentRooms![i] == widget.chatRoomId) {
+          targetUserModel.recentRooms!.remove(targetUserModel.recentRooms![i]);
+        }
+      }
+      targetUserModel.recentRooms?.add(widget.chatRoomId);
+    } else {
+      targetUserModel.recentRooms = [widget.chatRoomId];
+    }
+    if (globals.myUser!.recentRooms != null) {
+      for (int i = 0; i < globals.myUser!.recentRooms!.length; i++) {
+        if (globals.myUser!.recentRooms![i] == widget.chatRoomId) {
+          globals.myUser!.recentRooms!.remove(globals.myUser!.recentRooms![i]);
+        }
+      }
+      globals.myUser!.recentRooms?.add(widget.chatRoomId);
+    } else {
+      globals.myUser!.recentRooms = [widget.chatRoomId];
+    }
 
     await firebaseFirestore
         .collection("users")
         .doc(targetUserModel.uid)
         .set(targetUserModel.toMap());
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(globals.myUser!.uid)
+        .set(globals.myUser!.toMap());
 
     setState(() {});
   }

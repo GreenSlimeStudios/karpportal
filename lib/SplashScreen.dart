@@ -9,6 +9,8 @@ import 'package:karpportal/LinuxLoadScreen.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/Screen1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:firedart/firedart.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -47,7 +49,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void changeScreen() async {
-    if (!Platform.isLinux) {
+    if (kIsWeb) {
+      Navigator.push(
+          await context, MaterialPageRoute(builder: (context) => LoginPage()));
+    }
+    if (Platform.isAndroid || Platform.isIOS) {
       final _auth = FirebaseAuth.instance;
 
       //WidgetsFlutterBinding.ensureInitialized();
@@ -73,7 +79,9 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.push(await context,
             MaterialPageRoute(builder: (context) => LoginPage()));
       }
-    } else {
+    }
+
+    if (Platform.isLinux) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LinuxLoadPage()));
     }
