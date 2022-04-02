@@ -772,6 +772,8 @@ class _ChatPageState extends State<ChatPage> {
         .doc(widget.chatRoomId)
         .get();
 
+    // print(roomData.metadata.isFromCache);
+
     bool isAlready = false;
     UserModel targetUserModel = UserModel();
 
@@ -792,6 +794,7 @@ class _ChatPageState extends State<ChatPage> {
           .get()
           .then(
         (value) {
+          // print(value.metadata.isFromCache);
           targetUserModel = UserModel.fromMap(value.data());
         },
       );
@@ -802,6 +805,7 @@ class _ChatPageState extends State<ChatPage> {
           .get()
           .then(
         (value) {
+          // print(value.metadata.isFromCache);
           targetUserModel = UserModel.fromMap(value.data());
         },
       );

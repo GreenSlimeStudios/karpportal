@@ -53,20 +53,20 @@ class _HomePageState extends State<HomePage> {
   //   );
   // }
 
-  refresh() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then(
-      (value) {
-        print(value.metadata.isFromCache);
-        loggedInUser = UserModel.fromMap(value.data());
-        globals.myUser = loggedInUser;
+  refresh() {
+    // await FirebaseFirestore.instance
+    //     .collection("users")
+    //     .doc(user!.uid)
+    //     .get()
+    //     .then(
+    //   (value) {
+    //     print(value.metadata.isFromCache);
+    //     loggedInUser = UserModel.fromMap(value.data());
+    //     globals.myUser = loggedInUser;
 
-        setState(() {});
-      },
-    );
+    setState(() {});
+    //   },
+    // );
     // if (globals.myUser!.newMessages != [] ||
     //     globals.myUser!.newMessages != null) {
     //   hasNewMessages = true;
