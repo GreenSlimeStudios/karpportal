@@ -470,7 +470,10 @@ class _ChatPageState extends State<ChatPage> {
                     width: 50,
                     child: TextButton(
                       onPressed: sendImage,
-                      child: Icon(Icons.image),
+                      child: Icon(
+                        Icons.image,
+                        color: globals.primarySwatch,
+                      ),
                     ),
                   ),
                   Container(

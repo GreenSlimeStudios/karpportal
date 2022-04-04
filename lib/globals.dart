@@ -10,6 +10,9 @@ String? fullName;
 String? avatarUrl;
 MaterialColor? primarySwatch;
 MaterialColor? primaryColor;
+Color? themeColor;
+bool? isDarkTheme;
+// Colors.grey.shade900;
 User? authUser;
 
 UserModel? myUser;

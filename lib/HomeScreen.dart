@@ -331,12 +331,12 @@ class _HomePageState extends State<HomePage> {
       } else
         return Icon(
           Icons.comment,
-          color: Colors.white,
+          // color: Colors.white,
         );
     } else {
       return Icon(
         Icons.comment,
-        color: Colors.white,
+        // color: Colors.white,
       );
     }
   }

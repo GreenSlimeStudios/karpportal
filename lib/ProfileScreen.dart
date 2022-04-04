@@ -28,6 +28,8 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
+bool isDarkTheme = false;
+
 class _ProfilePageState extends State<ProfilePage> {
   User? user = FirebaseAuth.instance.currentUser;
   //UserModel loggedInUser = UserModel();
@@ -44,6 +46,12 @@ class _ProfilePageState extends State<ProfilePage> {
   //     },
   //   );
   // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    isDarkTheme = globals.isDarkTheme!;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 150,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100.withOpacity(0.9),
+                      color: globals.themeColor!.withOpacity(0.9),
                       // color: Colors.transparent,
                       //border: Border.all(width: 1, color: Colors.black),
                       boxShadow: [
@@ -118,13 +126,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             globals.myUser!.firstName!,
                             style: const TextStyle(
                                 fontSize: 30,
-                                color: Colors.black,
+                                // color: Colors.black,
                                 fontWeight: FontWeight.w300),
                           ),
                           Text(
                             globals.myUser!.secondName!,
                             style: const TextStyle(
-                                fontSize: 30, color: Colors.black),
+                              fontSize: 30,
+                              // color: Colors.black
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: changeAvatar,
@@ -143,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     margin: EdgeInsets.only(left: 5, right: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: Colors.white.withOpacity(0.9),
+                      color: globals.themeColor!.withOpacity(0.9),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -220,6 +230,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                           Padding(padding: EdgeInsets.only(top: 10)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'dark theme',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Switch(
+                                  value: isDarkTheme,
+                                  onChanged: changeDarkTheme),
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 10)),
                         ]),
                       )
                     ]),
@@ -236,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: Colors.white,
+                            color: globals.themeColor,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
@@ -271,7 +294,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: Colors.white,
+                            color: globals.themeColor,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
@@ -307,7 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: Colors.white,
+                            color: globals.themeColor,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
@@ -709,5 +732,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> setToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
     saveToken(token!);
+  }
+
+  void changeDarkTheme(bool value) async {
+    isDarkTheme = value;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDarkTheme', isDarkTheme);
+    Fluttertoast.showToast(msg: 'restart app to see changes');
+    setState(() {});
   }
 }

@@ -26,6 +26,8 @@ Color? otherColorS;
 MaterialColor? colorCustomS;
 Map<int, Color>? materialColorS;
 
+bool isDarkTheme = false;
+
 void main() async {
   if (kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +47,15 @@ void main() async {
       }
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('isDarkTheme') != null) {
+      isDarkTheme = prefs.getBool('isDarkTheme')!;
+    }
+    if (isDarkTheme) {
+      globals.themeColor = Colors.grey.shade900;
+    } else {
+      globals.themeColor = Colors.white;
+    }
+    globals.isDarkTheme = isDarkTheme;
 
     List<Color> colorShades = [
       Colors.black,
@@ -158,9 +169,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'karp portal',
-      theme: ThemeData(
-        primarySwatch: globals.primarySwatch,
-      ),
+      theme: isDarkTheme
+          ? ThemeData.dark().copyWith(
+              // primarySwatch: globals.primarySwatch,
+              // accentColor: globals.primarySwatch,
+              // iconTheme: IconThemeData(color: globals.primarySwatch),
+              switchTheme: SwitchThemeData(
+                  thumbColor: MaterialStateProperty.all(Colors.black),
+                  trackColor: MaterialStateProperty.all(Colors.black)),
+              progressIndicatorTheme:
+                  ProgressIndicatorThemeData(color: globals.primarySwatch),
+              primaryColor: globals.primarySwatch,
+              primaryColorDark: globals.primarySwatch,
+              primaryIconTheme: IconThemeData(color: globals.primarySwatch),
+              buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(globals.primarySwatch))))
+          : ThemeData(
+              primarySwatch: globals.primarySwatch,
+            ),
       home: const SplashScreen(),
     );
   }

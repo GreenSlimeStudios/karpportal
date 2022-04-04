@@ -78,7 +78,7 @@ class _InitUserPageState extends State<InitUserPage> {
           ),
           Text(
             'logging in ...',
-            style: TextStyle(color: Colors.black),
+            // style: TextStyle(color: Colors.black),
           ),
           Padding(
               padding: EdgeInsets.only(left: 20, top: 5, right: 20),
