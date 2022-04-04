@@ -125,7 +125,12 @@ class _MessagesPageState extends State<MessagesPage> {
           return Text(snapshot.error.toString());
         } else {
           return Center(
-              child: Container(height: 90, child: CircularProgressIndicator()));
+              child: Container(
+                  height: 60,
+                  width: 60,
+                  child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: CircularProgressIndicator())));
         }
       },
     );
