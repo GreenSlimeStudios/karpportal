@@ -124,7 +124,8 @@ class _MessagesPageState extends State<MessagesPage> {
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         } else {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+              child: Container(height: 90, child: CircularProgressIndicator()));
         }
       },
     );

@@ -174,9 +174,29 @@ class MyApp extends StatelessWidget {
               // primarySwatch: globals.primarySwatch,
               // accentColor: globals.primarySwatch,
               // iconTheme: IconThemeData(color: globals.primarySwatch),
+              // textSelectionColor: globals.primarySwatch,
+              textSelectionTheme: TextSelectionThemeData(
+                  selectionColor: globals.primarySwatch,
+                  cursorColor: globals.primarySwatch,
+                  selectionHandleColor: globals.primarySwatch),
+              cardTheme: CardTheme(color: globals.primarySwatch),
+              inputDecorationTheme: InputDecorationTheme(
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    borderSide:
+                        BorderSide(color: globals.primarySwatch!, width: 3),
+                  ),
+                  fillColor: globals.primarySwatch,
+                  // filled: true,
+                  // focusedBorder: MaterialStateOutlineInputBorder(),
+                  // border: InputBorder(borderSide: BorderSide(color: globals.primarySwatch!)),
+                  focusColor: globals.primarySwatch,
+                  hoverColor: globals.primarySwatch),
+              // textSelectionColor: globals.primarySwatch,
               switchTheme: SwitchThemeData(
-                  thumbColor: MaterialStateProperty.all(Colors.black),
-                  trackColor: MaterialStateProperty.all(Colors.black)),
+                  thumbColor: MaterialStateProperty.all(globals.primaryColor),
+                  trackColor: MaterialStateProperty.all(
+                      globals.primarySwatch!.shade600)),
               progressIndicatorTheme:
                   ProgressIndicatorThemeData(color: globals.primarySwatch),
               primaryColor: globals.primarySwatch,

@@ -488,11 +488,12 @@ class _ChatPageState extends State<ChatPage> {
                             //maxLength: 1000,
                             decoration: const InputDecoration(
                               contentPadding: EdgeInsets.all(8),
-                              //isDense: true,
                               hintText: 'message',
                               border: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15.0))),
+                                // borderSide: BorderSide(color: globals.primarySwatch!),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0)),
+                              ),
                             ),
                           ),
                         ),
