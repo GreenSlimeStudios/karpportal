@@ -11,6 +11,7 @@ import 'package:karpportal/HomeScreen.dart';
 import 'package:karpportal/InitUserScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'globals.dart' as globals;
 
 class SingUpPage extends StatefulWidget {
   const SingUpPage({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class _SingUpPageState extends State<SingUpPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.orange,
+        foregroundColor: globals.primarySwatch,
       ),
       body: ListView(
         children: [

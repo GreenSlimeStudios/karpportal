@@ -171,6 +171,14 @@ class MyApp extends StatelessWidget {
       title: 'karp portal',
       theme: isDarkTheme
           ? ThemeData.dark().copyWith(
+              // accentColor: globals.primaryColor,
+              splashColor: globals.primaryColor,
+              scrollbarTheme: ScrollbarThemeData(
+                  trackBorderColor:
+                      MaterialStateProperty.all(globals.primaryColor),
+                  thumbColor: MaterialStateProperty.all(globals.primaryColor),
+                  trackColor: MaterialStateProperty.all(globals.primaryColor)),
+
               // primarySwatch: globals.primarySwatch,
               // accentColor: globals.primarySwatch,
               // iconTheme: IconThemeData(color: globals.primarySwatch),
@@ -181,6 +189,7 @@ class MyApp extends StatelessWidget {
                   selectionHandleColor: globals.primarySwatch),
               cardTheme: CardTheme(color: globals.primarySwatch),
               inputDecorationTheme: InputDecorationTheme(
+                  iconColor: globals.primaryColor,
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0)),
                     borderSide:
