@@ -70,11 +70,19 @@ class _InitUserPageState extends State<InitUserPage> {
     return Scaffold(
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(
-            'Karp\nPortal',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.leagueScript(
-                fontSize: 60, fontWeight: FontWeight.bold),
+          Hero(
+            tag: 'karpPortal',
+            child: Card(
+              color: Colors.transparent,
+              elevation: 0,
+              margin: EdgeInsets.zero,
+              child: Text(
+                'Karp\nPortal',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.leagueScript(
+                    fontSize: 60, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           Text(
             'logging in ...',

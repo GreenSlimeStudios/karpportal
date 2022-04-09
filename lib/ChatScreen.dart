@@ -223,33 +223,36 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               Text(widget.chatUserData["fullName"]),
               const Padding(padding: const EdgeInsets.only(right: 10)),
-              ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: widget.chatUserData['avatarUrl'],
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
+              Hero(
+                tag: 'targetAvatar',
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: widget.chatUserData['avatarUrl'],
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
 
-                //   widget.chatUserData['avatarUrl'],
-                //   width: 40,
-                //   height: 40,
-                //   fit: BoxFit.cover,
-                //   loadingBuilder: (BuildContext context, Widget child,
-                //       ImageChunkEvent? loadingProgress) {
-                //     if (loadingProgress == null) return child;
-                //     return Center(
-                //       child: CircularProgressIndicator(
-                //         value: loadingProgress.expectedTotalBytes != null
-                //             ? loadingProgress.cumulativeBytesLoaded /
-                //                 loadingProgress.expectedTotalBytes!
-                //             : null,
-                //       ),
-                //     );
-                //   },
-                // ),
+                  //   widget.chatUserData['avatarUrl'],
+                  //   width: 40,
+                  //   height: 40,
+                  //   fit: BoxFit.cover,
+                  //   loadingBuilder: (BuildContext context, Widget child,
+                  //       ImageChunkEvent? loadingProgress) {
+                  //     if (loadingProgress == null) return child;
+                  //     return Center(
+                  //       child: CircularProgressIndicator(
+                  //         value: loadingProgress.expectedTotalBytes != null
+                  //             ? loadingProgress.cumulativeBytesLoaded /
+                  //                 loadingProgress.expectedTotalBytes!
+                  //             : null,
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                ),
               ),
             ],
           ),

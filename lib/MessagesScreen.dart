@@ -250,15 +250,18 @@ class _MessagesPageState extends State<MessagesPage> {
                   ),
                 ],
               ),
-              leading: ClipOval(
-                //clipper: MyClipper(),
-                child: CachedNetworkImage(
-                  imageUrl: targetUserModel.avatarUrl!,
-                  width: 55,
-                  height: 55,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+              leading: Hero(
+                tag: 'targetAvatar',
+                child: ClipOval(
+                  //clipper: MyClipper(),
+                  child: CachedNetworkImage(
+                    imageUrl: targetUserModel.avatarUrl!,
+                    width: 55,
+                    height: 55,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
               ),
               trailing: Icon(Icons.message),

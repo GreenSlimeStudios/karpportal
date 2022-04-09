@@ -25,103 +25,148 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+        body: Center(
+      child: Form(
+        key: _formKey,
+        child: LayoutBuilder(
+          builder: (context, constraints) => ListView(
             children: [
-              Text(
-                'Karp\nPortal',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.leagueScript(
-                    fontSize: 60, fontWeight: FontWeight.bold),
-              ),
               Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 20),
-                child: TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return ("Please Enter Email");
-                    }
-                    if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                        .hasMatch(value)) {
-                      return ("Please Enter a valid email");
-                    }
-                    return null;
-                  },
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    hintText: 'email',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    prefixIcon: Icon(Icons.email),
-                  ),
+                padding: const EdgeInsets.all(20.0),
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
                 ),
-              ),
-              Container(
-                margin:
-                    EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 5),
-                child: TextFormField(
-                  controller: passwordController,
-                  obscureText: _isObscure,
-                  validator: (value) {
-                    RegExp regex = new RegExp(r'^.{6,}$');
-                    if (value!.isEmpty) {
-                      return ("Please Enter password min 6 char");
-                    }
-                    if (!regex.hasMatch(value)) {
-                      return ("Please Enter valid password (min 6 character)");
-                    }
-                  },
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.key),
-                    hintText: 'password',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    // icon: Icon(Icons.email),
-                    suffixIcon: IconButton(
-                        icon: Icon(_isObscure
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        }),
-                  ),
-                ),
-              ),
-              Container(
-                  margin: EdgeInsets.only(right: 30, left: 30),
-                  width: double.infinity,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        login(emailController.text, passwordController.text);
-                      },
-                      child: Text('Login'))),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('don\'t have an account yet lmao '),
-                  Padding(padding: EdgeInsets.only(top: 30)),
-                  GestureDetector(
-                      onTap: singUp,
-                      child: Container(
-                        child: Text(
-                          'Sing in',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Hero(
+                        tag: 'karpPortal',
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 0,
+                          color: Colors.transparent,
+                          child: Text(
+                            'Karp\nPortal',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.leagueScript(
+                                fontSize: 60, fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ))
-                ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+                        child: TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Please Enter Email");
+                            }
+                            if (!RegExp(
+                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                .hasMatch(value)) {
+                              return ("Please Enter a valid email");
+                            }
+                            return null;
+                          },
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            hintText: 'email',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0))),
+                            prefixIcon: Icon(Icons.email),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: 30, right: 30, top: 10, bottom: 5),
+                        child: TextFormField(
+                          controller: passwordController,
+                          obscureText: _isObscure,
+                          validator: (value) {
+                            RegExp regex = new RegExp(r'^.{6,}$');
+                            if (value!.isEmpty) {
+                              return ("Please Enter password min 6 char");
+                            }
+                            if (!regex.hasMatch(value)) {
+                              return ("Please Enter valid password (min 6 character)");
+                            }
+                          },
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.key),
+                            hintText: 'password',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0))),
+                            // icon: Icon(Icons.email),
+                            suffixIcon: IconButton(
+                                icon: Icon(_isObscure
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                }),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: 30, left: 30),
+                        width: double.infinity,
+                        child: Hero(
+                          tag: 'accountLoginButton',
+                          child: Container(
+                            margin: EdgeInsets.only(top: 5),
+                            constraints:
+                                BoxConstraints(maxHeight: 35, minHeight: 35),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                login(emailController.text,
+                                    passwordController.text);
+                              },
+                              child: Text('Login'),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Hero(
+                        tag: 'loginText',
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          color: Colors.transparent,
+                          elevation: 0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('don\'t have an account yet lmao '),
+                              Padding(padding: EdgeInsets.only(top: 30)),
+                              GestureDetector(
+                                onTap: singUp,
+                                child: Container(
+                                  child: Text(
+                                    'Sing in',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               )
             ],
           ),
         ),
       ),
-    );
+    ));
   }
 
   void login(String email, String password) async {

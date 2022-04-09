@@ -53,11 +53,19 @@ class _SingUpPageState extends State<SingUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(padding: EdgeInsets.only(top: 30)),
-                  Text(
-                    'Karp\nPortal',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.leagueScript(
-                        fontSize: 60, fontWeight: FontWeight.bold),
+                  Hero(
+                    tag: 'karpPortal',
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 0,
+                      color: Colors.transparent,
+                      child: Text(
+                        'Karp\nPortal',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.leagueScript(
+                            fontSize: 60, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 30, right: 30, top: 20),
@@ -226,27 +234,44 @@ class _SingUpPageState extends State<SingUpPage> {
                   Container(
                       margin: EdgeInsets.only(right: 30, left: 30),
                       width: double.infinity,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            signUp(
-                                emailController.text, passwordController.text);
-                          },
-                          child: Text('Sing Up'))),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('already have account bruh '),
-                      Padding(padding: EdgeInsets.only(top: 30)),
-                      GestureDetector(
-                          onTap: loginScreen,
-                          child: Container(
-                            child: Text(
-                              'Login',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                      child: Hero(
+                        tag: 'accountLoginButton',
+                        child: Container(
+                          margin: EdgeInsets.only(top: 5),
+                          height: 35,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                signUp(emailController.text,
+                                    passwordController.text);
+                              },
+                              child: Text('Sing Up')),
+                        ),
+                      )),
+                  Hero(
+                    tag: 'loginText',
+                    child: Card(
+                      color: Colors.transparent,
+                      elevation: 0,
+                      margin: EdgeInsets.zero,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('already have account bruh '),
+                          Padding(padding: EdgeInsets.only(top: 30)),
+                          GestureDetector(
+                            onTap: loginScreen,
+                            child: Container(
+                              child: Text(
+                                'Login',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ))
-                    ],
-                  )
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 20)),
                 ],
               ),
             ),
