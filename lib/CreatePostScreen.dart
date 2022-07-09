@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'globals.dart' as globals;
@@ -106,12 +107,69 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                 ),
                 SizedBox(height: 10),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: globals.primarySwatch,
+                GestureDetector(
+                  onTap: AddPicture,
+                  child: Container(
+                    height: 40,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: globals.primaryColor,
+                    ),
+                    padding: EdgeInsets.only(left: 10),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(CupertinoIcons.camera),
+                        SizedBox(width: 10),
+                        Text(
+                          "Add Picture",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.dancingScript(
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 27,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Icon(Icons.camera),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                GestureDetector(
+                  onTap: SubmitPost,
+                  child: Container(
+                    height: 40,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: globals.primarySwatch,
+                    ),
+                    padding: EdgeInsets.only(left: 10),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.upload),
+                        SizedBox(width: 10),
+                        Text(
+                          "Submit Post",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.dancingScript(
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 27,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Icon(Icons.upload),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -124,4 +182,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
       //do stuff
     }
   }
+
+  void AddPicture() {}
 }
