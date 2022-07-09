@@ -1,2 +1,0 @@
-com/ko2ic/imagedownloader/BuildConfig.java
- com.ko2ic.imagedownloader.BuildConfig
