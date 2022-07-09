@@ -54,6 +54,13 @@ class DatabaseMethods {
         .snapshots();
   }
 
+  getPosts() async {
+    return await FirebaseFirestore.instance
+        .collection("Posts")
+        .orderBy("timeMil", descending: true)
+        .snapshots();
+  }
+
   createPost(postMap) {
     FirebaseFirestore.instance.collection("Posts").add(postMap).catchError((e) {
       print(e.toString());

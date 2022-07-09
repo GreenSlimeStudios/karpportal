@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:karpportal/MessagesScreen.dart';
 import 'globals.dart' as globals;
 
 class CreatePostPage extends StatefulWidget {
@@ -44,7 +45,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Text(
                     "Title",
                     style: GoogleFonts.leagueScript(fontSize: 22, fontWeight: FontWeight.bold),
@@ -72,7 +73,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
                 const SizedBox(height: 10),
                 Padding(
-                  padding: EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Text(
                     "Content",
                     style: GoogleFonts.leagueScript(fontSize: 22, fontWeight: FontWeight.bold),
@@ -98,10 +99,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     }
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Container(
-                  constraints: BoxConstraints(maxHeight: 400),
-                  padding: EdgeInsets.all(10),
+                  constraints: const BoxConstraints(maxHeight: 400),
+                  padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -112,17 +113,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       children: [
                         Image.network(
                             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2F5s_6AV3ZyuY%2Fmaxresdefault.jpg&f=1&nofb=1"),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Image.network(
                             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi1.kwejk.pl%2Fk%2Fobrazki%2F2020%2F07%2FbkfCqJNHxR13obs9.jpg&f=1&nofb=1"),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Image.network(
                             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Omv9uB0gRQqeWVdeh8rs4AAAAA%26pid%3DApi&f=1"),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // Padding(
                 //   padding: EdgeInsets.only(left: 10),
                 //   child: Text(
@@ -140,13 +141,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       borderRadius: BorderRadius.circular(10),
                       color: globals.primaryColor,
                     ),
-                    padding: EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 10),
                     alignment: Alignment.center,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(CupertinoIcons.camera),
-                        SizedBox(width: 10),
+                        const Icon(CupertinoIcons.camera),
+                        const SizedBox(width: 10),
                         Text(
                           "Add Picture",
                           textAlign: TextAlign.center,
@@ -157,13 +158,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             fontSize: 27,
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Icon(Icons.camera),
+                        const SizedBox(width: 10),
+                        const Icon(Icons.camera),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: SubmitPost,
                   child: Container(
@@ -173,13 +174,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       borderRadius: BorderRadius.circular(10),
                       color: globals.primarySwatch,
                     ),
-                    padding: EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 10),
                     alignment: Alignment.center,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.upload),
-                        SizedBox(width: 10),
+                        const Icon(Icons.upload),
+                        const SizedBox(width: 10),
                         Text(
                           "Submit Post",
                           textAlign: TextAlign.center,
@@ -190,8 +191,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             fontSize: 27,
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Icon(Icons.upload),
+                        const SizedBox(width: 10),
+                        const Icon(Icons.upload),
                       ],
                     ),
                   ),
@@ -201,9 +202,23 @@ class _CreatePostPageState extends State<CreatePostPage> {
           ),
         ),
       );
-  SubmitPost() {
+  SubmitPost() async {
     if (formKey.currentState!.validate()) {
+      List<String> emptyList = [];
+      List<String> imageUrls = [];
+      List<Map<String, dynamic>> emptyMapList = [];
       //do stuff
+      Map<String, dynamic> postMap = {
+        "authorID": globals.myUser!.uid,
+        "timeMil": DateTime.now().millisecondsSinceEpoch,
+        "title": titleController.text,
+        "content": contentController.text,
+        "reactions": {"heartIDs": emptyList, "likeIDs": emptyList, "shareIDs": emptyList},
+        "ImageURLs": imageUrls,
+        "comments": emptyMapList,
+      };
+      await databaseMethods.createPost(postMap);
+      print("UUUUUUUUUUUUUUUUUUUUUUUUUUDALO SIE CHYBA NWM XD");
     }
   }
 
