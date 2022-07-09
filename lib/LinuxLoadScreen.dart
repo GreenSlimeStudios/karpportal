@@ -27,8 +27,7 @@ class _LinuxLoadPageState extends State<LinuxLoadPage> {
     List<String> logindetailstouse;
 
     if (await prefs.getStringList('logindetails') != null) {
-      logindetailstouse =
-          await prefs.getStringList('logindetails') as List<String>;
+      logindetailstouse = await prefs.getStringList('logindetails') as List<String>;
 
       // FirebaseAuth.initialize(
       //     'AIzaSyA151Up5KqDmbiKEub8g6WzwIOZZc4HgDA', await HiveStore.create());
@@ -36,16 +35,14 @@ class _LinuxLoadPageState extends State<LinuxLoadPage> {
       //     .signIn(logindetailstouse[0], logindetailstouse[1]);
       // var user = await FirebaseAuth.instance.getUser();
 
-      var firebaseAuth = FirebaseAuth('AIzaSyA151Up5KqDmbiKEub8g6WzwIOZZc4HgDA',
-          await PreferencesStore.create());
+      var firebaseAuth =
+          FirebaseAuth('AIzaSyA151Up5KqDmbiKEub8g6WzwIOZZc4HgDA', await PreferencesStore.create());
       await firebaseAuth.signIn(logindetailstouse[0], logindetailstouse[1]);
       var user = await firebaseAuth.getUser();
 
-      Navigator.push(await context,
-          MaterialPageRoute(builder: (context) => InitUserPage()));
+      Navigator.push(await context, MaterialPageRoute(builder: (context) => InitUserPage()));
     } else {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Text('bruh')));
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Text('bruh')));
     }
   }
 }
