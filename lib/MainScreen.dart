@@ -21,11 +21,7 @@ class _MainPageState extends State<MainPage> {
             SliverAppBar(
               title: const Text("What's poppin ?"),
               // snap: true,
-
-              // Allows the user to reveal the app bar if they begin scrolling
-              // back up the list of items
               floating: true,
-              // Display a placeholder widget to visualize the shrinking size.
               flexibleSpace: Container(
                 color: globals.primarySwatch,
                 child: Container(
