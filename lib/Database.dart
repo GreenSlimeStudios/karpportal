@@ -53,4 +53,10 @@ class DatabaseMethods {
         .collection("chat")
         .snapshots();
   }
+
+  createPost(postMap) {
+    FirebaseFirestore.instance.collection("Posts").add(postMap).catchError((e) {
+      print(e.toString());
+    });
+  }
 }

@@ -16,8 +16,7 @@ class _Page1State extends State<Page1> {
         child: Text(
           'Karp\nPortal',
           textAlign: TextAlign.center,
-          style: GoogleFonts.leagueScript(
-              fontSize: 60, fontWeight: FontWeight.bold),
+          style: GoogleFonts.leagueScript(fontSize: 60, fontWeight: FontWeight.bold),
         ),
       ),
     );

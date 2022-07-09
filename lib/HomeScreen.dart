@@ -15,6 +15,7 @@ import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'MainScreen.dart';
 import 'globals.dart' as globals;
 
 class HomePage extends StatefulWidget {
@@ -27,7 +28,7 @@ class HomePage extends StatefulWidget {
 //int _index = 2;
 
 class _HomePageState extends State<HomePage> {
-  var screens = [Page1(), SearchPage(), Page1(), MessagesPage(), ProfilePage()];
+  var screens = [MainPage(), SearchPage(), Page1(), MessagesPage(), ProfilePage()];
 
   // @override
   // void initState() {
@@ -87,8 +88,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           'Karp Portal',
           textAlign: TextAlign.center,
-          style: GoogleFonts.leagueScript(
-              fontSize: 22, fontWeight: FontWeight.bold),
+          style: GoogleFonts.leagueScript(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         foregroundColor: Colors.white,
       ),
@@ -113,14 +113,12 @@ class _HomePageState extends State<HomePage> {
                       Padding(padding: EdgeInsets.only(right: 10)),
                       Text(
                         'Home',
-                        style:
-                            TextStyle(color: drawerTextColor(0), fontSize: 18),
+                        style: TextStyle(color: drawerTextColor(0), fontSize: 18),
                       )
                     ],
                   ),
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: globals.primaryColor as Color),
+                      border: Border.all(width: 1, color: globals.primaryColor as Color),
                       borderRadius: BorderRadius.circular(10),
                       color: drawerBackColor(0)),
                   height: 40,
@@ -150,8 +148,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1, color: globals.primaryColor as Color),
+                    border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(1)),
                 height: 40,
@@ -180,8 +177,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1, color: globals.primaryColor as Color),
+                    border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(2)),
                 height: 40,
@@ -210,8 +206,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1, color: globals.primaryColor as Color),
+                    border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(3)),
                 height: 40,
@@ -240,8 +235,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1, color: globals.primaryColor as Color),
+                    border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(4)),
                 height: 40,
@@ -279,11 +273,9 @@ class _HomePageState extends State<HomePage> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
-            BottomNavigationBarItem(
-                icon: FaIcon(FontAwesomeIcons.fish), label: 'karp'),
+            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.fish), label: 'karp'),
             BottomNavigationBarItem(icon: pickIcon(), label: 'messages'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle), label: 'profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'profile'),
           ],
           onTap: (index) => setState(() => globals.index = index),
         ),

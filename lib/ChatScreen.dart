@@ -28,8 +28,7 @@ import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 
 class ChatPage extends StatefulWidget {
-  const ChatPage(
-      {Key? key, required this.chatRoomId, required this.chatUserData})
+  const ChatPage({Key? key, required this.chatRoomId, required this.chatUserData})
       : super(key: key);
   final String chatRoomId;
   final Map<String, dynamic> chatUserData;
@@ -40,10 +39,10 @@ class ChatPage extends StatefulWidget {
 
 bool isLink = false;
 String time3 = "";
-TextEditingController messageController = new TextEditingController();
+TextEditingController messageController = TextEditingController();
 
 class _ChatPageState extends State<ChatPage> {
-  DatabaseMethods databaseMethods = new DatabaseMethods();
+  DatabaseMethods databaseMethods = DatabaseMethods();
   r() {
     setState(() {});
   }
@@ -72,11 +71,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   removePing() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then(
+    await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
       (value) {
         loggedInUser = UserModel.fromMap(value.data());
 
@@ -164,8 +159,7 @@ class _ChatPageState extends State<ChatPage> {
           "isImage": isImage,
           "isLink": isLink,
         };
-        databaseMethods.addConversationMessages(
-            widget.chatRoomId, messageMap, isImage);
+        databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
         messageController.text = "";
         notifyUser();
         // setState(() {
@@ -183,8 +177,7 @@ class _ChatPageState extends State<ChatPage> {
         "isLink": isLink,
       };
 
-      databaseMethods.addConversationMessages(
-          widget.chatRoomId, messageMap, isImage);
+      databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
       //messageController.text = "";
       notifyUser();
       // setState(() {
@@ -197,8 +190,7 @@ class _ChatPageState extends State<ChatPage> {
 
   scroll() {
     _scrollController.animateTo(_scrollController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.fastOutSlowIn);
+        duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
   }
 
   bool showTime = true;
@@ -222,7 +214,7 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(widget.chatUserData["fullName"]),
-              const Padding(padding: const EdgeInsets.only(right: 10)),
+              const Padding(padding: EdgeInsets.only(right: 10)),
               Hero(
                 tag: 'targetAvatar',
                 child: ClipOval(
@@ -234,24 +226,6 @@ class _ChatPageState extends State<ChatPage> {
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
-
-                  //   widget.chatUserData['avatarUrl'],
-                  //   width: 40,
-                  //   height: 40,
-                  //   fit: BoxFit.cover,
-                  //   loadingBuilder: (BuildContext context, Widget child,
-                  //       ImageChunkEvent? loadingProgress) {
-                  //     if (loadingProgress == null) return child;
-                  //     return Center(
-                  //       child: CircularProgressIndicator(
-                  //         value: loadingProgress.expectedTotalBytes != null
-                  //             ? loadingProgress.cumulativeBytesLoaded /
-                  //                 loadingProgress.expectedTotalBytes!
-                  //             : null,
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
                 ),
               ),
             ],
@@ -271,7 +245,7 @@ class _ChatPageState extends State<ChatPage> {
             builder: (context, snapshot) {
               return (snapshot.connectionState == ConnectionState.waiting)
                   ? const Center(
-                      child: const CircularProgressIndicator(),
+                      child: CircularProgressIndicator(),
                     )
                   : Expanded(
                       child: ListView.builder(
@@ -281,8 +255,7 @@ class _ChatPageState extends State<ChatPage> {
                         // itemCount: 2,
 
                         itemBuilder: (context, index) {
-                          var data = snapshot.data!.docs[index].data()
-                              as Map<String, dynamic>;
+                          var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                           if (data != null) {
                             return (data['sendBy'] != globals.myUser!.fullName)
                                 ? Container(
@@ -295,15 +268,11 @@ class _ChatPageState extends State<ChatPage> {
                                         Column(
                                           children: [
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 5),
+                                                  padding: const EdgeInsets.only(bottom: 5),
                                                   child: MessageImage(data),
                                                 ),
                                                 GestureDetector(
@@ -313,53 +282,36 @@ class _ChatPageState extends State<ChatPage> {
                                                   child: Container(
                                                     //height: 30,
                                                     decoration: BoxDecoration(
-                                                        color: globals
-                                                            .primarySwatch,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                            10),
+                                                        color: globals.primarySwatch,
+                                                        borderRadius: BorderRadius.circular(10)),
+                                                    margin: const EdgeInsets.all(10),
                                                     child: Padding(
                                                       child: Container(
                                                         constraints:
-                                                            const BoxConstraints(
-                                                                maxWidth: 250),
-                                                        child: generateMessage(
-                                                            data),
+                                                            const BoxConstraints(maxWidth: 250),
+                                                        child: generateMessage(data),
                                                       ),
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10,
-                                                              top: 5,
-                                                              right: 10,
-                                                              bottom: 5),
+                                                      padding: const EdgeInsets.only(
+                                                          left: 10, top: 5, right: 10, bottom: 5),
                                                     ),
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 5)),
+                                            const Padding(padding: EdgeInsets.only(bottom: 5)),
                                           ],
                                         ),
-                                        if (data['time2'] != null &&
-                                            showTime == true)
+                                        if (data['time2'] != null && showTime == true)
                                           Positioned(
                                             bottom: 0,
                                             left: 50,
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                              mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
                                                 Text(
                                                   data['time2'].toString(),
                                                   style: const TextStyle(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.w200),
+                                                      fontSize: 10, fontWeight: FontWeight.w200),
                                                 ),
                                               ],
                                             ),
@@ -378,10 +330,8 @@ class _ChatPageState extends State<ChatPage> {
                                         Column(
                                           children: [
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 GestureDetector(
                                                   onLongPress: () {
@@ -391,57 +341,39 @@ class _ChatPageState extends State<ChatPage> {
                                                     //height: 30,
                                                     decoration: BoxDecoration(
                                                         color: getColor(),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                            10),
+                                                        borderRadius: BorderRadius.circular(10)),
+                                                    margin: const EdgeInsets.all(10),
                                                     child: Padding(
                                                       child: Container(
                                                         constraints:
-                                                            const BoxConstraints(
-                                                                maxWidth: 250),
-                                                        child: generateMessage(
-                                                            data),
+                                                            const BoxConstraints(maxWidth: 250),
+                                                        child: generateMessage(data),
                                                       ),
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10,
-                                                              top: 5,
-                                                              right: 10,
-                                                              bottom: 5),
+                                                      padding: const EdgeInsets.only(
+                                                          left: 10, top: 5, right: 10, bottom: 5),
                                                     ),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 5),
+                                                  padding: const EdgeInsets.only(bottom: 5),
                                                   child: MessageImage(data),
                                                 ),
                                               ],
                                             ),
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 5)),
+                                            const Padding(padding: EdgeInsets.only(bottom: 5)),
                                           ],
                                         ),
-                                        if (data['time2'] != null &&
-                                            showTime == true)
+                                        if (data['time2'] != null && showTime == true)
                                           Positioned(
                                             bottom: 0,
                                             right: 50,
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                              mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
                                                 Text(
                                                   data['time2'].toString(),
                                                   style: const TextStyle(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.w200),
+                                                      fontSize: 10, fontWeight: FontWeight.w200),
                                                 ),
                                               ],
                                             ),
@@ -494,8 +426,7 @@ class _ChatPageState extends State<ChatPage> {
                               hintText: 'message',
                               border: OutlineInputBorder(
                                 // borderSide: BorderSide(color: globals.primarySwatch!),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15.0)),
+                                borderRadius: BorderRadius.all(Radius.circular(15.0)),
                               ),
                             ),
                           ),
@@ -607,8 +538,7 @@ class _ChatPageState extends State<ChatPage> {
 
       imageTemporary = File(image.path);
       if (imageTemporary!.lengthSync() > 20000000) {
-        Fluttertoast.showToast(
-            msg: 'bruh are you tryin to fuck up my cloud storage?');
+        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
         return;
       }
 
@@ -619,8 +549,7 @@ class _ChatPageState extends State<ChatPage> {
     //final ref = FirebaseStorage
     var snapshot = await _storage
         .ref()
-        .child(
-            'ChatImages/${loggedInUser.uid} $time3 ${widget.chatUserData['uid']}')
+        .child('ChatImages/${loggedInUser.uid} $time3 ${widget.chatUserData['uid']}')
         .putFile(imageTemporary!);
 
     var downloadurl = await snapshot.ref.getDownloadURL();
@@ -644,10 +573,8 @@ class _ChatPageState extends State<ChatPage> {
                       child: CachedNetworkImage(
                         imageUrl: data["message"],
                         //fit: BoxFit.fill,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                    value: downloadProgress.progress),
+                        progressIndicatorBuilder: (context, url, downloadProgress) =>
+                            CircularProgressIndicator(value: downloadProgress.progress),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
@@ -660,8 +587,7 @@ class _ChatPageState extends State<ChatPage> {
                   imageUrl: data["message"],
                   fit: BoxFit.fill,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(
-                          value: downloadProgress.progress),
+                      CircularProgressIndicator(value: downloadProgress.progress),
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
@@ -706,8 +632,7 @@ class _ChatPageState extends State<ChatPage> {
   downloadImage(Map<String, dynamic> data, String url) async {
     try {
       await ImageDownloader.downloadImage(url,
-          destination: AndroidDestinationType.directoryDownloads
-            ..subDirectory("karpportal.png"));
+          destination: AndroidDestinationType.directoryDownloads..subDirectory("karpportal.png"));
     } on PlatformException catch (error) {
       print(error);
     }
@@ -774,43 +699,29 @@ class _ChatPageState extends State<ChatPage> {
 
   void notifyUser() async {
     isImage = false;
-    final roomData = await FirebaseFirestore.instance
-        .collection('ChatRoom')
-        .doc(widget.chatRoomId)
-        .get();
+    final roomData =
+        await FirebaseFirestore.instance.collection('ChatRoom').doc(widget.chatRoomId).get();
 
     // print(roomData.metadata.isFromCache);
 
     bool isAlready = false;
     UserModel targetUserModel = UserModel();
 
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(globals.myUser!.uid)
-        .get()
-        .then(
+    await FirebaseFirestore.instance.collection("users").doc(globals.myUser!.uid).get().then(
       (value) {
         globals.myUser = UserModel.fromMap(value.data());
       },
     );
 
     if (roomData["uids"][0] != loggedInUser.uid) {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(roomData["uids"][0])
-          .get()
-          .then(
+      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
         (value) {
           // print(value.metadata.isFromCache);
           targetUserModel = UserModel.fromMap(value.data());
         },
       );
     } else {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(roomData["uids"][1])
-          .get()
-          .then(
+      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
         (value) {
           // print(value.metadata.isFromCache);
           targetUserModel = UserModel.fromMap(value.data());
