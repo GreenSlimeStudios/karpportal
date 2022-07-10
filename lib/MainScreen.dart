@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'CreatePostScreen.dart';
@@ -107,153 +109,156 @@ class _MainPageState extends State<MainPage> {
       future: getAuthor(data["authorID"]),
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
         if (snapshot.hasData) {
-          return Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: globals.themeColor,
-                  border: Border.all(
-                    width: 2,
-                    color: data["authorID"] == globals.myUser!.uid
-                        ? globals.primaryColor!
-                        : globals.primarySwatch!,
+          return GestureDetector(
+            onLongPress: (() => showOptions(data, snapshot)),
+            child: Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: globals.themeColor,
+                    border: Border.all(
+                      width: 2,
+                      color: data["authorID"] == globals.myUser!.uid
+                          ? globals.primaryColor!
+                          : globals.primarySwatch!,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(bottom: 10, right: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: snapshot.data!.avatarUrl!,
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.fill,
-                              placeholder: (builder, url) => const CircularProgressIndicator(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot.data!.avatarUrl!,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.fill,
+                                placeholder: (builder, url) => const CircularProgressIndicator(),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  snapshot.data!.nickname!,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                Container(
-                                  constraints: const BoxConstraints(maxWidth: 250),
-                                  child: Text(
-                                    data["title"],
+                            const SizedBox(width: 10),
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    snapshot.data!.nickname!,
                                     style: const TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 13,
                                     ),
                                   ),
-                                ),
+                                  Container(
+                                    constraints: const BoxConstraints(maxWidth: 250),
+                                    child: Text(
+                                      data["title"],
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        // padding: EdgeInsets.symmetric(horizontal: 10),
+                        constraints: const BoxConstraints(maxWidth: 3000),
+                        child: Text(
+                          data["content"],
+                        ),
+                      ),
+                      // const SizedBox(height: 10),
+                      if (data["ImageURLs"].length > 0)
+                        Container(
+                          constraints: const BoxConstraints(maxHeight: 300),
+                          padding: const EdgeInsets.only(
+                            top: 10,
+                            bottom: 5,
+                          ),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                for (String url in data["ImageURLs"])
+                                  Container(
+                                    // padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: GestureDetector(
+                                      child: CachedNetworkImage(
+                                        imageUrl: url,
+                                        placeholder: (builder, url) =>
+                                            const CircularProgressIndicator(),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => InteractiveViewer(
+                                                    child: CachedNetworkImage(imageUrl: url))));
+                                      },
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
+                        ),
+                      const SizedBox(height: 15),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: -20,
+                  left: 20,
+                  child: Container(
+                    width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: (globals.myUser!.uid == data["authorID"])
+                          ? globals.primaryColor
+                          : globals.primarySwatch,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            SizedBox(width: 10),
+                            Text("L: ${data["reactions"]["likeIDs"].length.toString()}"),
+                          ]),
+                          Row(children: [
+                            SizedBox(width: 10),
+                            Text("H: ${data["reactions"]["heartIDs"].length.toString()}"),
+                          ]),
+                          Row(children: [
+                            SizedBox(width: 10),
+                            Text("S: ${data["reactions"]["shareIDs"].length.toString()}"),
+                          ]),
+                          // Row(children: [
+                          //   SizedBox(width: 10),
+                          //   Text("C: ${data["comments"].length.toString()}"),
+                          // ]),
                         ],
                       ),
                     ),
-                    Container(
-                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                      constraints: const BoxConstraints(maxWidth: 3000),
-                      child: Text(
-                        data["content"],
-                      ),
-                    ),
-                    // const SizedBox(height: 10),
-                    if (data["ImageURLs"].length > 0)
-                      Container(
-                        constraints: const BoxConstraints(maxHeight: 300),
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 5,
-                        ),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              for (String url in data["ImageURLs"])
-                                Container(
-                                  // padding: EdgeInsets.symmetric(vertical: 5),
-                                  child: GestureDetector(
-                                    child: CachedNetworkImage(
-                                      imageUrl: url,
-                                      placeholder: (builder, url) =>
-                                          const CircularProgressIndicator(),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => InteractiveViewer(
-                                                  child: CachedNetworkImage(imageUrl: url))));
-                                    },
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 15),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: -20,
-                left: 20,
-                child: Container(
-                  width: 120,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: (globals.myUser!.uid == data["authorID"])
-                        ? globals.primaryColor
-                        : globals.primarySwatch,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          SizedBox(width: 10),
-                          Text("L: ${data["reactions"]["likeIDs"].length.toString()}"),
-                        ]),
-                        Row(children: [
-                          SizedBox(width: 10),
-                          Text("H: ${data["reactions"]["heartIDs"].length.toString()}"),
-                        ]),
-                        Row(children: [
-                          SizedBox(width: 10),
-                          Text("S: ${data["reactions"]["shareIDs"].length.toString()}"),
-                        ]),
-                        // Row(children: [
-                        //   SizedBox(width: 10),
-                        //   Text("C: ${data["comments"].length.toString()}"),
-                        // ]),
-                      ],
-                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
@@ -279,6 +284,90 @@ class _MainPageState extends State<MainPage> {
     );
     return author;
   }
+
+  showOptions(Map<String, dynamic> data, AsyncSnapshot<UserModel> snapshot) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('what do you?'),
+          content: Container(
+            height: 250,
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: data["title"]));
+                    Fluttertoast.showToast(msg: 'title copied succesfully');
+                    Navigator.pop(context);
+                  },
+                  child: Text('copy title'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: data["content"]));
+                    Fluttertoast.showToast(msg: 'content copied succesfully');
+                    Navigator.pop(context);
+                  },
+                  child: Text('copy content (text)'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    like(data);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.thumb_up),
+                      SizedBox(width: 5),
+                      Text('like'),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    heart(data);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(CupertinoIcons.heart),
+                      SizedBox(width: 5),
+                      Text('heart'),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    share(data);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.share),
+                      SizedBox(width: 5),
+                      Text('share'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void like(Map<String, dynamic> data) {}
+
+  void heart(Map<String, dynamic> data) {}
+
+  void share(Map<String, dynamic> data) {}
 }
 
 class Reaction extends StatefulWidget {
