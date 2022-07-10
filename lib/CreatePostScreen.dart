@@ -207,6 +207,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   SubmitPost() async {
     if (formKey.currentState!.validate()) {
       List<String> emptyList = [];
+      List<String> lsitWithAuthor = [globals.myUser!.uid!];
       List<Map<String, dynamic>> emptyMapList = [];
       //do stuff
       Map<String, dynamic> postMap = {
