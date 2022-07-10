@@ -19,6 +19,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           // Add the app bar to the CustomScrollView.
           SliverAppBar(
@@ -64,62 +65,27 @@ class _MainPageState extends State<MainPage> {
 
   Widget content() => SliverToBoxAdapter(
         child: Container(
+          // constraints: BoxConstraints(maxHeight: 10000),
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection("Posts")
                 .orderBy('timeMil', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
-              print(snapshot);
-              print(snapshot.data);
-              print("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
               return (snapshot.connectionState == ConnectionState.waiting)
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : Container(
-                      constraints: BoxConstraints(
-                        maxHeight: 1000,
-                        minHeight: 1,
-                      ),
-                      child: ListView.builder(
-                        reverse: true,
-                        controller: _scrollController,
-                        itemCount: snapshot.data!.docs.length,
-                        // itemCount: 2,
+                      // constraints: BoxConstraints(
+                      // maxHeight: 1000,
+                      // ),
 
-                        itemBuilder: (context, index) {
-                          print(snapshot.data);
-                          print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-                          var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                          if (data != null) {
-                            // return (data['authorID'] != globals.myUser!.uid)
-                            return Container(
-                              margin: const EdgeInsets.only(left: 10, bottom: 10, right: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    data["title"],
-                                  ),
-                                  SizedBox(height: 300),
-                                  // Text(
-                                  //   data["content"],
-                                  // ),
-                                  // Text(
-                                  //   data["authorID"],
-                                  // ),
-                                ],
-                              ),
-                            );
-                            // : Container();
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        },
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < snapshot.data!.docs.length; i++)
+                            renderPosts(snapshot.data!.docs[i].data() as Map<String, dynamic>),
+                        ],
                       ),
                     );
             },
@@ -129,5 +95,27 @@ class _MainPageState extends State<MainPage> {
   void createPost() async {
     var info = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => const CreatePostPage()));
+  }
+
+  renderPosts(Map<String, dynamic> data) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Text(
+            data["title"],
+          ),
+          Text(
+            data["content"],
+          ),
+          SizedBox(height: 300),
+        ],
+      ),
+    );
   }
 }
