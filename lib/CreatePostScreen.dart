@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/MessagesScreen.dart';
 import 'globals.dart' as globals;
 
@@ -16,6 +23,8 @@ TextEditingController contentController = TextEditingController();
 
 class _CreatePostPageState extends State<CreatePostPage> {
   final formKey = GlobalKey<FormState>();
+  List<String> imageURLs = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,14 +120,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Image.network(
-                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2F5s_6AV3ZyuY%2Fmaxresdefault.jpg&f=1&nofb=1"),
-                        const SizedBox(height: 10),
-                        Image.network(
-                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi1.kwejk.pl%2Fk%2Fobrazki%2F2020%2F07%2FbkfCqJNHxR13obs9.jpg&f=1&nofb=1"),
-                        const SizedBox(height: 10),
-                        Image.network(
-                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.Omv9uB0gRQqeWVdeh8rs4AAAAA%26pid%3DApi&f=1"),
+                        for (String url in imageURLs) Image.network(url),
                       ],
                     ),
                   ),
@@ -205,7 +207,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
   SubmitPost() async {
     if (formKey.currentState!.validate()) {
       List<String> emptyList = [];
-      List<String> imageUrls = [];
       List<Map<String, dynamic>> emptyMapList = [];
       //do stuff
       Map<String, dynamic> postMap = {
@@ -214,13 +215,51 @@ class _CreatePostPageState extends State<CreatePostPage> {
         "title": titleController.text,
         "content": contentController.text,
         "reactions": {"heartIDs": emptyList, "likeIDs": emptyList, "shareIDs": emptyList},
-        "ImageURLs": imageUrls,
+        "ImageURLs": imageURLs,
         "comments": emptyMapList,
       };
       await databaseMethods.createPost(postMap);
-      print("UUUUUUUUUUUUUUUUUUUUUUUUUUDALO SIE CHYBA NWM XD");
+      Navigator.pop(context);
+      // print("UUUUUUUUUUUUUUUUUUUUUUUUUUDALO SIE CHYBA NWM XD");
     }
   }
 
-  void AddPicture() {}
+  void AddPicture() {
+    pickImage();
+  }
+
+  String? imageUrl;
+  final _storage = FirebaseStorage.instance;
+  File? imageTemporary;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      imageTemporary = File(image.path);
+      if (imageTemporary!.lengthSync() > 5000000) {
+        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
+        return;
+      }
+    } on PlatformException catch (e) {
+      print('failed tp pick image $e');
+    }
+    //final ref = FirebaseStorage
+    var snapshot = await _storage
+        .ref()
+        .child('PostImages/${globals.myUser!.uid}-${DateTime.now().millisecondsSinceEpoch}')
+        .putFile(imageTemporary!);
+
+    var downloadurl = await snapshot.ref.getDownloadURL();
+    setState(() {
+      imageUrl = downloadurl;
+      imageURLs.add(imageUrl!);
+    });
+    Fluttertoast.showToast(
+        msg: "Image uploaded successfully :) ",
+        textColor: Colors.black,
+        backgroundColor: Colors.white);
+  }
 }
