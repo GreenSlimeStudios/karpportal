@@ -208,17 +208,23 @@ class _MainPageState extends State<MainPage> {
                                   Container(
                                     // padding: EdgeInsets.symmetric(vertical: 5),
                                     child: GestureDetector(
-                                      child: CachedNetworkImage(
-                                        imageUrl: url,
-                                        placeholder: (builder, url) =>
-                                            const CircularProgressIndicator(),
+                                      child: Hero(
+                                        tag: "image",
+                                        child: CachedNetworkImage(
+                                          imageUrl: url,
+                                          placeholder: (builder, url) =>
+                                              const CircularProgressIndicator(),
+                                        ),
                                       ),
                                       onTap: () {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => InteractiveViewer(
-                                                    child: CachedNetworkImage(imageUrl: url))));
+                                                builder: (context) => Hero(
+                                                      tag: "image",
+                                                      child: InteractiveViewer(
+                                                          child: CachedNetworkImage(imageUrl: url)),
+                                                    )));
                                       },
                                     ),
                                   ),

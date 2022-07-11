@@ -569,13 +569,16 @@ class _ChatPageState extends State<ChatPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PinchZoom(
-                      child: CachedNetworkImage(
-                        imageUrl: data["message"],
-                        //fit: BoxFit.fill,
-                        progressIndicatorBuilder: (context, url, downloadProgress) =>
-                            CircularProgressIndicator(value: downloadProgress.progress),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                    builder: (context) => Hero(
+                      tag: "chatImage",
+                      child: InteractiveViewer(
+                        child: CachedNetworkImage(
+                          imageUrl: data["message"],
+                          //fit: BoxFit.fill,
+                          progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              CircularProgressIndicator(value: downloadProgress.progress),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
                       ),
                     ),
                   ),
@@ -583,12 +586,15 @@ class _ChatPageState extends State<ChatPage> {
               },
               child: Padding(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
-                child: CachedNetworkImage(
-                  imageUrl: data["message"],
-                  fit: BoxFit.fill,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(value: downloadProgress.progress),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                child: Hero(
+                  tag: "chatImage",
+                  child: CachedNetworkImage(
+                    imageUrl: data["message"],
+                    fit: BoxFit.fill,
+                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                        CircularProgressIndicator(value: downloadProgress.progress),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
               ),
             );
