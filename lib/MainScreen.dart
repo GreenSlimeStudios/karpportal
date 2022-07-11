@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:karpportal/MessagesScreen.dart';
 
 import 'CreatePostScreen.dart';
 import 'UserModel.dart';
@@ -35,7 +36,14 @@ class _MainPageState extends State<MainPage> {
                 color: Colors.white,
                 // fontWeight: FontWeight.bold,
               ),
-            ), // snap: true,
+            ),
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    setState(() {});
+                  })
+            ], // snap: true,
 
             floating: true,
             flexibleSpace: Container(
@@ -65,6 +73,9 @@ class _MainPageState extends State<MainPage> {
             expandedHeight: 140,
           ),
           content(),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 10),
+          ),
         ],
       ),
     );
@@ -223,7 +234,7 @@ class _MainPageState extends State<MainPage> {
                   bottom: -20,
                   left: 20,
                   child: Container(
-                    width: 120,
+                    // width: 120,
                     height: 40,
                     decoration: BoxDecoration(
                       color: (globals.myUser!.uid == data["authorID"])
@@ -232,22 +243,23 @@ class _MainPageState extends State<MainPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Container(
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.only(bottom: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Row(children: [
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text("L: ${data["reactions"]["likeIDs"].length.toString()}"),
                           ]),
                           Row(children: [
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text("H: ${data["reactions"]["heartIDs"].length.toString()}"),
                           ]),
                           Row(children: [
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text("S: ${data["reactions"]["shareIDs"].length.toString()}"),
                           ]),
+                          const SizedBox(width: 10),
                           // Row(children: [
                           //   SizedBox(width: 10),
                           //   Text("C: ${data["comments"].length.toString()}"),
@@ -290,8 +302,8 @@ class _MainPageState extends State<MainPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('what do you?'),
-          content: Container(
+          title: const Text('what do you?'),
+          content: SizedBox(
             height: 250,
             width: double.infinity,
             child: Column(
@@ -303,7 +315,7 @@ class _MainPageState extends State<MainPage> {
                     Fluttertoast.showToast(msg: 'title copied succesfully');
                     Navigator.pop(context);
                   },
-                  child: Text('copy title'),
+                  child: const Text('copy title'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -311,11 +323,12 @@ class _MainPageState extends State<MainPage> {
                     Fluttertoast.showToast(msg: 'content copied succesfully');
                     Navigator.pop(context);
                   },
-                  child: Text('copy content (text)'),
+                  child: const Text('copy content (text)'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    like(data);
+                  onPressed: () async {
+                    await like(data);
+                    // setState(() {});
                     Navigator.pop(context);
                   },
                   child: Row(
@@ -328,8 +341,9 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    heart(data);
+                  onPressed: () async {
+                    await heart(data);
+                    // setState(() {});
                     Navigator.pop(context);
                   },
                   child: Row(
@@ -342,8 +356,9 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    share(data);
+                  onPressed: () async {
+                    await share(data);
+                    // setState(() {});
                     Navigator.pop(context);
                   },
                   child: Row(
@@ -363,15 +378,48 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void like(Map<String, dynamic> data) {}
+  Future like(Map<String, dynamic> data) async {
+    await addReaction(data, "likeIDs");
+  }
 
-  void heart(Map<String, dynamic> data) {}
+  Future heart(Map<String, dynamic> data) async {
+    await addReaction(data, "heartIDs");
+  }
 
-  void share(Map<String, dynamic> data) {}
+  Future share(Map<String, dynamic> data) async {
+    await addReaction(data, "shareIDs");
+  }
+
+  Future addReaction(Map<String, dynamic> data, String reaction) async {
+    List<String> placeholder = ["fsfs", "dada"];
+    // placeholder.remove(…)
+    if (data["uid"] == null) {
+      return;
+    }
+    if (data["reactions"][reaction].contains(globals.myUser!.uid)) {
+      Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
+      postData["reactions"][reaction].remove(globals.myUser!.uid);
+      await databaseMethods.setPost(postData["uid"], postData);
+    } else {
+      Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
+      if (postData["reactions"][reaction] != null &&
+          postData["reactions"][reaction] != [] &&
+          postData["reactions"][reaction].isEmpty == false) {
+        postData["reactions"][reaction].add(globals.myUser!.uid);
+      } else {
+        postData["reactions"][reaction] = [globals.myUser!.uid];
+      }
+      await databaseMethods.setPost(postData["uid"], postData);
+    }
+  }
+
+  // Future heart(Map<String, dynamic> data) async {}
+
+  // Future share(Map<String, dynamic> data) async {}
 }
 
 class Reaction extends StatefulWidget {
-  Reaction({Key? key, required this.icon}) : super(key: key);
+  const Reaction({Key? key, required this.icon}) : super(key: key);
 
   final Icon icon;
 

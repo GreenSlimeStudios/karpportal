@@ -209,17 +209,20 @@ class _CreatePostPageState extends State<CreatePostPage> {
       List<String> emptyList = [];
       List<String> lsitWithAuthor = [globals.myUser!.uid!];
       List<Map<String, dynamic>> emptyMapList = [];
+      String uid =
+          globals.myUser!.uid.toString() + DateTime.now().millisecondsSinceEpoch.toString();
       //do stuff
       Map<String, dynamic> postMap = {
+        "uid": uid,
         "authorID": globals.myUser!.uid,
         "timeMil": DateTime.now().millisecondsSinceEpoch,
         "title": titleController.text,
         "content": contentController.text,
-        "reactions": {"heartIDs": emptyList, "likeIDs": emptyList, "shareIDs": emptyList},
+        "reactions": {"heartIDs": emptyList, "likeIDs": lsitWithAuthor, "shareIDs": emptyList},
         "ImageURLs": imageURLs,
         "comments": emptyMapList,
       };
-      await databaseMethods.createPost(postMap);
+      await databaseMethods.createPost(uid, postMap);
       Navigator.pop(context);
       // print("UUUUUUUUUUUUUUUUUUUUUUUUUUDALO SIE CHYBA NWM XD");
     }

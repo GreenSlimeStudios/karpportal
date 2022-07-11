@@ -61,9 +61,21 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  createPost(postMap) {
-    FirebaseFirestore.instance.collection("Posts").add(postMap).catchError((e) {
+  createPost(postID, postMap) {
+    FirebaseFirestore.instance.collection("Posts").doc(postID).set(postMap).catchError((e) {
       print(e.toString());
     });
+  }
+
+  Future<Map<String, dynamic>> getPost(String postID) async {
+    Map<String, dynamic> postMap = {};
+    await FirebaseFirestore.instance.collection("Posts").doc(postID).get().then((value) {
+      postMap = value.data() as Map<String, dynamic>;
+    });
+    return postMap;
+  }
+
+  setPost(postID, Map<String, dynamic> postData) async {
+    await FirebaseFirestore.instance.collection("Posts").doc(postID).set(postData);
   }
 }
