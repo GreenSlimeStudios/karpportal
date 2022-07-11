@@ -161,7 +161,7 @@ class _ChatPageState extends State<ChatPage> {
         };
         databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
         messageController.text = "";
-        notifyUser();
+        notifyUser(messageController.text);
         // setState(() {
         //   //scrollToBottom();
         // });
@@ -179,7 +179,7 @@ class _ChatPageState extends State<ChatPage> {
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
       //messageController.text = "";
-      notifyUser();
+      notifyUser(messageController.text);
       // setState(() {
       //   isImage == false;
       //   //scrollToBottom();
@@ -569,16 +569,13 @@ class _ChatPageState extends State<ChatPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Hero(
-                      tag: "chatImage",
-                      child: InteractiveViewer(
-                        child: CachedNetworkImage(
-                          imageUrl: data["message"],
-                          //fit: BoxFit.fill,
-                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              CircularProgressIndicator(value: downloadProgress.progress),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
-                        ),
+                    builder: (context) => InteractiveViewer(
+                      child: CachedNetworkImage(
+                        imageUrl: data["message"],
+                        //fit: BoxFit.fill,
+                        progressIndicatorBuilder: (context, url, downloadProgress) =>
+                            CircularProgressIndicator(value: downloadProgress.progress),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
                   ),
@@ -586,15 +583,12 @@ class _ChatPageState extends State<ChatPage> {
               },
               child: Padding(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
-                child: Hero(
-                  tag: "chatImage",
-                  child: CachedNetworkImage(
-                    imageUrl: data["message"],
-                    fit: BoxFit.fill,
-                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        CircularProgressIndicator(value: downloadProgress.progress),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
+                child: CachedNetworkImage(
+                  imageUrl: data["message"],
+                  fit: BoxFit.fill,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(value: downloadProgress.progress),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
             );
@@ -703,7 +697,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void notifyUser() async {
+  void notifyUser(String content) async {
     isImage = false;
     final roomData =
         await FirebaseFirestore.instance.collection('ChatRoom').doc(widget.chatRoomId).get();
@@ -778,6 +772,9 @@ class _ChatPageState extends State<ChatPage> {
         .doc(globals.myUser!.uid)
         .set(globals.myUser!.toMap());
 
+    String title = "You have recived a message from: " + globals.myUser!.nickname!;
+
+    databaseMethods.sendNotification(title, content, targetUserModel.token!);
     setState(() {});
   }
 

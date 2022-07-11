@@ -39,7 +39,7 @@ class _MainPageState extends State<MainPage> {
             ),
             actions: [
               IconButton(
-                  icon: Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh),
                   onPressed: () {
                     setState(() {});
                   })
@@ -416,6 +416,12 @@ class _MainPageState extends State<MainPage> {
         postData["reactions"][reaction] = [globals.myUser!.uid];
       }
       await databaseMethods.setPost(postData["uid"], postData);
+
+      // await FirebaseFirestore.instance.collection("Posts").doc(data["uid"]).set({
+      //   "reactions": {
+      //     reaction: FieldValue.arrayUnion(globals.myUser!.uid!),
+      //   }
+      // }, SetOptions(merge: true));
     }
   }
 

@@ -66,8 +66,8 @@ class _ProfilePageState extends State<ProfilePage> {
               imageUrl: getBackroundUrl(),
               colorBlendMode: BlendMode.clear,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                  width: 50, height: 50, child: CircularProgressIndicator()),
+              placeholder: (context, url) =>
+                  Container(width: 50, height: 50, child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
@@ -77,8 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(
-                        top: 10, left: 10, right: 10, bottom: 10),
+                    margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
                     height: 150,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -104,17 +103,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             width: 120,
                             height: 120,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
                           ),
                         )
                       else
                         const Icon(
                           Icons.account_circle,
                           size: 140,
-                          color: const Color.fromARGB(255, 141, 141, 141),
+                          color: Color.fromARGB(255, 141, 141, 141),
                         ),
                       const Padding(padding: EdgeInsets.only(left: 10)),
                       Column(
@@ -147,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       )
                     ]),
                   ),
-                  const Padding(padding: const EdgeInsets.only(top: 10)),
+                  const Padding(padding: EdgeInsets.only(top: 10)),
 
                   Container(
                     margin: EdgeInsets.only(left: 5, right: 5),
@@ -164,19 +161,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                     child: Column(children: [
-                      const Padding(padding: const EdgeInsets.only(top: 15)),
+                      const Padding(padding: EdgeInsets.only(top: 15)),
                       ProfileTitle(
-                          title: 'First name',
-                          param: globals.myUser!.firstName!,
-                          func: changeName),
+                          title: 'First name', param: globals.myUser!.firstName!, func: changeName),
                       ProfileTitle(
                           title: 'Last name',
                           param: globals.myUser!.secondName!,
                           func: changeSurName),
                       ProfileTitle(
-                          title: 'Email',
-                          param: globals.myUser!.email!,
-                          func: changeEmail),
+                          title: 'Email', param: globals.myUser!.email!, func: changeEmail),
                       ProfileTitle(
                           title: 'Nickname',
                           param: globals.myUser!.nickname!,
@@ -237,9 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 'dark theme',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Switch(
-                                  value: isDarkTheme,
-                                  onChanged: changeDarkTheme),
+                              Switch(value: isDarkTheme, onChanged: changeDarkTheme),
                             ],
                           ),
                           Padding(padding: EdgeInsets.only(top: 10)),
@@ -249,8 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Container(
                     decoration: const BoxDecoration(
-                        color: Colors.transparent,
-                        backgroundBlendMode: BlendMode.darken),
+                        color: Colors.transparent, backgroundBlendMode: BlendMode.darken),
                     child: Column(
                       children: [
                         const Padding(padding: EdgeInsets.only(top: 40)),
@@ -265,8 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.black.withOpacity(0.2),
                                 spreadRadius: 5,
                                 blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
+                                offset: Offset(0, 3), // changes position of shadow
                               ),
                             ],
                           ),
@@ -300,8 +289,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.black.withOpacity(0.2),
                                 spreadRadius: 5,
                                 blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
+                                offset: Offset(0, 3), // changes position of shadow
                               ),
                             ],
                           ),
@@ -317,8 +305,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Padding(padding: EdgeInsets.only(right: 5)),
                                 Text(
                                   'Update Karpportal (google drive)',
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 64, 255, 105)),
+                                  style: TextStyle(color: Color.fromARGB(255, 64, 255, 105)),
                                 ),
                               ],
                             ),
@@ -336,29 +323,32 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.black.withOpacity(0.2),
                                 spreadRadius: 5,
                                 blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
+                                offset: Offset(0, 3), // changes position of shadow
                               ),
                             ],
                           ),
-                          child: TextButton(
-                            onPressed: setToken,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.upload,
-                                  color: Color.fromARGB(255, 64, 255, 239),
-                                ),
-                                Padding(padding: EdgeInsets.only(right: 5)),
-                                Text(
-                                  'set Token',
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 64, 255, 239)),
-                                ),
-                              ],
-                            ),
-                          ),
+                          child:
+                              // (globals.myUser!.token == null)
+                              (true)
+                                  ? TextButton(
+                                      onPressed: setToken,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(
+                                            Icons.upload,
+                                            color: Color.fromARGB(255, 64, 255, 239),
+                                          ),
+                                          Padding(padding: EdgeInsets.only(right: 5)),
+                                          Text(
+                                            'set Token',
+                                            style:
+                                                TextStyle(color: Color.fromARGB(255, 64, 255, 239)),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
                         ),
                         Padding(padding: EdgeInsets.only(bottom: 5)),
                         GestureDetector(
@@ -408,8 +398,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       imageTemporary = File(image.path);
       if (imageTemporary!.lengthSync() > 5000000) {
-        Fluttertoast.showToast(
-            msg: 'bruh are you tryin to fuck up my cloud storage?');
+        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
         return;
       }
       setState(() {
@@ -449,13 +438,12 @@ class _ProfilePageState extends State<ProfilePage> {
     _prefs.remove('logindetails');
     final _auth = FirebaseAuth.instance;
     _auth.signOut();
-    Navigator.push(
-        context, MaterialPageRoute(builder: ((context) => const LoginPage())));
+    Navigator.push(context, MaterialPageRoute(builder: ((context) => const LoginPage())));
   }
 
   void changeName() {}
 
-  TextEditingController newEmailController = new TextEditingController();
+  TextEditingController newEmailController = TextEditingController();
   void changeEmail() async {
     return showDialog(
       context: context,
@@ -469,8 +457,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 TextField(
                   controller: newEmailController,
                 ),
-                ElevatedButton(
-                    onPressed: changeToNewEmail, child: Text('resetEmail'))
+                ElevatedButton(onPressed: changeToNewEmail, child: Text('resetEmail'))
               ],
             ),
           ),
@@ -482,8 +469,7 @@ class _ProfilePageState extends State<ProfilePage> {
   changeToNewEmail() async {
     // EmailAuthProvider.getCredential(email: 'email', password: 'password');
     Fluttertoast.showToast(
-        msg:
-            'if you restart the app and the email changed it means it worked :)');
+        msg: 'if you restart the app and the email changed it means it worked :)');
     var authUser = await FirebaseAuth.instance.currentUser;
     try {
       await authUser
@@ -497,11 +483,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   updateEmailInFirestore() async {
     UserModel loggedInUser = UserModel();
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) async {
+    await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then((value) async {
       loggedInUser = UserModel.fromMap(value.data());
 
       User? user = FirebaseAuth.instance.currentUser;
@@ -526,8 +508,7 @@ class _ProfilePageState extends State<ProfilePage> {
       launch(
           'https://drive.google.com/drive/folders/1WgqMYXzfzDirmRJv7616Mb6MFBgUF9uM?usp=sharing');
     } else {
-      launch(
-          'https://drive.google.com/file/d/1p4C2rfIsIHSQbkxtieRhLnPeLT-JcWr8/view?usp=sharing');
+      launch('https://drive.google.com/file/d/1p4C2rfIsIHSQbkxtieRhLnPeLT-JcWr8/view?usp=sharing');
     }
   }
 
@@ -668,8 +649,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       imageTemporary = File(image.path);
       if (imageTemporary!.lengthSync() > 5000000) {
-        Fluttertoast.showToast(
-            msg: 'bruh are you tryin to fuck up my cloud storage?');
+        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
         return;
       }
       setState(() {
@@ -710,21 +690,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void saveToken(String token) async {
-    UserModel myUser = UserModel();
+    // UserModel myUser = UserModel();
+    // await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
+    //   (value) {
+    //     myUser = UserModel.fromMap(value.data());
+    //   },
+    // );
+    // myUser.token = token;
+    // await FirebaseFirestore.instance.collection("users").doc(user!.uid).set(myUser.toMap());
+
     await FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
-        .get()
-        .then(
-      (value) {
-        myUser = UserModel.fromMap(value.data());
-      },
-    );
-    myUser.token = token;
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .set(myUser.toMap());
+        .set({"token": token}, SetOptions(merge: true));
 
     Fluttertoast.showToast(msg: 'token created succesfully');
   }

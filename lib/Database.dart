@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class DatabaseMethods {
   getByUserName(String username) async {
@@ -77,5 +80,42 @@ class DatabaseMethods {
 
   setPost(postID, Map<String, dynamic> postData) async {
     await FirebaseFirestore.instance.collection("Posts").doc(postID).set(postData);
+  }
+
+  sendNotification(String title, String body, String token) async {
+    final data = {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'id': '1',
+      'status': 'done',
+      'message': title,
+    };
+
+    try {
+      http.Response response = await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization':
+                'key=AAAASkfbv0c:APA91bGlzPWhK6D07chlvcnpD6KYZUPt9Xeif4QbadV-Y8QJwlG7qI_YmmFtTooliqjQET5YCXBs4B9GFtkGco7GKntJZeve2LfMeIAtNobDym3-4AxJhPYF25Xz8WOvprQUmDKwIpsU'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'notification': <String, dynamic>{
+              'title': title,
+              'body': body,
+            },
+            'priority': 'high',
+            'data': data,
+            'to': '$token'
+          }));
+
+      if (response.statusCode == 200) {
+        print("Yeh notificatin is sended");
+        print("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+      } else {
+        print("Error");
+        print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

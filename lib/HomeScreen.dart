@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,7 @@ import 'package:karpportal/Screen1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
+import 'package:karpportal/services/localPushNotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MainScreen.dart';
@@ -37,8 +39,17 @@ class _HomePageState extends State<HomePage> {
   //   //makeUserGlobal();
   // }
 
+  initState() {
+    super.initState();
+    FirebaseMessaging.onMessage.listen((event) {
+      print("MessageRecived");
+      LocalNotificationService.display(event);
+    });
+  }
+
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+
   // makeUserGlobal() async {
   //   await FirebaseFirestore.instance
   //       .collection("users")

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:karpportal/SplashScreen.dart';
+import 'package:karpportal/services/localPushNotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -73,8 +74,7 @@ void main() async {
       for (int i = 1; i < 11; i++) {
         String? colorString = prefs.getString('shade$i');
         print(colorString);
-        String? valueString =
-            colorString?.split('(0x')[1].split(')')[0]; // kind of hacky..
+        String? valueString = colorString?.split('(0x')[1].split(')')[0]; // kind of hacky..
         if (i == 6) {
           //Color(0xffe91e63)
           primary = colorString!.substring(6, 16);
@@ -82,7 +82,7 @@ void main() async {
           valuePrimary = int.parse(valueString!, radix: 16);
         }
         int value = int.parse(valueString!, radix: 16);
-        otherColor = new Color(value);
+        otherColor = Color(value);
         colorShades[i - 1] = otherColor!;
       }
       print(colorShades);
@@ -122,8 +122,7 @@ void main() async {
       for (int i = 1; i < 11; i++) {
         String? colorStringS = prefs.getString('shadeS$i');
         print(colorStringS);
-        String? valueString =
-            colorStringS?.split('(0x')[1].split(')')[0]; // kind of hacky..
+        String? valueString = colorStringS?.split('(0x')[1].split(')')[0]; // kind of hacky..
         if (i == 6) {
           //Color(0xffe91e63)
           primaryS = colorStringS!.substring(6, 16);
@@ -131,7 +130,7 @@ void main() async {
           valuePrimaryS = int.parse(valueString!, radix: 16);
         }
         int value = int.parse(valueString!, radix: 16);
-        otherColorS = new Color(value);
+        otherColorS = Color(value);
         colorSwatchShades[i - 1] = otherColor!;
       }
       print(colorSwatchShades);
@@ -154,9 +153,41 @@ void main() async {
       colorCustomS = Colors.orange;
       globals.primarySwatch = Colors.orange;
     }
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    LocalNotificationService.initialize();
     runApp(const MyApp());
   }
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
 }
 
 class MyApp extends StatelessWidget {
@@ -174,8 +205,7 @@ class MyApp extends StatelessWidget {
               // accentColor: globals.primaryColor,
               splashColor: globals.primaryColor,
               scrollbarTheme: ScrollbarThemeData(
-                  trackBorderColor:
-                      MaterialStateProperty.all(globals.primaryColor),
+                  trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
                   thumbColor: MaterialStateProperty.all(globals.primaryColor),
                   trackColor: MaterialStateProperty.all(globals.primaryColor)),
 
@@ -192,8 +222,7 @@ class MyApp extends StatelessWidget {
                   iconColor: globals.primaryColor,
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                    borderSide:
-                        BorderSide(color: globals.primarySwatch!, width: 3),
+                    borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
                   ),
                   fillColor: globals.primarySwatch,
                   // filled: true,
@@ -204,18 +233,15 @@ class MyApp extends StatelessWidget {
               // textSelectionColor: globals.primarySwatch,
               switchTheme: SwitchThemeData(
                   thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                  trackColor: MaterialStateProperty.all(
-                      globals.primarySwatch!.shade600)),
-              progressIndicatorTheme:
-                  ProgressIndicatorThemeData(color: globals.primarySwatch),
+                  trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
+              progressIndicatorTheme: ProgressIndicatorThemeData(color: globals.primarySwatch),
               primaryColor: globals.primarySwatch,
               primaryColorDark: globals.primarySwatch,
               primaryIconTheme: IconThemeData(color: globals.primarySwatch),
               buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
               elevatedButtonTheme: ElevatedButtonThemeData(
                   style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(globals.primarySwatch))))
+                      backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
           : ThemeData(
               primarySwatch: globals.primarySwatch,
             ),
