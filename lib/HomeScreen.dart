@@ -280,6 +280,8 @@ class _HomePageState extends State<HomePage> {
                 .textTheme
                 .copyWith(caption: const TextStyle(color: Colors.yellow))),
         child: BottomNavigationBar(
+          unselectedItemColor: getColor(),
+          selectedItemColor: getColor(),
           currentIndex: globals.index,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
@@ -292,6 +294,10 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Color getColor() {
+    return (globals.themeColor == Colors.white) ? Colors.white : Colors.grey.shade900;
   }
 
   void pop() {
@@ -332,13 +338,12 @@ class _HomePageState extends State<HomePage> {
           color: globals.primaryColor!.shade800,
         );
       } else
-        return Icon(
-          Icons.comment,
-          // color: Colors.white,
-        );
+        return Icon(Icons.comment
+            // color: Colors.white,
+            );
     } else {
       return Icon(
-        Icons.comment,
+        Icons.comment, color: getColor(),
         // color: Colors.white,
       );
     }
