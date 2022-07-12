@@ -133,18 +133,18 @@ class _MainPageState extends State<MainPage> {
       },
     );
   }
+}
 
-  Future<UserModel> getAuthor(uid) async {
-    UserModel author = UserModel();
-    await FirebaseFirestore.instance.collection("users").doc(uid).get().then(
-      (value) {
-        print(value.metadata.isFromCache);
+Future<UserModel> getAuthor(uid) async {
+  UserModel author = UserModel();
+  await FirebaseFirestore.instance.collection("users").doc(uid).get().then(
+    (value) {
+      print(value.metadata.isFromCache);
 
-        author = UserModel.fromMap(value.data());
-      },
-    );
-    return author;
-  }
+      author = UserModel.fromMap(value.data());
+    },
+  );
+  return author;
 }
 
 // Future heart(Map<String, dynamic> data) async {}
@@ -163,6 +163,7 @@ class PostInstance extends StatefulWidget {
 
 class _PostInstanceState extends State<PostInstance> {
   bool isExpanded = false;
+  bool addComment = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -232,16 +233,21 @@ class _PostInstanceState extends State<PostInstance> {
                 Container(
                   // padding: EdgeInsets.symmetric(horizontal: 10),
                   constraints: const BoxConstraints(maxWidth: 3000),
-                  child: Text(
-                    widget.data["content"],
-                  ),
+                  child: (widget.data["content"] != null && widget.data["content"] != " ")
+                      ? Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            widget.data["content"],
+                          ),
+                        )
+                      : Container(),
                 ),
                 // const SizedBox(height: 10),
                 if (widget.data["ImageURLs"].length > 0)
                   Container(
                     constraints: (isExpanded) ? BoxConstraints() : BoxConstraints(maxHeight: 300),
                     padding: const EdgeInsets.only(
-                      top: 10,
+                      // top: 10,
                       bottom: 5,
                     ),
                     width: double.infinity,
@@ -302,10 +308,71 @@ class _PostInstanceState extends State<PostInstance> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                            Text("Comments"),
-                            for (Map<String, dynamic> comment in widget.data["comments"])
-                              CommentInstance(postData: widget.data, commentData: comment),
-                          ])
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Text("Comments ${widget.data["comments"].length}"),
+                              const SizedBox(width: 10),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    addComment = !addComment;
+                                  });
+                                },
+                                child: Text((addComment) ? "hide comment" : "add comment",
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.italic, color: Colors.grey)),
+                              ),
+                            ],
+                          ),
+                          (addComment)
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(width: 2, color: globals.primaryColor!),
+                                      ),
+                                      child: Form(
+                                        key: formKey,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 10),
+                                          child: TextFormField(
+                                            minLines: 1,
+                                            maxLines: 10,
+                                            controller: commentController,
+                                            scrollPadding: EdgeInsets.symmetric(vertical: 0),
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              hintText: "enter your comment here",
+                                              focusedBorder: InputBorder.none,
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Container(
+                                      height: 25,
+                                      child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(globals.primaryColor!),
+                                          ),
+                                          child: Text("post comment"),
+                                          onPressed: (() => postComment(commentController.text))),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
+                          for (Map<String, dynamic> comment in widget.data["comments"].reversed)
+                            CommentInstance(postData: widget.data, commentData: comment),
+                          SizedBox(height: 5),
+                        ],
+                      )
                     : Container(),
                 const SizedBox(height: 15),
               ],
@@ -480,22 +547,66 @@ class _PostInstanceState extends State<PostInstance> {
       postData["reactions"][reaction].remove(globals.myUser!.uid);
       await databaseMethods.setPost(postData["uid"], postData);
     } else {
-      Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
-      if (postData["reactions"][reaction] != null &&
-          postData["reactions"][reaction] != [] &&
-          postData["reactions"][reaction].isEmpty == false) {
-        postData["reactions"][reaction].add(globals.myUser!.uid);
-      } else {
-        postData["reactions"][reaction] = [globals.myUser!.uid];
-      }
-      await databaseMethods.setPost(postData["uid"], postData);
+      // Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
+      // if (postData["reactions"][reaction] != null &&
+      //     postData["reactions"][reaction] != [] &&
+      //     postData["reactions"][reaction].isEmpty == false) {
+      //   postData["reactions"][reaction].add(globals.myUser!.uid);
+      // } else {
+      //   postData["reactions"][reaction] = [globals.myUser!.uid];
+      // }
+      // await databaseMethods.setPost(postData["uid"], postData);
 
-      // await FirebaseFirestore.instance.collection("Posts").doc(data["uid"]).set({
-      //   "reactions": {
-      //     reaction: FieldValue.arrayUnion(globals.myUser!.uid!),
-      //   }
-      // }, SetOptions(merge: true));
+      await FirebaseFirestore.instance.collection("Posts").doc(data["uid"]).set({
+        "reactions": {
+          reaction: FieldValue.arrayUnion([globals.myUser!.uid!]),
+        }
+      }, SetOptions(merge: true));
     }
+  }
+
+  TextEditingController commentController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  postComment(String content) {
+    Map<String, dynamic> commentMap = {
+      "authorID": globals.myUser!.uid!,
+      "time": DateTime.now().millisecondsSinceEpoch,
+      "time2": getCurrentTime(),
+      "content": content,
+    };
+    FirebaseFirestore.instance.collection("Posts").doc(widget.data["uid"]).set({
+      "comments": FieldValue.arrayUnion([commentMap])
+    }, SetOptions(merge: true));
+    commentController.text = "";
+  }
+
+  String getCurrentTime() {
+    String? hour;
+    if (DateTime.now().hour.toString().characters.length == 1) {
+      hour = '0${DateTime.now().hour}';
+    } else {
+      hour = '${DateTime.now().hour}';
+    }
+    String? minute;
+    if (DateTime.now().minute.toString().characters.length == 1) {
+      minute = '0${DateTime.now().minute}';
+    } else {
+      minute = '${DateTime.now().minute}';
+    }
+    String? month;
+    if (DateTime.now().month.toString().characters.length == 1) {
+      month = '0${DateTime.now().month}';
+    } else {
+      month = '${DateTime.now().month}';
+    }
+    String? day;
+    if (DateTime.now().day.toString().characters.length == 1) {
+      day = '0${DateTime.now().day}';
+    } else {
+      day = '${DateTime.now().day}';
+    }
+    return '${DateTime.now().year}/${month}/${day} ${hour}:${minute}';
   }
 }
 
@@ -528,7 +639,42 @@ class _CommentInstanceState extends State<CommentInstance> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(widget.commentData["title"]),
+          FutureBuilder(
+            future: getAuthor(widget.commentData["authorID"]),
+            builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+              if (snapshot.hasData) {
+                return Row(
+                  children: [
+                    Column(
+                      children: [
+                        ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: snapshot.data!.avatarUrl!,
+                            height: 25,
+                            width: 25,
+                            fit: BoxFit.fill,
+                            placeholder: (context, value) {
+                              return CircularProgressIndicator();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 5),
+                    Text(snapshot.data!.nickname!),
+                  ],
+                );
+              } else {
+                return Container(
+                  height: 25,
+                  width: 25,
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+          SizedBox(height: 5),
+          // Text(widget.commentData["title"]),
           Text(widget.commentData["content"]),
         ],
       ),

@@ -74,6 +74,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                   validator: (value) {
                     if (value != null && value != "" && value.isEmpty == false) {
+                      if (value != " ") {
+                        return "bruh you tryin to trick me?";
+                      }
                       return null;
                     } else {
                       return "Please create a title";
@@ -100,13 +103,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       borderSide: BorderSide(color: globals.primarySwatch as Color, width: 3),
                     ),
                   ),
-                  validator: (value) {
-                    if (value != null && value != "" && value.isEmpty == false) {
-                      return null;
-                    } else {
-                      return "Please create a title";
-                    }
-                  },
                 ),
                 const SizedBox(height: 10),
                 Container(
