@@ -226,7 +226,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 ],
               ),
               leading: Hero(
-                tag: 'targetAvatar',
+                tag: targetUserModel.uid!,
                 child: ClipOval(
                   //clipper: MyClipper(),
                   child: CachedNetworkImage(

@@ -124,13 +124,17 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     leading: ClipOval(
                                       //clipper: MyClipper(),
-                                      child: CachedNetworkImage(
-                                        imageUrl: data['avatarUrl'],
-                                        width: 55,
-                                        height: 55,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                      child: Hero(
+                                        tag: data['uid'],
+                                        child: CachedNetworkImage(
+                                          imageUrl: data['avatarUrl'],
+                                          width: 55,
+                                          height: 55,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) => Icon(Icons.error),
+                                        ),
                                       ),
                                     ),
                                     trailing: const Icon(Icons.message),

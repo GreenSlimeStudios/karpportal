@@ -209,7 +209,7 @@ class _MainPageState extends State<MainPage> {
                                     // padding: EdgeInsets.symmetric(vertical: 5),
                                     child: GestureDetector(
                                       child: Hero(
-                                        tag: "image",
+                                        tag: url,
                                         child: CachedNetworkImage(
                                           imageUrl: url,
                                           placeholder: (builder, url) =>
@@ -221,7 +221,7 @@ class _MainPageState extends State<MainPage> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => Hero(
-                                                      tag: "image",
+                                                      tag: url,
                                                       child: InteractiveViewer(
                                                           child: CachedNetworkImage(imageUrl: url)),
                                                     )));
