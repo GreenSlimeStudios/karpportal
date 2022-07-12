@@ -569,16 +569,13 @@ class _ChatPageState extends State<ChatPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Hero(
-                      tag: data["message"],
-                      child: InteractiveViewer(
-                        child: CachedNetworkImage(
-                          imageUrl: data["message"],
-                          //fit: BoxFit.fill,
-                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              CircularProgressIndicator(value: downloadProgress.progress),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
-                        ),
+                    builder: (context) => InteractiveViewer(
+                      child: CachedNetworkImage(
+                        imageUrl: data["message"],
+                        //fit: BoxFit.fill,
+                        progressIndicatorBuilder: (context, url, downloadProgress) =>
+                            CircularProgressIndicator(value: downloadProgress.progress),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
                   ),
@@ -586,15 +583,12 @@ class _ChatPageState extends State<ChatPage> {
               },
               child: Padding(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
-                child: Hero(
-                  tag: data["message"],
-                  child: CachedNetworkImage(
-                    imageUrl: data["message"],
-                    fit: BoxFit.fill,
-                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        CircularProgressIndicator(value: downloadProgress.progress),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
+                child: CachedNetworkImage(
+                  imageUrl: data["message"],
+                  fit: BoxFit.fill,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(value: downloadProgress.progress),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
             );

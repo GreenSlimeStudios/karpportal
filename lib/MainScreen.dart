@@ -153,7 +153,9 @@ class _MainPageState extends State<MainPage> {
                                 width: 40,
                                 height: 40,
                                 fit: BoxFit.fill,
-                                placeholder: (builder, url) => const CircularProgressIndicator(),
+                                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(value: downloadProgress.progress),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -212,19 +214,37 @@ class _MainPageState extends State<MainPage> {
                                         tag: url,
                                         child: CachedNetworkImage(
                                           imageUrl: url,
-                                          placeholder: (builder, url) =>
-                                              const CircularProgressIndicator(),
+                                          progressIndicatorBuilder:
+                                              (context, url, downloadProgress) => Container(
+                                            height: 180,
+                                            alignment: Alignment.center,
+                                            child: CircularProgressIndicator(
+                                                value: downloadProgress.progress),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
                                         ),
                                       ),
                                       onTap: () {
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Hero(
-                                                      tag: url,
-                                                      child: InteractiveViewer(
-                                                          child: CachedNetworkImage(imageUrl: url)),
-                                                    )));
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => InteractiveViewer(
+                                              child: Hero(
+                                                tag: url,
+                                                child: CachedNetworkImage(
+                                                  imageUrl: url,
+                                                  progressIndicatorBuilder:
+                                                      (context, url, downloadProgress) =>
+                                                          CircularProgressIndicator(
+                                                              value: downloadProgress.progress),
+                                                  errorWidget: (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
                                   ),
