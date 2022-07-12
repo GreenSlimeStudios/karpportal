@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -117,5 +118,33 @@ class DatabaseMethods {
     } catch (e) {
       print(e);
     }
+  }
+
+  String getCurrentTime() {
+    String? hour;
+    if (DateTime.now().hour.toString().characters.length == 1) {
+      hour = '0${DateTime.now().hour}';
+    } else {
+      hour = '${DateTime.now().hour}';
+    }
+    String? minute;
+    if (DateTime.now().minute.toString().characters.length == 1) {
+      minute = '0${DateTime.now().minute}';
+    } else {
+      minute = '${DateTime.now().minute}';
+    }
+    String? month;
+    if (DateTime.now().month.toString().characters.length == 1) {
+      month = '0${DateTime.now().month}';
+    } else {
+      month = '${DateTime.now().month}';
+    }
+    String? day;
+    if (DateTime.now().day.toString().characters.length == 1) {
+      day = '0${DateTime.now().day}';
+    } else {
+      day = '${DateTime.now().day}';
+    }
+    return '${DateTime.now().year}/${month}/${day} ${hour}:${minute}';
   }
 }

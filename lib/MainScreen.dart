@@ -163,6 +163,7 @@ class PostInstance extends StatefulWidget {
 
 class _PostInstanceState extends State<PostInstance> {
   bool isExpanded = false;
+  bool isImageExpanded = false;
   bool addComment = false;
   @override
   Widget build(BuildContext context) {
@@ -381,40 +382,52 @@ class _PostInstanceState extends State<PostInstance> {
           Positioned(
             bottom: -20,
             left: 20,
-            child: Container(
-              // width: 120,
-              height: 40,
-              decoration: BoxDecoration(
-                color: (globals.myUser!.uid == widget.data["authorID"])
-                    ? globals.primaryColor
-                    : globals.primarySwatch,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      const SizedBox(width: 10),
-                      Text("L: ${widget.data["reactions"]["likeIDs"].length.toString()}"),
-                    ]),
-                    Row(children: [
-                      const SizedBox(width: 10),
-                      Text("H: ${widget.data["reactions"]["heartIDs"].length.toString()}"),
-                    ]),
-                    Row(children: [
-                      const SizedBox(width: 10),
-                      Text("S: ${widget.data["reactions"]["shareIDs"].length.toString()}"),
-                    ]),
-                    const SizedBox(width: 10),
-                    // Row(children: [
-                    //   SizedBox(width: 10),
-                    //   Text("C: ${widget.data["comments"].length.toString()}"),
-                    // ]),
-                  ],
+            child: Row(
+              children: [
+                Container(
+                  // width: 120,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: (globals.myUser!.uid == widget.data["authorID"])
+                        ? globals.primaryColor
+                        : globals.primarySwatch,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          const SizedBox(width: 10),
+                          Text("L: ${widget.data["reactions"]["likeIDs"].length.toString()}"),
+                        ]),
+                        Row(children: [
+                          const SizedBox(width: 10),
+                          Text("H: ${widget.data["reactions"]["heartIDs"].length.toString()}"),
+                        ]),
+                        Row(children: [
+                          const SizedBox(width: 10),
+                          Text("S: ${widget.data["reactions"]["shareIDs"].length.toString()}"),
+                        ]),
+                        const SizedBox(width: 10),
+                        // Row(children: [
+                        //   SizedBox(width: 10),
+                        //   Text("C: ${widget.data["comments"].length.toString()}"),
+                        // ]),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(width: 10),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 25),
+                  child: Text(
+                    (widget.data["time2"] != null) ? widget.data["time2"] : "2022/07/12 00:00",
+                    style: const TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+                  ),
+                ),
+              ],
             ),
           ),
           Positioned(
@@ -572,41 +585,16 @@ class _PostInstanceState extends State<PostInstance> {
     Map<String, dynamic> commentMap = {
       "authorID": globals.myUser!.uid!,
       "time": DateTime.now().millisecondsSinceEpoch,
-      "time2": getCurrentTime(),
+      "time2": databaseMethods.getCurrentTime(),
       "content": content,
     };
     FirebaseFirestore.instance.collection("Posts").doc(widget.data["uid"]).set({
       "comments": FieldValue.arrayUnion([commentMap])
     }, SetOptions(merge: true));
     commentController.text = "";
-  }
 
-  String getCurrentTime() {
-    String? hour;
-    if (DateTime.now().hour.toString().characters.length == 1) {
-      hour = '0${DateTime.now().hour}';
-    } else {
-      hour = '${DateTime.now().hour}';
-    }
-    String? minute;
-    if (DateTime.now().minute.toString().characters.length == 1) {
-      minute = '0${DateTime.now().minute}';
-    } else {
-      minute = '${DateTime.now().minute}';
-    }
-    String? month;
-    if (DateTime.now().month.toString().characters.length == 1) {
-      month = '0${DateTime.now().month}';
-    } else {
-      month = '${DateTime.now().month}';
-    }
-    String? day;
-    if (DateTime.now().day.toString().characters.length == 1) {
-      day = '0${DateTime.now().day}';
-    } else {
-      day = '${DateTime.now().day}';
-    }
-    return '${DateTime.now().year}/${month}/${day} ${hour}:${minute}';
+    String title = "${globals.myUser!.nickname!} has commented on your post: '${content}'";
+    databaseMethods.sendNotification(title, content, widget.snapshot.data!.token!);
   }
 }
 
@@ -661,7 +649,15 @@ class _CommentInstanceState extends State<CommentInstance> {
                       ],
                     ),
                     SizedBox(width: 5),
-                    Text(snapshot.data!.nickname!),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(snapshot.data!.nickname!),
+                        Text(widget.commentData["time2"],
+                            style: TextStyle(
+                                fontSize: 10, fontStyle: FontStyle.italic, color: Colors.grey)),
+                      ],
+                    ),
                   ],
                 );
               } else {

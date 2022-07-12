@@ -213,6 +213,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         "authorID": globals.myUser!.uid,
         "timeMil": DateTime.now().millisecondsSinceEpoch,
         "title": titleController.text,
+        "time2": databaseMethods.getCurrentTime(),
         "content": contentController.text,
         "reactions": {"heartIDs": emptyList, "likeIDs": lsitWithAuthor, "shareIDs": emptyList},
         "ImageURLs": imageURLs,
