@@ -671,8 +671,9 @@ class _ChatPageState extends State<ChatPage> {
         return AlertDialog(
           title: Text('what do you?'),
           content: Container(
-            height: 200,
+            height: 100,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -681,7 +682,7 @@ class _ChatPageState extends State<ChatPage> {
                   },
                   child: Text('copy image url'),
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () {
                     //copyMessage(data,"");
                     downloadImage(data, data["message"]);
