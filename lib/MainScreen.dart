@@ -120,184 +120,7 @@ class _MainPageState extends State<MainPage> {
       future: getAuthor(data["authorID"]),
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
         if (snapshot.hasData) {
-          return GestureDetector(
-            onLongPress: (() => showOptions(data, snapshot)),
-            child: Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: globals.themeColor,
-                    border: Border.all(
-                      width: 2,
-                      color: data["authorID"] == globals.myUser!.uid
-                          ? globals.primaryColor!
-                          : globals.primarySwatch!,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(bottom: 10, right: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: snapshot.data!.avatarUrl!,
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.fill,
-                                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(value: downloadProgress.progress),
-                                errorWidget: (context, url, error) => Icon(Icons.error),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    snapshot.data!.nickname!,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  Container(
-                                    constraints: const BoxConstraints(maxWidth: 250),
-                                    child: Text(
-                                      data["title"],
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        // padding: EdgeInsets.symmetric(horizontal: 10),
-                        constraints: const BoxConstraints(maxWidth: 3000),
-                        child: Text(
-                          data["content"],
-                        ),
-                      ),
-                      // const SizedBox(height: 10),
-                      if (data["ImageURLs"].length > 0)
-                        Container(
-                          constraints: const BoxConstraints(maxHeight: 300),
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            bottom: 5,
-                          ),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                for (String url in data["ImageURLs"])
-                                  Container(
-                                    // padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: GestureDetector(
-                                      child: Hero(
-                                        tag: url,
-                                        child: CachedNetworkImage(
-                                          imageUrl: url,
-                                          progressIndicatorBuilder:
-                                              (context, url, downloadProgress) => Container(
-                                            height: 180,
-                                            alignment: Alignment.center,
-                                            child: CircularProgressIndicator(
-                                                value: downloadProgress.progress),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(Icons.error),
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => InteractiveViewer(
-                                              child: Hero(
-                                                tag: url,
-                                                child: CachedNetworkImage(
-                                                  imageUrl: url,
-                                                  progressIndicatorBuilder:
-                                                      (context, url, downloadProgress) =>
-                                                          CircularProgressIndicator(
-                                                              value: downloadProgress.progress),
-                                                  errorWidget: (context, url, error) =>
-                                                      const Icon(Icons.error),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: -20,
-                  left: 20,
-                  child: Container(
-                    // width: 120,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: (globals.myUser!.uid == data["authorID"])
-                          ? globals.primaryColor
-                          : globals.primarySwatch,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(children: [
-                            const SizedBox(width: 10),
-                            Text("L: ${data["reactions"]["likeIDs"].length.toString()}"),
-                          ]),
-                          Row(children: [
-                            const SizedBox(width: 10),
-                            Text("H: ${data["reactions"]["heartIDs"].length.toString()}"),
-                          ]),
-                          Row(children: [
-                            const SizedBox(width: 10),
-                            Text("S: ${data["reactions"]["shareIDs"].length.toString()}"),
-                          ]),
-                          const SizedBox(width: 10),
-                          // Row(children: [
-                          //   SizedBox(width: 10),
-                          //   Text("C: ${data["comments"].length.toString()}"),
-                          // ]),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+          return PostInstance(data: data, snapshot: snapshot);
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         } else {
@@ -321,6 +144,222 @@ class _MainPageState extends State<MainPage> {
       },
     );
     return author;
+  }
+}
+
+// Future heart(Map<String, dynamic> data) async {}
+
+// Future share(Map<String, dynamic> data) async {}
+
+class PostInstance extends StatefulWidget {
+  PostInstance({Key? key, required this.data, required this.snapshot}) : super(key: key);
+
+  final Map<String, dynamic> data;
+  final AsyncSnapshot<UserModel> snapshot;
+
+  @override
+  State<PostInstance> createState() => _PostInstanceState();
+}
+
+class _PostInstanceState extends State<PostInstance> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: (() => showOptions(widget.data, widget.snapshot)),
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: globals.themeColor,
+              border: Border.all(
+                width: 2,
+                color: widget.data["authorID"] == globals.myUser!.uid
+                    ? globals.primaryColor!
+                    : globals.primarySwatch!,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10, right: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: widget.snapshot.data!.avatarUrl!,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.fill,
+                          progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              CircularProgressIndicator(value: downloadProgress.progress),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.snapshot.data!.nickname!,
+                              style: const TextStyle(
+                                fontSize: 13,
+                              ),
+                            ),
+                            Container(
+                              constraints: const BoxConstraints(maxWidth: 250),
+                              child: Text(
+                                widget.data["title"],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  // padding: EdgeInsets.symmetric(horizontal: 10),
+                  constraints: const BoxConstraints(maxWidth: 3000),
+                  child: Text(
+                    widget.data["content"],
+                  ),
+                ),
+                // const SizedBox(height: 10),
+                if (widget.data["ImageURLs"].length > 0)
+                  Container(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    padding: const EdgeInsets.only(
+                      top: 10,
+                      bottom: 5,
+                    ),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          for (String url in widget.data["ImageURLs"])
+                            Container(
+                              // padding: EdgeInsets.symmetric(vertical: 5),
+                              child: GestureDetector(
+                                child: Hero(
+                                  tag: url,
+                                  child: CachedNetworkImage(
+                                    imageUrl: url,
+                                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                        Container(
+                                      height: 180,
+                                      alignment: Alignment.center,
+                                      child: CircularProgressIndicator(
+                                          value: downloadProgress.progress),
+                                    ),
+                                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InteractiveViewer(
+                                        child: Hero(
+                                          tag: url,
+                                          child: CachedNetworkImage(
+                                            imageUrl: url,
+                                            progressIndicatorBuilder:
+                                                (context, url, downloadProgress) =>
+                                                    CircularProgressIndicator(
+                                                        value: downloadProgress.progress),
+                                            errorWidget: (context, url, error) =>
+                                                const Icon(Icons.error),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 15),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: -20,
+            left: 20,
+            child: Container(
+              // width: 120,
+              height: 40,
+              decoration: BoxDecoration(
+                color: (globals.myUser!.uid == widget.data["authorID"])
+                    ? globals.primaryColor
+                    : globals.primarySwatch,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const SizedBox(width: 10),
+                      Text("L: ${widget.data["reactions"]["likeIDs"].length.toString()}"),
+                    ]),
+                    Row(children: [
+                      const SizedBox(width: 10),
+                      Text("H: ${widget.data["reactions"]["heartIDs"].length.toString()}"),
+                    ]),
+                    Row(children: [
+                      const SizedBox(width: 10),
+                      Text("S: ${widget.data["reactions"]["shareIDs"].length.toString()}"),
+                    ]),
+                    const SizedBox(width: 10),
+                    // Row(children: [
+                    //   SizedBox(width: 10),
+                    //   Text("C: ${widget.data["comments"].length.toString()}"),
+                    // ]),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 5,
+            right: 20,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {});
+                  },
+                  child: Row(
+                    children: [
+                      Text("expand"),
+                      Icon(Icons.expand_more),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   showOptions(Map<String, dynamic> data, AsyncSnapshot<UserModel> snapshot) {
@@ -443,25 +482,5 @@ class _MainPageState extends State<MainPage> {
       //   }
       // }, SetOptions(merge: true));
     }
-  }
-
-  // Future heart(Map<String, dynamic> data) async {}
-
-  // Future share(Map<String, dynamic> data) async {}
-}
-
-class Reaction extends StatefulWidget {
-  const Reaction({Key? key, required this.icon}) : super(key: key);
-
-  final Icon icon;
-
-  @override
-  State<Reaction> createState() => _ReactionState();
-}
-
-class _ReactionState extends State<Reaction> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
