@@ -162,6 +162,7 @@ class PostInstance extends StatefulWidget {
 }
 
 class _PostInstanceState extends State<PostInstance> {
+  bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -238,7 +239,7 @@ class _PostInstanceState extends State<PostInstance> {
                 // const SizedBox(height: 10),
                 if (widget.data["ImageURLs"].length > 0)
                   Container(
-                    constraints: const BoxConstraints(maxHeight: 300),
+                    constraints: (isExpanded) ? BoxConstraints() : BoxConstraints(maxHeight: 300),
                     padding: const EdgeInsets.only(
                       top: 10,
                       bottom: 5,
@@ -248,6 +249,7 @@ class _PostInstanceState extends State<PostInstance> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: SingleChildScrollView(
+                      // controller:
                       child: Column(
                         children: [
                           for (String url in widget.data["ImageURLs"])
@@ -295,6 +297,16 @@ class _PostInstanceState extends State<PostInstance> {
                       ),
                     ),
                   ),
+                (isExpanded)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            Text("Comments"),
+                            for (Map<String, dynamic> comment in widget.data["comments"])
+                              CommentInstance(postData: widget.data, commentData: comment),
+                          ])
+                    : Container(),
                 const SizedBox(height: 15),
               ],
             ),
@@ -345,12 +357,14 @@ class _PostInstanceState extends State<PostInstance> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    setState(() {});
+                    setState(() {
+                      isExpanded = !isExpanded;
+                    });
                   },
                   child: Row(
                     children: [
-                      Text("expand"),
-                      Icon(Icons.expand_more),
+                      (!isExpanded) ? Text("expand") : Text("close"),
+                      Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
                     ],
                   ),
                 ),
@@ -482,5 +496,42 @@ class _PostInstanceState extends State<PostInstance> {
       //   }
       // }, SetOptions(merge: true));
     }
+  }
+}
+
+class CommentInstance extends StatefulWidget {
+  CommentInstance({Key? key, required this.postData, required this.commentData}) : super(key: key);
+  final Map<String, dynamic> postData;
+  final Map<String, dynamic> commentData;
+  @override
+  State<CommentInstance> createState() => _CommentInstanceState();
+}
+
+class _CommentInstanceState extends State<CommentInstance> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: globals.themeColor,
+        border: Border.all(
+          width: 2,
+          color: widget.commentData["authorID"] == globals.myUser!.uid
+              ? globals.primaryColor!
+              : globals.primarySwatch!,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(widget.commentData["title"]),
+          Text(widget.commentData["content"]),
+        ],
+      ),
+    );
   }
 }
