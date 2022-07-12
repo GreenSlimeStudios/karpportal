@@ -25,14 +25,14 @@ class MessagesPage extends StatefulWidget {
 String? name;
 var fields = ["firstName", "secondName", "email", "nickname"];
 
-DatabaseMethods databaseMethods = new DatabaseMethods();
+DatabaseMethods databaseMethods = DatabaseMethods();
 UserModel? searchModel;
 
 class _MessagesPageState extends State<MessagesPage> {
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = new UserModel();
+  UserModel loggedInUser = UserModel();
 
   // @override
   // void initState() {
@@ -88,25 +88,15 @@ class _MessagesPageState extends State<MessagesPage> {
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return New Messages
-                    for (int i = 0;
-                        i < globals.myUser!.recentRooms!.length;
-                        i++)
-                      if (isNewMessage(globals.myUser!.recentRooms!.reversed
-                              .toList()[i]) ==
-                          true)
-                        getRooms(
-                            globals.myUser!.recentRooms!.reversed.toList()[i]),
+                    for (int i = 0; i < globals.myUser!.recentRooms!.length; i++)
+                      if (isNewMessage(globals.myUser!.recentRooms!.reversed.toList()[i]) == true)
+                        getRooms(globals.myUser!.recentRooms!.reversed.toList()[i]),
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return other most recent Messages
-                    for (int i = 0;
-                        i < globals.myUser!.recentRooms!.length;
-                        i++)
-                      if (isNewMessage(globals.myUser!.recentRooms!.reversed
-                              .toList()[i]) ==
-                          false)
-                        getRooms(
-                            globals.myUser!.recentRooms!.reversed.toList()[i])
+                    for (int i = 0; i < globals.myUser!.recentRooms!.length; i++)
+                      if (isNewMessage(globals.myUser!.recentRooms!.reversed.toList()[i]) == false)
+                        getRooms(globals.myUser!.recentRooms!.reversed.toList()[i])
               ],
             ),
           )
@@ -128,9 +118,7 @@ class _MessagesPageState extends State<MessagesPage> {
               child: Container(
                   height: 60,
                   width: 60,
-                  child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: CircularProgressIndicator())));
+                  child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator())));
         }
       },
     );
@@ -146,8 +134,7 @@ class _MessagesPageState extends State<MessagesPage> {
   // }
 
   void createChatRoom(Map<String, dynamic> data) async {
-    String chatRoomId =
-        getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
+    String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
     List<String> users = [data['fullName'], globals.myUser!.fullName!];
     //users.sort();
@@ -166,8 +153,7 @@ class _MessagesPageState extends State<MessagesPage> {
     await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
+            builder: (context) => ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
 
     setState(() {});
   }
@@ -175,18 +161,11 @@ class _MessagesPageState extends State<MessagesPage> {
   Future<Widget> getRecentRooms(chatRoomId) async {
     UserModel targetUserModel = UserModel();
 
-    final roomData = await FirebaseFirestore.instance
-        .collection('ChatRoom')
-        .doc(chatRoomId)
-        .get();
+    final roomData = await FirebaseFirestore.instance.collection('ChatRoom').doc(chatRoomId).get();
     print(roomData.metadata.isFromCache);
 
     if (roomData["uids"][0] != globals.myUser!.uid) {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(roomData["uids"][0])
-          .get()
-          .then(
+      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
         (value) {
           print(value.metadata.isFromCache);
 
@@ -194,11 +173,7 @@ class _MessagesPageState extends State<MessagesPage> {
         },
       );
     } else {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(roomData["uids"][1])
-          .get()
-          .then(
+      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
         (value) {
           print(value.metadata.isFromCache);
 
@@ -241,7 +216,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    targetUserModel.fullName!,
+                    targetUserModel.nickname!,
                     style: getRoomTextStyle(chatRoomId),
                   ),
                   Text(
@@ -273,11 +248,7 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   void refresh() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then(
+    await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
       (value) {
         loggedInUser = UserModel.fromMap(value.data());
         globals.myUser = loggedInUser;
@@ -290,8 +261,7 @@ class _MessagesPageState extends State<MessagesPage> {
   getRoomTextStyle(String chatRoomId) {
     bool isNewMessage = false;
 
-    if (globals.myUser!.newMessages != null &&
-        globals.myUser!.newMessages != []) {
+    if (globals.myUser!.newMessages != null && globals.myUser!.newMessages != []) {
       for (int i = 0; i < globals.myUser!.newMessages!.length; i++) {
         if (globals.myUser!.newMessages![i] == chatRoomId) {
           isNewMessage = true;
@@ -309,8 +279,7 @@ class _MessagesPageState extends State<MessagesPage> {
   bool isNewMessage(String chatRoomId) {
     bool isNewMessage = false;
 
-    if (globals.myUser!.newMessages != null &&
-        globals.myUser!.newMessages != []) {
+    if (globals.myUser!.newMessages != null && globals.myUser!.newMessages != []) {
       for (int i = 0; i < globals.myUser!.newMessages!.length; i++) {
         if (globals.myUser!.newMessages![i] == chatRoomId) {
           isNewMessage = true;

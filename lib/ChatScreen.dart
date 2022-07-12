@@ -213,7 +213,7 @@ class _ChatPageState extends State<ChatPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(widget.chatUserData["fullName"]),
+              Text(widget.chatUserData["nickname"]),
               const Padding(padding: EdgeInsets.only(right: 10)),
               Hero(
                 tag: 'targetAvatar',

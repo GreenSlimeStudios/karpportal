@@ -24,14 +24,14 @@ class SearchPage extends StatefulWidget {
 String? name;
 var fields = ["firstName", "secondName", "email", "nickname"];
 
-DatabaseMethods databaseMethods = new DatabaseMethods();
+DatabaseMethods databaseMethods = DatabaseMethods();
 UserModel? searchModel;
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = new UserModel();
+  UserModel loggedInUser = UserModel();
 
   // @override
   // void initState() {
@@ -89,15 +89,14 @@ class _SearchPageState extends State<SearchPage> {
           builder: (context, snapshot) {
             return (snapshot.connectionState == ConnectionState.waiting)
                 ? const Center(
-                    child: const CircularProgressIndicator(),
+                    child: CircularProgressIndicator(),
                   )
                 : Expanded(
                     child: ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       // itemCount: 2,
                       itemBuilder: (context, index) {
-                        var data = snapshot.data!.docs[index].data()
-                            as Map<String, dynamic>;
+                        var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                         print((snapshot.data!.docs[index].metadata.isFromCache)
                             ? "NOT FROM NETWORK"
                             : "FROM NETWORK");
@@ -113,16 +112,13 @@ class _SearchPageState extends State<SearchPage> {
                                 children: [
                                   ListTile(
                                     title: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(data['fullName']),
+                                        Text(data['nickname']),
                                         Text(
                                           data['nickname'],
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w300),
+                                          style: const TextStyle(fontWeight: FontWeight.w300),
                                         ),
                                       ],
                                     ),
@@ -133,10 +129,8 @@ class _SearchPageState extends State<SearchPage> {
                                         width: 55,
                                         height: 55,
                                         fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
+                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) => Icon(Icons.error),
                                       ),
                                     ),
                                     trailing: const Icon(Icons.message),
@@ -180,8 +174,7 @@ class _SearchPageState extends State<SearchPage> {
     //   },
     // );
 
-    String chatRoomId =
-        getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
+    String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
     List<String> users = [data['fullName'], globals.myUser!.fullName!];
     //users.sort();
@@ -202,8 +195,7 @@ class _SearchPageState extends State<SearchPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
+            builder: (context) => ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
   }
 }
 
