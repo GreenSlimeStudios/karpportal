@@ -18,6 +18,7 @@ import 'package:karpportal/services/localPushNotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MainScreen.dart';
+import 'enums.dart';
 import 'globals.dart' as globals;
 
 class HomePage extends StatefulWidget {
@@ -105,6 +106,7 @@ class _HomePageState extends State<HomePage> {
       ),
       //drawerScrimColor: Colors.white,
       drawer: Drawer(
+        backgroundColor: globals.themeColor!,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [

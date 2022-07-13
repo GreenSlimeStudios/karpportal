@@ -773,7 +773,7 @@ class _ChatPageState extends State<ChatPage> {
         .doc(globals.myUser!.uid)
         .set(globals.myUser!.toMap());
 
-    String title = "You have recived a message from: " + globals.myUser!.nickname!;
+    String title = "new message from: ${globals.myUser!.nickname!}!";
 
     databaseMethods.sendNotification(title, content, targetUserModel.token!);
     setState(() {});

@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:karpportal/UserModel.dart';
 
+import 'enums.dart';
+
 File? image;
 int index = 2;
 String? fullName;
@@ -14,5 +16,6 @@ Color? themeColor;
 bool? isDarkTheme;
 // Colors.grey.shade900;
 User? authUser;
+ThemeColor? theme;
 
 UserModel? myUser;

@@ -169,6 +169,7 @@ class _PostInstanceState extends State<PostInstance> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: (() => showOptions(widget.data, widget.snapshot, false)),
+      onTap: (() => showOptions(widget.data, widget.snapshot, false)),
       child: Stack(
         children: [
           Container(
@@ -429,24 +430,33 @@ class _PostInstanceState extends State<PostInstance> {
                         if (widget.data["reactions"]["likeIDs"].length > 0)
                           Row(children: [
                             const SizedBox(width: 10),
-                            Icon(Icons.thumb_up, size: 17),
+                            Icon(Icons.thumb_up, size: 17, color: Colors.white),
                             SizedBox(width: 2),
                             // if (widget.data["reactions"]["likeIDs"].length > 1)
-                            Text("${widget.data["reactions"]["likeIDs"].length.toString()}"),
+                            Text(
+                              "${widget.data["reactions"]["likeIDs"].length.toString()}",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ]),
                         if (widget.data["reactions"]["heartIDs"].length > 0)
                           Row(children: [
                             const SizedBox(width: 10),
-                            Icon(CupertinoIcons.heart, size: 17),
+                            Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
                             SizedBox(width: 2),
-                            Text("${widget.data["reactions"]["heartIDs"].length.toString()}"),
+                            Text(
+                              "${widget.data["reactions"]["heartIDs"].length.toString()}",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ]),
                         if (widget.data["comments"].length > 0)
                           Row(children: [
                             const SizedBox(width: 10),
-                            Icon(Icons.comment, size: 17),
+                            Icon(Icons.comment, size: 17, color: Colors.white),
                             SizedBox(width: 2),
-                            Text("${widget.data["comments"].length.toString()}"),
+                            Text(
+                              "${widget.data["comments"].length.toString()}",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ]),
                         const SizedBox(width: 10),
                         // Row(children: [
@@ -457,12 +467,13 @@ class _PostInstanceState extends State<PostInstance> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 5),
                 Container(
                   margin: const EdgeInsets.only(bottom: 25),
                   child: Text(
                     (widget.data["time2"] != null) ? widget.data["time2"] : "2022/07/12 00:00",
-                    style: const TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+                    style: const TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic, fontSize: 13),
                   ),
                 ),
               ],
@@ -765,19 +776,23 @@ class _CommentInstanceState extends State<CommentInstance> {
                                 if (widget.commentData["reactions"]["likeIDs"].length > 0)
                                   Row(children: [
                                     const SizedBox(width: 10),
-                                    Icon(Icons.thumb_up, size: 17),
+                                    Icon(Icons.thumb_up, size: 17, color: Colors.white),
                                     SizedBox(width: 2),
                                     // if (widget.commentData["reactions"]["likeIDs"].length > 1)
                                     Text(
-                                        "${widget.commentData["reactions"]["likeIDs"].length.toString()}"),
+                                      "${widget.commentData["reactions"]["likeIDs"].length.toString()}",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ]),
                                 if (widget.commentData["reactions"]["heartIDs"].length > 0)
                                   Row(children: [
                                     const SizedBox(width: 10),
-                                    Icon(CupertinoIcons.heart, size: 17),
+                                    Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
                                     SizedBox(width: 2),
                                     Text(
-                                        "${widget.commentData["reactions"]["heartIDs"].length.toString()}"),
+                                      "${widget.commentData["reactions"]["heartIDs"].length.toString()}",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ]),
                                 // if (widget.commentData["comments"].length > 0)
                                 //   Row(children: [

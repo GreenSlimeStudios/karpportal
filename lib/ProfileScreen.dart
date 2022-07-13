@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/ProfileTitle.dart';
 import 'package:karpportal/UserModel.dart';
+import 'package:karpportal/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'HomeScreen.dart' as home;
@@ -226,14 +227,25 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                'dark theme',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Switch(value: isDarkTheme, onChanged: changeDarkTheme),
+                              ThemeColorPick(ThemeColor.Light, Colors.white),
+                              Padding(padding: EdgeInsets.only(right: 5)),
+                              ThemeColorPick(ThemeColor.Dark, Colors.grey.shade900),
+                              Padding(padding: EdgeInsets.only(right: 5)),
+                              ThemeColorPick(ThemeColor.Contrast, Colors.black),
                             ],
                           ),
                           Padding(padding: EdgeInsets.only(top: 10)),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Text(
+                          //       'dark theme',
+                          //       style: TextStyle(fontWeight: FontWeight.bold),
+                          //     ),
+                          //     Switch(value: isDarkTheme, onChanged: changeDarkTheme),
+                          //   ],
+                          // ),
+                          // Padding(padding: EdgeInsets.only(top: 10)),
                         ]),
                       )
                     ]),
@@ -557,12 +569,14 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(30),
             child: Container(
-              height: 30,
-              width: 30,
-              color: color,
-            ),
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: color,
+                  // border: Border.all(width: 1, color: Colors.white),
+                )),
           ),
           if (globals.primaryColor.toString() == color.toString())
             Positioned(
@@ -582,6 +596,53 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  Widget ThemeColorPick(ThemeColor theme, Color backgroundColor) {
+    return GestureDetector(
+      onTap: () {
+        changeThemeColor(theme);
+        setState(() {});
+      },
+      child: Stack(
+        children: [
+          ClipRRect(
+            child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(width: 1, color: Colors.white),
+                  color: backgroundColor,
+                )),
+          ),
+          if (globals.theme == theme)
+            Positioned(
+              left: 11,
+              top: 11,
+              // alignment: Alignment.center,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 8,
+                  width: 8,
+                  color: (theme != ThemeColor.Light) ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  changeThemeColor(ThemeColor theme) async {
+    globals.theme = theme;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setBool('isDarkTheme', isDarkTheme);
+    prefs.setString('theme', theme.toString());
+    Fluttertoast.showToast(msg: 'restart app to see changes');
+    setState(() {});
   }
 
   void changePrimaryColor(MaterialColor color) async {

@@ -9,7 +9,7 @@ class DatabaseMethods {
   getByUserName(String username) async {
     // var x = await FirebaseFirestore.instance
     //     .collection('users')
-    //     .where('nickname', isEqualTo: username)
+
     //     .get;
 
     // print(x.toString());
