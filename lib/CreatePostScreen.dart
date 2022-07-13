@@ -74,7 +74,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                   validator: (value) {
                     if (value != null && value != "" && value.isEmpty == false) {
-                      if (value != " ") {
+                      if (value == " ") {
                         return "bruh you tryin to trick me?";
                       }
                       return null;
