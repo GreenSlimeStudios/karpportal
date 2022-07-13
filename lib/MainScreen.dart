@@ -394,22 +394,32 @@ class _PostInstanceState extends State<PostInstance> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Container(
-                    padding: const EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.only(bottom: 18),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Row(children: [
-                          const SizedBox(width: 10),
-                          Text("L: ${widget.data["reactions"]["likeIDs"].length.toString()}"),
-                        ]),
-                        Row(children: [
-                          const SizedBox(width: 10),
-                          Text("H: ${widget.data["reactions"]["heartIDs"].length.toString()}"),
-                        ]),
-                        Row(children: [
-                          const SizedBox(width: 10),
-                          Text("S: ${widget.data["reactions"]["shareIDs"].length.toString()}"),
-                        ]),
+                        if (widget.data["reactions"]["likeIDs"].length > 0)
+                          Row(children: [
+                            const SizedBox(width: 10),
+                            Icon(Icons.thumb_up, size: 17),
+                            SizedBox(width: 2),
+                            // if (widget.data["reactions"]["likeIDs"].length > 1)
+                            Text("${widget.data["reactions"]["likeIDs"].length.toString()}"),
+                          ]),
+                        if (widget.data["reactions"]["heartIDs"].length > 0)
+                          Row(children: [
+                            const SizedBox(width: 10),
+                            Icon(CupertinoIcons.heart, size: 17),
+                            SizedBox(width: 2),
+                            Text("${widget.data["reactions"]["heartIDs"].length.toString()}"),
+                          ]),
+                        if (widget.data["comments"].length > 0)
+                          Row(children: [
+                            const SizedBox(width: 10),
+                            Icon(Icons.comment, size: 17),
+                            SizedBox(width: 2),
+                            Text("${widget.data["comments"].length.toString()}"),
+                          ]),
                         const SizedBox(width: 10),
                         // Row(children: [
                         //   SizedBox(width: 10),

@@ -179,7 +179,7 @@ class _ChatPageState extends State<ChatPage> {
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
       //messageController.text = "";
-      notifyUser(imageUrl);
+      notifyUser(imageUrl!);
       // setState(() {
       //   isImage == false;
       //   //scrollToBottom();
