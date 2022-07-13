@@ -168,7 +168,7 @@ class _PostInstanceState extends State<PostInstance> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: (() => showOptions(widget.data, widget.snapshot)),
+      onLongPress: (() => showOptions(widget.data, widget.snapshot, false)),
       child: Stack(
         children: [
           Container(
@@ -369,8 +369,36 @@ class _PostInstanceState extends State<PostInstance> {
                                   ],
                                 )
                               : Container(),
-                          for (Map<String, dynamic> comment in widget.data["comments"].reversed)
-                            CommentInstance(postData: widget.data, commentData: comment),
+                          StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection("Posts")
+                                  .doc(widget.data["uid"])
+                                  .collection("comments")
+                                  .orderBy('time', descending: true)
+                                  .snapshots(),
+                              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                return (snapshot.connectionState == ConnectionState.waiting)
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : Container(
+                                        // constraints: BoxConstraints(
+                                        // maxHeight: 1000,
+                                        // ),
+
+                                        child: Column(
+                                          children: [
+                                            for (int i = 0; i < snapshot.data!.docs.length; i++)
+                                              CommentInstance(
+                                                  postData: widget.data,
+                                                  commentData: snapshot.data!.docs[i].data()
+                                                      as Map<String, dynamic>),
+                                          ],
+                                        ),
+                                      );
+                              }),
+                          // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
+                          //   CommentInstance(postData: widget.data, commentData: comment),
                           SizedBox(height: 5),
                         ],
                       )
@@ -466,26 +494,27 @@ class _PostInstanceState extends State<PostInstance> {
     );
   }
 
-  showOptions(Map<String, dynamic> data, AsyncSnapshot<UserModel> snapshot) {
+  showOptions(Map<String, dynamic> data, AsyncSnapshot<UserModel> snapshot, bool isComment) {
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('what do you?'),
           content: SizedBox(
-            height: 250,
+            height: (isComment) ? 220 : 250,
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: data["title"]));
-                    Fluttertoast.showToast(msg: 'title copied succesfully');
-                    Navigator.pop(context);
-                  },
-                  child: const Text('copy title'),
-                ),
+                if (isComment == false)
+                  ElevatedButton(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: data["title"]));
+                      Fluttertoast.showToast(msg: 'title copied succesfully');
+                      Navigator.pop(context);
+                    },
+                    child: const Text('copy title'),
+                  ),
                 ElevatedButton(
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: data["content"]));
@@ -566,9 +595,11 @@ class _PostInstanceState extends State<PostInstance> {
       return;
     }
     if (data["reactions"][reaction].contains(globals.myUser!.uid)) {
-      Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
-      postData["reactions"][reaction].remove(globals.myUser!.uid);
-      await databaseMethods.setPost(postData["uid"], postData);
+      await FirebaseFirestore.instance.collection("Posts").doc(data["uid"]).set({
+        "reactions": {
+          reaction: FieldValue.arrayRemove([globals.myUser!.uid!]),
+        }
+      }, SetOptions(merge: true));
     } else {
       // Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
       // if (postData["reactions"][reaction] != null &&
@@ -592,16 +623,31 @@ class _PostInstanceState extends State<PostInstance> {
   final formKey = GlobalKey<FormState>();
 
   postComment(String content) {
+    String commentID = "${globals.myUser!.uid!}${DateTime.now().millisecondsSinceEpoch}";
     Map<String, dynamic> commentMap = {
+      "uid": commentID,
       "authorID": globals.myUser!.uid!,
       "time": DateTime.now().millisecondsSinceEpoch,
       "time2": databaseMethods.getCurrentTime(),
       "content": content,
+      "reactions": {
+        "likeIDs": [globals.myUser!.uid!],
+        "heartIDs": [],
+        "shareIDs": []
+      },
     };
     FirebaseFirestore.instance.collection("Posts").doc(widget.data["uid"]).set({
-      "comments": FieldValue.arrayUnion([commentMap])
+      "comments": FieldValue.arrayUnion([commentID])
     }, SetOptions(merge: true));
     commentController.text = "";
+    addComment = false;
+
+    FirebaseFirestore.instance
+        .collection("Posts")
+        .doc(widget.data["uid"])
+        .collection("comments")
+        .doc(commentID)
+        .set(commentMap);
 
     String title = "${globals.myUser!.nickname!} has commented on your post: '${content}'";
     databaseMethods.sendNotification(title, content, widget.snapshot.data!.token!);
@@ -619,71 +665,266 @@ class CommentInstance extends StatefulWidget {
 class _CommentInstanceState extends State<CommentInstance> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: globals.themeColor,
-        border: Border.all(
-          width: 2,
-          color: widget.commentData["authorID"] == globals.myUser!.uid
-              ? globals.primaryColor!
-              : globals.primarySwatch!,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
+    return GestureDetector(
+      onLongPress: (() => showOptions(widget.postData)),
+      onTap: (() => showOptions(widget.commentData)),
+      child: Stack(
         children: [
-          FutureBuilder(
-            future: getAuthor(widget.commentData["authorID"]),
-            builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
-              if (snapshot.hasData) {
-                return Row(
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: globals.themeColor,
+              border: Border.all(
+                width: 2,
+                color: widget.commentData["authorID"] == globals.myUser!.uid
+                    ? globals.primaryColor!
+                    : globals.primarySwatch!,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Column(
-                      children: [
-                        ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: snapshot.data!.avatarUrl!,
+                    FutureBuilder(
+                      future: getAuthor(widget.commentData["authorID"]),
+                      builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+                        if (snapshot.hasData) {
+                          return Row(
+                            children: [
+                              Column(
+                                children: [
+                                  ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: snapshot.data!.avatarUrl!,
+                                      height: 25,
+                                      width: 25,
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, value) {
+                                        return CircularProgressIndicator();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(width: 5),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(snapshot.data!.nickname!),
+                                  Text(widget.commentData["time2"],
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          fontStyle: FontStyle.italic,
+                                          color: Colors.grey)),
+                                ],
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Container(
                             height: 25,
                             width: 25,
-                            fit: BoxFit.fill,
-                            placeholder: (context, value) {
-                              return CircularProgressIndicator();
-                            },
-                          ),
-                        ),
-                      ],
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
                     ),
-                    SizedBox(width: 5),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(snapshot.data!.nickname!),
-                        Text(widget.commentData["time2"],
-                            style: TextStyle(
-                                fontSize: 10, fontStyle: FontStyle.italic, color: Colors.grey)),
-                      ],
-                    ),
+                    SizedBox(height: 5),
+                    Text(widget.commentData["content"]),
+                    SizedBox(height: 15),
                   ],
-                );
-              } else {
-                return Container(
-                  height: 25,
-                  width: 25,
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 5),
-          // Text(widget.commentData["title"]),
-          Text(widget.commentData["content"]),
+          Positioned(
+            bottom: -20,
+            left: 10,
+            child: Row(
+              children: [
+                Container(
+                    // width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: (globals.myUser!.uid == widget.commentData["authorID"])
+                          ? globals.primaryColor
+                          : globals.primarySwatch,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.only(bottom: 18),
+                      child: (widget.commentData["reactions"] != null)
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                if (widget.commentData["reactions"]["likeIDs"].length > 0)
+                                  Row(children: [
+                                    const SizedBox(width: 10),
+                                    Icon(Icons.thumb_up, size: 17),
+                                    SizedBox(width: 2),
+                                    // if (widget.commentData["reactions"]["likeIDs"].length > 1)
+                                    Text(
+                                        "${widget.commentData["reactions"]["likeIDs"].length.toString()}"),
+                                  ]),
+                                if (widget.commentData["reactions"]["heartIDs"].length > 0)
+                                  Row(children: [
+                                    const SizedBox(width: 10),
+                                    Icon(CupertinoIcons.heart, size: 17),
+                                    SizedBox(width: 2),
+                                    Text(
+                                        "${widget.commentData["reactions"]["heartIDs"].length.toString()}"),
+                                  ]),
+                                // if (widget.commentData["comments"].length > 0)
+                                //   Row(children: [
+                                //     const SizedBox(width: 10),
+                                //     Icon(Icons.comment, size: 17),
+                                //     SizedBox(width: 2),
+                                //     Text("${widget.commentData["comments"].length.toString()}"),
+                                //   ]),
+                                const SizedBox(width: 10),
+                                // Row(children: [
+                                //   SizedBox(width: 10),
+                                //   Text("C: ${widget.commentData["comments"].length.toString()}"),
+                                // ]),
+                              ],
+                            )
+                          : Container(
+                              child: SizedBox(
+                              width: 10,
+                            )),
+                    )),
+                SizedBox(width: 5),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 25),
+                  child: Text(
+                    (widget.commentData["time2"] != null)
+                        ? widget.commentData["time2"]
+                        : "2022/07/12 00:00",
+                    style: const TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  showOptions(Map<String, dynamic> data) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('what do you?'),
+          content: SizedBox(
+            height: 150,
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: data["content"]));
+                    Fluttertoast.showToast(msg: 'content copied succesfully');
+                    Navigator.pop(context);
+                  },
+                  child: const Text('copy comment content'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await like(data);
+                    // setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.thumb_up),
+                      SizedBox(width: 5),
+                      Text('like'),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await heart(data);
+                    // setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(CupertinoIcons.heart),
+                      SizedBox(width: 5),
+                      Text('heart'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future like(Map<String, dynamic> data) async {
+    await addReaction(data, "likeIDs");
+  }
+
+  Future heart(Map<String, dynamic> data) async {
+    await addReaction(data, "heartIDs");
+  }
+
+  Future share(Map<String, dynamic> data) async {
+    await addReaction(data, "shareIDs");
+  }
+
+  Future addReaction(Map<String, dynamic> data, String reaction) async {
+    List<String> placeholder = ["fsfs", "dada"];
+    // placeholder.remove(…)
+    if (data["uid"] == null) {
+      return;
+    }
+    if (data["reactions"][reaction].contains(globals.myUser!.uid)) {
+      await FirebaseFirestore.instance
+          .collection("Posts")
+          .doc(widget.postData["uid"])
+          .collection("comments")
+          .doc(widget.commentData["uid"])
+          .set({
+        "reactions": {
+          reaction: FieldValue.arrayRemove([globals.myUser!.uid!]),
+        }
+      }, SetOptions(merge: true));
+    } else {
+      // Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
+      // if (postData["reactions"][reaction] != null &&
+      //     postData["reactions"][reaction] != [] &&
+      //     postData["reactions"][reaction].isEmpty == false) {
+      //   postData["reactions"][reaction].add(globals.myUser!.uid);
+      // } else {
+      //   postData["reactions"][reaction] = [globals.myUser!.uid];
+      // }
+      // await databaseMethods.setPost(postData["uid"], postData);
+
+      await FirebaseFirestore.instance
+          .collection("Posts")
+          .doc(widget.postData["uid"])
+          .collection("comments")
+          .doc(widget.commentData["uid"])
+          .set({
+        "reactions": {
+          reaction: FieldValue.arrayUnion([globals.myUser!.uid!]),
+        }
+      }, SetOptions(merge: true));
+    }
   }
 }
