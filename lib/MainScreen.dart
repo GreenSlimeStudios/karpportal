@@ -152,7 +152,7 @@ Future<UserModel> getAuthor(uid) async {
 // Future share(Map<String, dynamic> data) async {}
 
 class PostInstance extends StatefulWidget {
-  PostInstance({Key? key, required this.data, required this.snapshot}) : super(key: key);
+  const PostInstance({Key? key, required this.data, required this.snapshot}) : super(key: key);
 
   final Map<String, dynamic> data;
   final AsyncSnapshot<UserModel> snapshot;
@@ -169,7 +169,6 @@ class _PostInstanceState extends State<PostInstance> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: (() => showOptions(widget.data, widget.snapshot, false)),
-      onTap: (() => showOptions(widget.data, widget.snapshot, false)),
       child: Stack(
         children: [
           Container(
@@ -203,7 +202,7 @@ class _PostInstanceState extends State<PostInstance> {
                           fit: BoxFit.fill,
                           progressIndicatorBuilder: (context, url, downloadProgress) =>
                               CircularProgressIndicator(value: downloadProgress.progress),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -237,7 +236,7 @@ class _PostInstanceState extends State<PostInstance> {
                   constraints: const BoxConstraints(maxWidth: 3000),
                   child: (widget.data["content"] != null && widget.data["content"] != " ")
                       ? Container(
-                          padding: EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 10),
                           child: Text(
                             widget.data["content"],
                           ),
@@ -247,7 +246,9 @@ class _PostInstanceState extends State<PostInstance> {
                 // const SizedBox(height: 10),
                 if (widget.data["ImageURLs"].length > 0)
                   Container(
-                    constraints: (isExpanded) ? BoxConstraints() : BoxConstraints(maxHeight: 300),
+                    constraints: (isExpanded)
+                        ? const BoxConstraints()
+                        : const BoxConstraints(maxHeight: 300),
                     padding: const EdgeInsets.only(
                       // top: 10,
                       bottom: 5,
@@ -310,7 +311,7 @@ class _PostInstanceState extends State<PostInstance> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Row(
                             children: [
                               Text("Comments ${widget.data["comments"].length}"),
@@ -322,8 +323,8 @@ class _PostInstanceState extends State<PostInstance> {
                                   });
                                 },
                                 child: Text((addComment) ? "hide comment" : "add comment",
-                                    style:
-                                        TextStyle(fontStyle: FontStyle.italic, color: Colors.grey)),
+                                    style: const TextStyle(
+                                        fontStyle: FontStyle.italic, color: Colors.grey)),
                               ),
                             ],
                           ),
@@ -332,7 +333,7 @@ class _PostInstanceState extends State<PostInstance> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(top: 10),
+                                      margin: const EdgeInsets.only(top: 10),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(width: 2, color: globals.primaryColor!),
@@ -340,13 +341,13 @@ class _PostInstanceState extends State<PostInstance> {
                                       child: Form(
                                         key: formKey,
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 10),
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
                                           child: TextFormField(
                                             minLines: 1,
                                             maxLines: 10,
                                             controller: commentController,
-                                            scrollPadding: EdgeInsets.symmetric(vertical: 0),
-                                            decoration: InputDecoration(
+                                            scrollPadding: const EdgeInsets.symmetric(vertical: 0),
+                                            decoration: const InputDecoration(
                                               isDense: true,
                                               hintText: "enter your comment here",
                                               focusedBorder: InputBorder.none,
@@ -356,16 +357,16 @@ class _PostInstanceState extends State<PostInstance> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 5),
-                                    Container(
+                                    const SizedBox(height: 5),
+                                    SizedBox(
                                       height: 25,
                                       child: ElevatedButton(
                                           style: ButtonStyle(
                                             backgroundColor:
                                                 MaterialStateProperty.all(globals.primaryColor!),
                                           ),
-                                          child: Text("post comment"),
-                                          onPressed: (() => postComment(commentController.text))),
+                                          onPressed: (() => postComment(commentController.text)),
+                                          child: const Text("post comment")),
                                     ),
                                   ],
                                 )
@@ -400,7 +401,7 @@ class _PostInstanceState extends State<PostInstance> {
                               }),
                           // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
                           //   CommentInstance(postData: widget.data, commentData: comment),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                         ],
                       )
                     : Container(),
@@ -413,61 +414,64 @@ class _PostInstanceState extends State<PostInstance> {
             left: 20,
             child: Row(
               children: [
-                Container(
-                  // width: 120,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: (globals.myUser!.uid == widget.data["authorID"])
-                        ? globals.primaryColor
-                        : globals.primarySwatch,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                GestureDetector(
+                  onTap: (() => showOptions(widget.data, widget.snapshot, false)),
                   child: Container(
-                    padding: const EdgeInsets.only(bottom: 18),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        if (widget.data["reactions"]["likeIDs"].length > 0)
-                          Row(children: [
-                            const SizedBox(width: 10),
-                            Icon(Icons.thumb_up, size: 17, color: Colors.white),
-                            SizedBox(width: 2),
-                            // if (widget.data["reactions"]["likeIDs"].length > 1)
-                            Text(
-                              "${widget.data["reactions"]["likeIDs"].length.toString()}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ]),
-                        if (widget.data["reactions"]["heartIDs"].length > 0)
-                          Row(children: [
-                            const SizedBox(width: 10),
-                            Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
-                            SizedBox(width: 2),
-                            Text(
-                              "${widget.data["reactions"]["heartIDs"].length.toString()}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ]),
-                        if (widget.data["comments"].length > 0)
-                          Row(children: [
-                            const SizedBox(width: 10),
-                            Icon(Icons.comment, size: 17, color: Colors.white),
-                            SizedBox(width: 2),
-                            Text(
-                              "${widget.data["comments"].length.toString()}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ]),
-                        const SizedBox(width: 10),
-                        // Row(children: [
-                        //   SizedBox(width: 10),
-                        //   Text("C: ${widget.data["comments"].length.toString()}"),
-                        // ]),
-                      ],
+                    // width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: (globals.myUser!.uid == widget.data["authorID"])
+                          ? globals.primaryColor
+                          : globals.primarySwatch,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.only(bottom: 18),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          if (widget.data["reactions"]["likeIDs"].length > 0)
+                            Row(children: [
+                              const SizedBox(width: 10),
+                              const Icon(Icons.thumb_up, size: 17, color: Colors.white),
+                              const SizedBox(width: 2),
+                              // if (widget.data["reactions"]["likeIDs"].length > 1)
+                              Text(
+                                widget.data["reactions"]["likeIDs"].length.toString(),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ]),
+                          if (widget.data["reactions"]["heartIDs"].length > 0)
+                            Row(children: [
+                              const SizedBox(width: 10),
+                              const Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
+                              const SizedBox(width: 2),
+                              Text(
+                                widget.data["reactions"]["heartIDs"].length.toString(),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ]),
+                          if (widget.data["comments"].length > 0)
+                            Row(children: [
+                              const SizedBox(width: 10),
+                              const Icon(Icons.comment, size: 17, color: Colors.white),
+                              const SizedBox(width: 2),
+                              Text(
+                                widget.data["comments"].length.toString(),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ]),
+                          const SizedBox(width: 10),
+                          // Row(children: [
+                          //   SizedBox(width: 10),
+                          //   Text("C: ${widget.data["comments"].length.toString()}"),
+                          // ]),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 Container(
                   margin: const EdgeInsets.only(bottom: 25),
                   child: Text(
@@ -492,7 +496,7 @@ class _PostInstanceState extends State<PostInstance> {
                   },
                   child: Row(
                     children: [
-                      (!isExpanded) ? Text("expand") : Text("close"),
+                      (!isExpanded) ? const Text("expand") : const Text("close"),
                       Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
                     ],
                   ),
@@ -532,7 +536,7 @@ class _PostInstanceState extends State<PostInstance> {
                     Fluttertoast.showToast(msg: 'content copied succesfully');
                     Navigator.pop(context);
                   },
-                  child: const Text('copy content (text)'),
+                  child: const Text('copy content'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -660,13 +664,14 @@ class _PostInstanceState extends State<PostInstance> {
         .doc(commentID)
         .set(commentMap);
 
-    String title = "${globals.myUser!.nickname!} has commented on your post: '${content}'";
+    String title = "${globals.myUser!.nickname!} has commented on your post: '$content'";
     databaseMethods.sendNotification(title, content, widget.snapshot.data!.token!);
   }
 }
 
 class CommentInstance extends StatefulWidget {
-  CommentInstance({Key? key, required this.postData, required this.commentData}) : super(key: key);
+  const CommentInstance({Key? key, required this.postData, required this.commentData})
+      : super(key: key);
   final Map<String, dynamic> postData;
   final Map<String, dynamic> commentData;
   @override
@@ -716,19 +721,19 @@ class _CommentInstanceState extends State<CommentInstance> {
                                       width: 25,
                                       fit: BoxFit.fill,
                                       placeholder: (context, value) {
-                                        return CircularProgressIndicator();
+                                        return const CircularProgressIndicator();
                                       },
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(snapshot.data!.nickname!),
                                   Text(widget.commentData["time2"],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 10,
                                           fontStyle: FontStyle.italic,
                                           color: Colors.grey)),
@@ -737,7 +742,7 @@ class _CommentInstanceState extends State<CommentInstance> {
                             ],
                           );
                         } else {
-                          return Container(
+                          return const SizedBox(
                             height: 25,
                             width: 25,
                             child: CircularProgressIndicator(),
@@ -745,9 +750,9 @@ class _CommentInstanceState extends State<CommentInstance> {
                         }
                       },
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(widget.commentData["content"]),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                   ],
                 ),
               ],
@@ -776,22 +781,22 @@ class _CommentInstanceState extends State<CommentInstance> {
                                 if (widget.commentData["reactions"]["likeIDs"].length > 0)
                                   Row(children: [
                                     const SizedBox(width: 10),
-                                    Icon(Icons.thumb_up, size: 17, color: Colors.white),
-                                    SizedBox(width: 2),
+                                    const Icon(Icons.thumb_up, size: 17, color: Colors.white),
+                                    const SizedBox(width: 2),
                                     // if (widget.commentData["reactions"]["likeIDs"].length > 1)
                                     Text(
-                                      "${widget.commentData["reactions"]["likeIDs"].length.toString()}",
-                                      style: TextStyle(color: Colors.white),
+                                      widget.commentData["reactions"]["likeIDs"].length.toString(),
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                   ]),
                                 if (widget.commentData["reactions"]["heartIDs"].length > 0)
                                   Row(children: [
                                     const SizedBox(width: 10),
-                                    Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
-                                    SizedBox(width: 2),
+                                    const Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
+                                    const SizedBox(width: 2),
                                     Text(
-                                      "${widget.commentData["reactions"]["heartIDs"].length.toString()}",
-                                      style: TextStyle(color: Colors.white),
+                                      widget.commentData["reactions"]["heartIDs"].length.toString(),
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                   ]),
                                 // if (widget.commentData["comments"].length > 0)
@@ -809,11 +814,11 @@ class _CommentInstanceState extends State<CommentInstance> {
                               ],
                             )
                           : Container(
-                              child: SizedBox(
+                              child: const SizedBox(
                               width: 10,
                             )),
                     )),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 Container(
                   margin: const EdgeInsets.only(bottom: 25),
                   child: Text(

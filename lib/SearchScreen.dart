@@ -1,17 +1,26 @@
-import 'dart:convert';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:karpportal/ChatScreen.dart';
 import 'package:karpportal/Database.dart';
-import 'package:karpportal/MyClipper.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import 'UserModel.dart';
-
 import 'globals.dart' as globals;
+
+DatabaseMethods databaseMethods = DatabaseMethods();
+
+var fields = ["firstName", "secondName", "email", "nickname"];
+String? name;
+
+UserModel? searchModel;
+getChatRoomId(String a, String b) {
+  if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+    return "$b - $a";
+  } else {
+    return "$a - $b";
+  }
+}
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -21,17 +30,36 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-String? name;
-var fields = ["firstName", "secondName", "email", "nickname"];
+class SearchTitle extends StatelessWidget {
+  final String userName;
+  final String userEmail;
 
-DatabaseMethods databaseMethods = DatabaseMethods();
-UserModel? searchModel;
+  const SearchTitle({required this.userName, required this.userEmail});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Text(userName),
+              Text(userEmail),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
 
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+
+  QuerySnapshot? searchSnapshot;
 
   // @override
   // void initState() {
@@ -61,20 +89,21 @@ class _SearchPageState extends State<SearchPage> {
         Container(
           margin: const EdgeInsets.only(left: 20, right: 20),
           //child: Form(
-          child: Container(
-            child: TextFormField(
-              decoration: const InputDecoration(hintText: 'find user'),
-              controller: searchController,
-              onChanged: (val) {
-                setState(() {
-                  if (val != null) {
-                    name = val;
-                  } else {
-                    name = "";
-                  }
-                });
-              },
-            ),
+          child: TextFormField(
+            decoration: const InputDecoration(
+                hintText: 'find user',
+                focusedBorder:
+                    UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey, width: 1))),
+            controller: searchController,
+            onChanged: (val) {
+              setState(() {
+                if (val != null) {
+                  name = val;
+                } else {
+                  name = "";
+                }
+              });
+            },
           ),
         ),
         const Padding(padding: EdgeInsets.only(top: 10)),
@@ -132,8 +161,9 @@ class _SearchPageState extends State<SearchPage> {
                                           height: 55,
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) =>
-                                              CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) => Icon(Icons.error),
+                                              const CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
                                         ),
                                       ),
                                     ),
@@ -155,15 +185,6 @@ class _SearchPageState extends State<SearchPage> {
         )
       ]),
     );
-  }
-
-  QuerySnapshot? searchSnapshot;
-  void initSearch() {
-    databaseMethods.getByUserName(searchController.text).then((val) {
-      print(val.toString());
-      searchSnapshot = val;
-      print(searchSnapshot);
-    });
   }
 
   void createChatRoom(Map<String, dynamic> data) async {
@@ -201,35 +222,12 @@ class _SearchPageState extends State<SearchPage> {
         MaterialPageRoute(
             builder: (context) => ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
   }
-}
 
-getChatRoomId(String a, String b) {
-  if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-    return "$b - $a";
-  } else {
-    return "$a - $b";
-  }
-}
-
-class SearchTitle extends StatelessWidget {
-  final String userName;
-  final String userEmail;
-
-  SearchTitle({required this.userName, required this.userEmail});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          Column(
-            children: [
-              Text(userName),
-              Text(userEmail),
-            ],
-          ),
-        ],
-      ),
-    );
+  void initSearch() {
+    databaseMethods.getByUserName(searchController.text).then((val) {
+      print(val.toString());
+      searchSnapshot = val;
+      print(searchSnapshot);
+    });
   }
 }
