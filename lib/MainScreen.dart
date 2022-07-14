@@ -721,7 +721,7 @@ class _CommentInstanceState extends State<CommentInstance> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: (() => showOptions(widget.postData)),
+      onLongPress: (() => showOptions(widget.commentData)),
       // onTap: (() => showOptions(widget.commentData)),
       onTap: (widget.isExpanded)
           ? () {}
@@ -1141,6 +1141,7 @@ class _CommentInstanceState extends State<CommentInstance> {
         }
       }, SetOptions(merge: true));
     }
+    // setState(() {});
   }
 
   postComment(String content) {
