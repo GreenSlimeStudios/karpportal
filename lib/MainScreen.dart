@@ -183,7 +183,14 @@ class _PostInstanceState extends State<PostInstance> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => Scaffold(
-                          appBar: AppBar(title: Text("Karpportal")),
+                          appBar: AppBar(
+                            title: Text(
+                              'Karp Portal',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.leagueScript(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           body: SingleChildScrollView(
                               child: Column(
                             children: [
@@ -421,7 +428,8 @@ class _PostInstanceState extends State<PostInstance> {
                                                   CommentInstance(
                                                       postData: widget.data,
                                                       commentData: snapshot.data!.docs[i].data()
-                                                          as Map<String, dynamic>),
+                                                          as Map<String, dynamic>,
+                                                      isExpanded: false),
                                             ],
                                           ),
                                         );
@@ -478,16 +486,17 @@ class _PostInstanceState extends State<PostInstance> {
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ]),
-                          if (widget.data["comments"].length > 0)
-                            Row(children: [
-                              const SizedBox(width: 10),
-                              const Icon(Icons.comment, size: 17, color: Colors.white),
-                              const SizedBox(width: 2),
-                              Text(
-                                widget.data["comments"].length.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ]),
+                          if (widget.data["allComments"] != null)
+                            if (widget.data["allComments"].length > 0)
+                              Row(children: [
+                                const SizedBox(width: 10),
+                                const Icon(Icons.comment, size: 17, color: Colors.white),
+                                const SizedBox(width: 2),
+                                Text(
+                                  widget.data["allComments"].length.toString(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ]),
                           const SizedBox(width: 10),
                           // Row(children: [
                           //   SizedBox(width: 10),
@@ -643,16 +652,6 @@ class _PostInstanceState extends State<PostInstance> {
         }
       }, SetOptions(merge: true));
     } else {
-      // Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
-      // if (postData["reactions"][reaction] != null &&
-      //     postData["reactions"][reaction] != [] &&
-      //     postData["reactions"][reaction].isEmpty == false) {
-      //   postData["reactions"][reaction].add(globals.myUser!.uid);
-      // } else {
-      //   postData["reactions"][reaction] = [globals.myUser!.uid];
-      // }
-      // await databaseMethods.setPost(postData["uid"], postData);
-
       await FirebaseFirestore.instance.collection("Posts").doc(data["uid"]).set({
         "reactions": {
           reaction: FieldValue.arrayUnion([globals.myUser!.uid!]),
@@ -679,7 +678,8 @@ class _PostInstanceState extends State<PostInstance> {
       },
     };
     FirebaseFirestore.instance.collection("Posts").doc(widget.data["uid"]).set({
-      "comments": FieldValue.arrayUnion([commentID])
+      "comments": FieldValue.arrayUnion([commentID]),
+      "allComments": FieldValue.arrayUnion([commentID]),
     }, SetOptions(merge: true));
     commentController.text = "";
     addComment = false;
@@ -697,10 +697,12 @@ class _PostInstanceState extends State<PostInstance> {
 }
 
 class CommentInstance extends StatefulWidget {
-  const CommentInstance({Key? key, required this.postData, required this.commentData})
+  const CommentInstance(
+      {Key? key, required this.postData, required this.commentData, required this.isExpanded})
       : super(key: key);
   final Map<String, dynamic> postData;
   final Map<String, dynamic> commentData;
+  final bool isExpanded;
   @override
   State<CommentInstance> createState() => _CommentInstanceState();
 }
@@ -712,11 +714,41 @@ class _CommentInstanceState extends State<CommentInstance> {
   final formKey = GlobalKey<FormState>();
   UserModel? author;
 
+  initState() {
+    isExpanded = widget.isExpanded;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: (() => showOptions(widget.postData)),
-      onTap: (() => showOptions(widget.commentData)),
+      // onTap: (() => showOptions(widget.commentData)),
+      onTap: (widget.isExpanded)
+          ? () {}
+          : () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Scaffold(
+                          appBar: AppBar(
+                            title: Text(
+                              'Karp Portal',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.leagueScript(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          body: SingleChildScrollView(
+                              child: Column(
+                            children: [
+                              CommentInstance(
+                                  postData: widget.postData,
+                                  commentData: widget.commentData,
+                                  isExpanded: true),
+                              SizedBox(height: 10),
+                            ],
+                          )))));
+            },
       child: Stack(
         children: [
           Container(
@@ -885,7 +917,8 @@ class _CommentInstanceState extends State<CommentInstance> {
                                                       CommentInstance(
                                                           postData: widget.postData,
                                                           commentData: snapshot.data!.docs[i].data()
-                                                              as Map<String, dynamic>),
+                                                              as Map<String, dynamic>,
+                                                          isExpanded: false),
                                                 ],
                                               ),
                                             );
@@ -907,62 +940,68 @@ class _CommentInstanceState extends State<CommentInstance> {
             left: 10,
             child: Row(
               children: [
-                Container(
-                    // width: 120,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: (globals.myUser!.uid == widget.commentData["authorID"])
-                          ? globals.primaryColor
-                          : globals.primarySwatch,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.only(bottom: 18),
-                      child: (widget.commentData["reactions"] != null)
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                if (widget.commentData["reactions"]["likeIDs"].length > 0)
-                                  Row(children: [
-                                    const SizedBox(width: 10),
-                                    const Icon(Icons.thumb_up, size: 17, color: Colors.white),
-                                    const SizedBox(width: 2),
-                                    // if (widget.commentData["reactions"]["likeIDs"].length > 1)
-                                    Text(
-                                      widget.commentData["reactions"]["likeIDs"].length.toString(),
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ]),
-                                if (widget.commentData["reactions"]["heartIDs"].length > 0)
-                                  Row(children: [
-                                    const SizedBox(width: 10),
-                                    const Icon(CupertinoIcons.heart, size: 17, color: Colors.white),
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      widget.commentData["reactions"]["heartIDs"].length.toString(),
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ]),
-                                if (widget.commentData["comments"] != null)
-                                  if (widget.commentData["comments"].length > 0)
+                GestureDetector(
+                  onTap: (() => showOptions(widget.commentData)),
+                  child: Container(
+                      // width: 120,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: (globals.myUser!.uid == widget.commentData["authorID"])
+                            ? globals.primaryColor
+                            : globals.primarySwatch,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 18),
+                        child: (widget.commentData["reactions"] != null)
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  if (widget.commentData["reactions"]["likeIDs"].length > 0)
                                     Row(children: [
                                       const SizedBox(width: 10),
-                                      Icon(Icons.comment, size: 17),
-                                      SizedBox(width: 2),
-                                      Text("${widget.commentData["comments"].length.toString()}"),
+                                      const Icon(Icons.thumb_up, size: 17, color: Colors.white),
+                                      const SizedBox(width: 2),
+                                      // if (widget.commentData["reactions"]["likeIDs"].length > 1)
+                                      Text(
+                                        widget.commentData["reactions"]["likeIDs"].length
+                                            .toString(),
+                                        style: const TextStyle(color: Colors.white),
+                                      ),
                                     ]),
-                                const SizedBox(width: 10),
-                                // Row(children: [
-                                //   SizedBox(width: 10),
-                                //   Text("C: ${widget.commentData["comments"].length.toString()}"),
-                                // ]),
-                              ],
-                            )
-                          : Container(
-                              child: const SizedBox(
-                              width: 10,
-                            )),
-                    )),
+                                  if (widget.commentData["reactions"]["heartIDs"].length > 0)
+                                    Row(children: [
+                                      const SizedBox(width: 10),
+                                      const Icon(CupertinoIcons.heart,
+                                          size: 17, color: Colors.white),
+                                      const SizedBox(width: 2),
+                                      Text(
+                                        widget.commentData["reactions"]["heartIDs"].length
+                                            .toString(),
+                                        style: const TextStyle(color: Colors.white),
+                                      ),
+                                    ]),
+                                  if (widget.commentData["comments"] != null)
+                                    if (widget.commentData["comments"].length > 0)
+                                      Row(children: [
+                                        const SizedBox(width: 10),
+                                        Icon(Icons.comment, size: 17),
+                                        SizedBox(width: 2),
+                                        Text("${widget.commentData["comments"].length.toString()}"),
+                                      ]),
+                                  const SizedBox(width: 10),
+                                  // Row(children: [
+                                  //   SizedBox(width: 10),
+                                  //   Text("C: ${widget.commentData["comments"].length.toString()}"),
+                                  // ]),
+                                ],
+                              )
+                            : Container(
+                                child: const SizedBox(
+                                width: 10,
+                              )),
+                      )),
+                ),
                 const SizedBox(width: 5),
                 Container(
                   margin: const EdgeInsets.only(bottom: 25),
@@ -1119,6 +1158,9 @@ class _CommentInstanceState extends State<CommentInstance> {
       },
     };
 
+    FirebaseFirestore.instance.collection("Posts").doc(widget.postData["uid"]).set({
+      "allComments": FieldValue.arrayUnion([commentID])
+    }, SetOptions(merge: true));
     FirebaseFirestore.instance
         .collection("Posts")
         .doc(widget.postData["uid"])
