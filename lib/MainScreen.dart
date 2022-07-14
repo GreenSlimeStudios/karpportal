@@ -167,7 +167,7 @@ class PostInstance extends StatefulWidget {
 class _PostInstanceState extends State<PostInstance> {
   bool isExpanded = false;
   bool isImageExpanded = false;
-  bool addComment = false;
+  bool addComment = true;
   initState() {
     isExpanded = widget.isExpanded;
   }
@@ -205,7 +205,7 @@ class _PostInstanceState extends State<PostInstance> {
           Container(
             width: double.infinity,
             margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
             decoration: BoxDecoration(
               color: globals.themeColor,
               border: Border.all(
@@ -265,7 +265,9 @@ class _PostInstanceState extends State<PostInstance> {
                 Container(
                   // padding: EdgeInsets.symmetric(horizontal: 10),
                   constraints: const BoxConstraints(maxWidth: 3000),
-                  child: (widget.data["content"] != null && widget.data["content"] != " ")
+                  child: (widget.data["content"] != null &&
+                          widget.data["content"] != " " &&
+                          widget.data["content"] != "")
                       ? Container(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: Text(
@@ -399,6 +401,7 @@ class _PostInstanceState extends State<PostInstance> {
                                           onPressed: (() => postComment(commentController.text)),
                                           child: const Text("post comment")),
                                     ),
+                                    SizedBox(height: 5),
                                   ],
                                 )
                               : Container(),
@@ -429,7 +432,7 @@ class _PostInstanceState extends State<PostInstance> {
                                                       postData: widget.data,
                                                       commentData: snapshot.data!.docs[i].data()
                                                           as Map<String, dynamic>,
-                                                      isExpanded: false),
+                                                      isExpanded: true),
                                             ],
                                           ),
                                         );
@@ -710,12 +713,18 @@ class CommentInstance extends StatefulWidget {
 class _CommentInstanceState extends State<CommentInstance> {
   TextEditingController commentController = TextEditingController();
   bool addComment = false;
-  bool isExpanded = false;
+  bool isExpanded = true;
   final formKey = GlobalKey<FormState>();
   UserModel? author;
 
   initState() {
-    isExpanded = widget.isExpanded;
+    if (widget.isExpanded) isExpanded = true;
+  }
+
+  Color getBorderColor() {
+    return widget.commentData["authorID"] == globals.myUser!.uid
+        ? globals.primaryColor!
+        : globals.primarySwatch!;
   }
 
   @override
@@ -753,17 +762,39 @@ class _CommentInstanceState extends State<CommentInstance> {
         children: [
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.only(top: 5),
+            padding: const EdgeInsets.only(left: 10, top: 10, bottom: 5),
             decoration: BoxDecoration(
               color: globals.themeColor,
-              border: Border.all(
-                width: 2,
-                color: widget.commentData["authorID"] == globals.myUser!.uid
-                    ? globals.primaryColor!
-                    : globals.primarySwatch!,
-              ),
+              // border: Border(
+              //   left: BorderSide(
+              //     width: 2,
+              //     color: getBorderColor(),
+              //   ),
+              //   bottom: BorderSide(
+              //     width: 2,
+              //     color: getBorderColor(),
+              //   ),
+              //   top: BorderSide(
+              //     width: 2,
+              //     color: getBorderColor(),
+              //   ),
+              // ),
+              // border: Border.merge(
+              //   Border(top: BorderSide(color: getBorderColor(), width: 2)),
+              //   Border(left: BorderSide(color: getBorderColor(), width: 2)),
+              // ),
+              border: Border.all(width: 2, color: getBorderColor()),
+              // Border.all(
+              // width: 2,
+              // color: widget.commentData["authorID"] == globals.myUser!.uid
+              // ? globals.primaryColor!
+              // : globals.primarySwatch!,
+              // ),
               borderRadius: BorderRadius.circular(10),
+              // borderRadius: BorderRadius.only(
+              //   topLeft: Radius.circular(10),
+              // ),
             ),
             child: Stack(
               children: [
@@ -818,6 +849,26 @@ class _CommentInstanceState extends State<CommentInstance> {
                     ),
                     const SizedBox(height: 5),
                     Text(widget.commentData["content"]),
+                    if (isExpanded == false)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isExpanded = !isExpanded;
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                (!isExpanded) ? const Text("expand") : const Text("collapse"),
+                                Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
                     (isExpanded)
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -825,11 +876,8 @@ class _CommentInstanceState extends State<CommentInstance> {
                             children: [
                               const SizedBox(height: 5),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  (widget.commentData["comments"] != null)
-                                      ? Text("Comments ${widget.commentData["comments"].length}")
-                                      : Text("comments 0"),
-                                  const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -840,6 +888,21 @@ class _CommentInstanceState extends State<CommentInstance> {
                                         style: const TextStyle(
                                             fontStyle: FontStyle.italic, color: Colors.grey)),
                                   ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isExpanded = !isExpanded;
+                                      });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        (!isExpanded)
+                                            ? const Text("expand")
+                                            : const Text("collapse"),
+                                        Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               (addComment)
@@ -847,7 +910,7 @@ class _CommentInstanceState extends State<CommentInstance> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          margin: const EdgeInsets.only(top: 10),
+                                          // margin: const EdgeInsets.only(top: 10),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(10),
                                             border:
@@ -925,34 +988,36 @@ class _CommentInstanceState extends State<CommentInstance> {
                                     }),
                               // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
                               //   CommentInstance(postData: widget.data, commentData: comment),
-                              const SizedBox(height: 5),
+                              // const SizedBox(height: 5),
                             ],
                           )
                         : Container(),
-                    const SizedBox(height: 15),
+                    // const SizedBox(height: 15),
                   ],
                 ),
               ],
             ),
           ),
           Positioned(
-            bottom: -20,
-            left: 10,
+            top: 5,
+            right: 10,
             child: Row(
               children: [
                 GestureDetector(
                   onTap: (() => showOptions(widget.commentData)),
                   child: Container(
                       // width: 120,
-                      height: 40,
+                      height: 20,
                       decoration: BoxDecoration(
                         color: (globals.myUser!.uid == widget.commentData["authorID"])
                             ? globals.primaryColor
                             : globals.primarySwatch,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(10),
+                        ),
                       ),
                       child: Container(
-                        padding: const EdgeInsets.only(bottom: 18),
+                        padding: const EdgeInsets.only(top: 0),
                         child: (widget.commentData["reactions"] != null)
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1002,41 +1067,41 @@ class _CommentInstanceState extends State<CommentInstance> {
                               )),
                       )),
                 ),
-                const SizedBox(width: 5),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 25),
-                  child: Text(
-                    (widget.commentData["time2"] != null)
-                        ? widget.commentData["time2"]
-                        : "2022/07/12 00:00",
-                    style: const TextStyle(
-                        color: Colors.grey, fontStyle: FontStyle.italic, fontSize: 13),
-                  ),
-                ),
+                // const SizedBox(width: 5),
+                // Container(
+                //   margin: const EdgeInsets.only(bottom: 25),
+                //   child: Text(
+                //     (widget.commentData["time2"] != null)
+                //         ? widget.commentData["time2"]
+                //         : "2022/07/12 00:00",
+                //     style: const TextStyle(
+                //         color: Colors.grey, fontStyle: FontStyle.italic, fontSize: 13),
+                //   ),
+                // ),
               ],
             ),
           ),
-          Positioned(
-            bottom: 5,
-            right: 10,
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isExpanded = !isExpanded;
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      (!isExpanded) ? const Text("expand") : const Text("collapse"),
-                      Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Positioned(
+          //   bottom: 5,
+          //   right: 10,
+          //   child: Row(
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           setState(() {
+          //             isExpanded = !isExpanded;
+          //           });
+          //         },
+          //         child: Row(
+          //           children: [
+          //             (!isExpanded) ? const Text("expand") : const Text("collapse"),
+          //             Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
