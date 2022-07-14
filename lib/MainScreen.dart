@@ -102,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                       child: Column(
                         children: [
                           for (int i = 0; i < snapshot.data!.docs.length; i++)
-                            renderPosts(snapshot.data!.docs[i].data() as Map<String, dynamic>),
+                            renderPost(snapshot.data!.docs[i].data() as Map<String, dynamic>),
                         ],
                       ),
                     );
@@ -115,12 +115,12 @@ class _MainPageState extends State<MainPage> {
         context, MaterialPageRoute(builder: (context) => const CreatePostPage()));
   }
 
-  Widget renderPosts(Map<String, dynamic> data) {
+  Widget renderPost(Map<String, dynamic> data) {
     return FutureBuilder<UserModel>(
       future: getAuthor(data["authorID"]),
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
         if (snapshot.hasData) {
-          return PostInstance(data: data, snapshot: snapshot);
+          return PostInstance(data: data, snapshot: snapshot, isExpanded: false);
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         } else {
@@ -152,10 +152,13 @@ Future<UserModel> getAuthor(uid) async {
 // Future share(Map<String, dynamic> data) async {}
 
 class PostInstance extends StatefulWidget {
-  const PostInstance({Key? key, required this.data, required this.snapshot}) : super(key: key);
+  const PostInstance(
+      {Key? key, required this.data, required this.snapshot, required this.isExpanded})
+      : super(key: key);
 
   final Map<String, dynamic> data;
   final AsyncSnapshot<UserModel> snapshot;
+  final bool isExpanded;
 
   @override
   State<PostInstance> createState() => _PostInstanceState();
@@ -165,10 +168,31 @@ class _PostInstanceState extends State<PostInstance> {
   bool isExpanded = false;
   bool isImageExpanded = false;
   bool addComment = false;
+  initState() {
+    isExpanded = widget.isExpanded;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: (() => showOptions(widget.data, widget.snapshot, false)),
+      onTap: (widget.isExpanded)
+          ? () {}
+          : () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Scaffold(
+                          appBar: AppBar(title: Text("Karpportal")),
+                          body: SingleChildScrollView(
+                              child: Column(
+                            children: [
+                              PostInstance(
+                                  data: widget.data, snapshot: widget.snapshot, isExpanded: true),
+                              SizedBox(height: 10),
+                            ],
+                          )))));
+            },
       child: Stack(
         children: [
           Container(
@@ -371,34 +395,37 @@ class _PostInstanceState extends State<PostInstance> {
                                   ],
                                 )
                               : Container(),
-                          StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection("Posts")
-                                  .doc(widget.data["uid"])
-                                  .collection("comments")
-                                  .orderBy('time', descending: true)
-                                  .snapshots(),
-                              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                                return (snapshot.connectionState == ConnectionState.waiting)
-                                    ? const Center(
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : Container(
-                                        // constraints: BoxConstraints(
-                                        // maxHeight: 1000,
-                                        // ),
+                          if (widget.data["comments"] != null)
+                            StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection("Posts")
+                                    .doc(widget.data["uid"])
+                                    .collection("comments")
+                                    .orderBy('time', descending: true)
+                                    .snapshots(),
+                                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                  return (snapshot.connectionState == ConnectionState.waiting)
+                                      ? const Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : Container(
+                                          // constraints: BoxConstraints(
+                                          // maxHeight: 1000,
+                                          // ),
 
-                                        child: Column(
-                                          children: [
-                                            for (int i = 0; i < snapshot.data!.docs.length; i++)
-                                              CommentInstance(
-                                                  postData: widget.data,
-                                                  commentData: snapshot.data!.docs[i].data()
-                                                      as Map<String, dynamic>),
-                                          ],
-                                        ),
-                                      );
-                              }),
+                                          child: Column(
+                                            children: [
+                                              for (int i = 0; i < snapshot.data!.docs.length; i++)
+                                                if (widget.data["comments"]
+                                                    .contains(snapshot.data!.docs[i].data()["uid"]))
+                                                  CommentInstance(
+                                                      postData: widget.data,
+                                                      commentData: snapshot.data!.docs[i].data()
+                                                          as Map<String, dynamic>),
+                                            ],
+                                          ),
+                                        );
+                                }),
                           // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
                           //   CommentInstance(postData: widget.data, commentData: comment),
                           const SizedBox(height: 5),
@@ -496,7 +523,7 @@ class _PostInstanceState extends State<PostInstance> {
                   },
                   child: Row(
                     children: [
-                      (!isExpanded) ? const Text("expand") : const Text("close"),
+                      (!isExpanded) ? const Text("expand") : const Text("collapse"),
                       Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
                     ],
                   ),
@@ -679,6 +706,12 @@ class CommentInstance extends StatefulWidget {
 }
 
 class _CommentInstanceState extends State<CommentInstance> {
+  TextEditingController commentController = TextEditingController();
+  bool addComment = false;
+  bool isExpanded = false;
+  final formKey = GlobalKey<FormState>();
+  UserModel? author;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -710,6 +743,7 @@ class _CommentInstanceState extends State<CommentInstance> {
                       future: getAuthor(widget.commentData["authorID"]),
                       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
                         if (snapshot.hasData) {
+                          author = snapshot.data!;
                           return Row(
                             children: [
                               Column(
@@ -752,6 +786,116 @@ class _CommentInstanceState extends State<CommentInstance> {
                     ),
                     const SizedBox(height: 5),
                     Text(widget.commentData["content"]),
+                    (isExpanded)
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  (widget.commentData["comments"] != null)
+                                      ? Text("Comments ${widget.commentData["comments"].length}")
+                                      : Text("comments 0"),
+                                  const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        addComment = !addComment;
+                                      });
+                                    },
+                                    child: Text((addComment) ? "hide comment" : "add comment",
+                                        style: const TextStyle(
+                                            fontStyle: FontStyle.italic, color: Colors.grey)),
+                                  ),
+                                ],
+                              ),
+                              (addComment)
+                                  ? Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.only(top: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            border:
+                                                Border.all(width: 2, color: globals.primaryColor!),
+                                          ),
+                                          child: Form(
+                                            key: formKey,
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              child: TextFormField(
+                                                minLines: 1,
+                                                maxLines: 10,
+                                                controller: commentController,
+                                                scrollPadding:
+                                                    const EdgeInsets.symmetric(vertical: 0),
+                                                decoration: const InputDecoration(
+                                                  isDense: true,
+                                                  hintText: "enter your comment here",
+                                                  focusedBorder: InputBorder.none,
+                                                  border: InputBorder.none,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        SizedBox(
+                                          height: 25,
+                                          child: ElevatedButton(
+                                              style: ButtonStyle(
+                                                backgroundColor: MaterialStateProperty.all(
+                                                    globals.primaryColor!),
+                                              ),
+                                              onPressed: (() =>
+                                                  postComment(commentController.text)),
+                                              child: const Text("post comment")),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(),
+                              if (widget.commentData["comments"] != null)
+                                StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection("Posts")
+                                        .doc(widget.postData["uid"])
+                                        .collection("comments")
+                                        .orderBy('time', descending: true)
+                                        .snapshots(),
+                                    builder:
+                                        (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                      return (snapshot.connectionState == ConnectionState.waiting)
+                                          ? const Center(
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          : Container(
+                                              // constraints: BoxConstraints(
+                                              // maxHeight: 1000,
+                                              // ),
+
+                                              child: Column(
+                                                children: [
+                                                  for (int i = 0;
+                                                      i < snapshot.data!.docs.length;
+                                                      i++)
+                                                    if (widget.commentData["comments"].contains(
+                                                        snapshot.data!.docs[i].data()["uid"]))
+                                                      CommentInstance(
+                                                          postData: widget.postData,
+                                                          commentData: snapshot.data!.docs[i].data()
+                                                              as Map<String, dynamic>),
+                                                ],
+                                              ),
+                                            );
+                                    }),
+                              // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
+                              //   CommentInstance(postData: widget.data, commentData: comment),
+                              const SizedBox(height: 5),
+                            ],
+                          )
+                        : Container(),
                     const SizedBox(height: 15),
                   ],
                 ),
@@ -799,13 +943,14 @@ class _CommentInstanceState extends State<CommentInstance> {
                                       style: const TextStyle(color: Colors.white),
                                     ),
                                   ]),
-                                // if (widget.commentData["comments"].length > 0)
-                                //   Row(children: [
-                                //     const SizedBox(width: 10),
-                                //     Icon(Icons.comment, size: 17),
-                                //     SizedBox(width: 2),
-                                //     Text("${widget.commentData["comments"].length.toString()}"),
-                                //   ]),
+                                if (widget.commentData["comments"] != null)
+                                  if (widget.commentData["comments"].length > 0)
+                                    Row(children: [
+                                      const SizedBox(width: 10),
+                                      Icon(Icons.comment, size: 17),
+                                      SizedBox(width: 2),
+                                      Text("${widget.commentData["comments"].length.toString()}"),
+                                    ]),
                                 const SizedBox(width: 10),
                                 // Row(children: [
                                 //   SizedBox(width: 10),
@@ -827,6 +972,27 @@ class _CommentInstanceState extends State<CommentInstance> {
                         : "2022/07/12 00:00",
                     style: const TextStyle(
                         color: Colors.grey, fontStyle: FontStyle.italic, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 5,
+            right: 10,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isExpanded = !isExpanded;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      (!isExpanded) ? const Text("expand") : const Text("collapse"),
+                      Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
+                    ],
                   ),
                 ),
               ],
@@ -925,16 +1091,6 @@ class _CommentInstanceState extends State<CommentInstance> {
         }
       }, SetOptions(merge: true));
     } else {
-      // Map<String, dynamic> postData = await databaseMethods.getPost(data["uid"]);
-      // if (postData["reactions"][reaction] != null &&
-      //     postData["reactions"][reaction] != [] &&
-      //     postData["reactions"][reaction].isEmpty == false) {
-      //   postData["reactions"][reaction].add(globals.myUser!.uid);
-      // } else {
-      //   postData["reactions"][reaction] = [globals.myUser!.uid];
-      // }
-      // await databaseMethods.setPost(postData["uid"], postData);
-
       await FirebaseFirestore.instance
           .collection("Posts")
           .doc(widget.postData["uid"])
@@ -946,5 +1102,42 @@ class _CommentInstanceState extends State<CommentInstance> {
         }
       }, SetOptions(merge: true));
     }
+  }
+
+  postComment(String content) {
+    String commentID = "${globals.myUser!.uid!}${DateTime.now().millisecondsSinceEpoch}";
+    Map<String, dynamic> commentMap = {
+      "uid": commentID,
+      "authorID": globals.myUser!.uid!,
+      "time": DateTime.now().millisecondsSinceEpoch,
+      "time2": databaseMethods.getCurrentTime(),
+      "content": content,
+      "reactions": {
+        "likeIDs": [globals.myUser!.uid!],
+        "heartIDs": [],
+        "shareIDs": []
+      },
+    };
+
+    FirebaseFirestore.instance
+        .collection("Posts")
+        .doc(widget.postData["uid"])
+        .collection("comments")
+        .doc(widget.commentData["uid"])
+        .set({
+      "comments": FieldValue.arrayUnion([commentID])
+    }, SetOptions(merge: true));
+    commentController.text = "";
+    addComment = false;
+
+    FirebaseFirestore.instance
+        .collection("Posts")
+        .doc(widget.postData["uid"])
+        .collection("comments")
+        .doc(commentID)
+        .set(commentMap);
+
+    String title = "${globals.myUser!.nickname!} has commented on your comment: '$content'";
+    databaseMethods.sendNotification(title, content, author!.token!);
   }
 }
