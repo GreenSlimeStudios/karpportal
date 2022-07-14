@@ -168,8 +168,12 @@ class _PostInstanceState extends State<PostInstance> {
   bool isExpanded = false;
   bool isImageExpanded = false;
   bool addComment = true;
+  bool isOnce = false;
   initState() {
-    isExpanded = widget.isExpanded;
+    if (isOnce == false) {
+      isOnce = true;
+      isExpanded = widget.isExpanded;
+    }
   }
 
   @override
@@ -346,18 +350,37 @@ class _PostInstanceState extends State<PostInstance> {
                         children: [
                           const SizedBox(height: 5),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Comments ${widget.data["comments"].length}"),
-                              const SizedBox(width: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Comments ${widget.data["comments"].length}"),
+                                  const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        addComment = !addComment;
+                                      });
+                                    },
+                                    child: Text((addComment) ? "hide comment" : "add comment",
+                                        style: const TextStyle(
+                                            fontStyle: FontStyle.italic, color: Colors.grey)),
+                                  ),
+                                ],
+                              ),
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    addComment = !addComment;
+                                    isExpanded = !isExpanded;
                                   });
                                 },
-                                child: Text((addComment) ? "hide comment" : "add comment",
-                                    style: const TextStyle(
-                                        fontStyle: FontStyle.italic, color: Colors.grey)),
+                                child: Row(
+                                  children: [
+                                    (!isExpanded) ? const Text("expand") : const Text("collapse"),
+                                    Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
