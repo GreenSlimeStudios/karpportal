@@ -271,6 +271,7 @@ class _PostInstanceState extends State<PostInstance> {
                         ),
                       ),
                       Container(
+                        alignment: Alignment.centerLeft,
                         // padding: EdgeInsets.symmetric(horizontal: 10),
                         constraints: const BoxConstraints(maxWidth: 3000),
                         child: (widget.data["content"] != null &&
@@ -407,6 +408,13 @@ class _PostInstanceState extends State<PostInstance> {
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 10),
                                           child: TextFormField(
+                                            validator: (value) {
+                                              if (value == null) return "enter a valid comment";
+                                              if (value.isEmpty)
+                                                return "put a thing into the comment dum dum";
+                                              if (value == " ")
+                                                return "please enter a valid comment";
+                                            },
                                             minLines: 1,
                                             maxLines: 10,
                                             controller: commentController,
@@ -698,6 +706,7 @@ class _PostInstanceState extends State<PostInstance> {
   final formKey = GlobalKey<FormState>();
 
   postComment(String content) {
+    if (formKey.currentState!.validate() == false) return;
     String commentID = "${globals.myUser!.uid!}${DateTime.now().millisecondsSinceEpoch}";
     Map<String, dynamic> commentMap = {
       "uid": commentID,
@@ -729,6 +738,8 @@ class _PostInstanceState extends State<PostInstance> {
     databaseMethods.sendNotification(title, content, widget.snapshot.data!.token!);
   }
 }
+
+TextEditingController commentOnCommentController = TextEditingController();
 
 class CommentInstance extends StatefulWidget {
   const CommentInstance(
@@ -791,271 +802,291 @@ class _CommentInstanceState extends State<CommentInstance> {
             },
       child: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-              ),
-              color: getBorderColor(),
-            ),
-            margin: const EdgeInsets.only(top: 5),
-            width: double.infinity,
+          RepaintBoundary(
             child: Container(
-              margin: EdgeInsets.only(left: 2, top: 2),
-              width: double.infinity,
-              padding: const EdgeInsets.only(left: 5, top: 10, bottom: 5),
               decoration: BoxDecoration(
-                color: globals.themeColor,
-                // border: Border(
-                //   left: BorderSide(
-                //     width: 2,
-                //     color: getBorderColor(),
-                //   ),
-                //   // bottom: BorderSide(
-                //   //   width: 2,
-                //   //   color: getBorderColor(),
-                //   // ),
-                //   top: BorderSide(
-                //     width: 2,
-                //     color: getBorderColor(),
-                //   ),
-                // ),
-
-                // border: Border.merge(
-                //   Border(top: BorderSide(color: getBorderColor(), width: 2)),
-                //   Border(left: BorderSide(color: getBorderColor(), width: 2)),
-                // ),
-
-                // border: Border.all(width: 2, color: getBorderColor()),
-
-                // Border.all(
-                // width: 2,
-                // color: widget.commentData["authorID"] == globals.myUser!.uid
-                // ? globals.primaryColor!
-                // : globals.primarySwatch!,
-                // ),
-
-                // borderRadius: BorderRadius.circular(10),
-                // shape: BoxShape.circle,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                 ),
+                color: getBorderColor(),
+                // gradient: LinearGradient(…)
+                // gradient: LinearGradient(
+                //     colors: [getBorderColor(), globals.themeColor!],
+                //     begin: Alignment(0.0, 0.997),
+                //     end: Alignment.bottomCenter,
+                //     tileMode: TileMode.clamp),
               ),
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            FutureBuilder(
-                              future: getAuthor(widget.commentData["authorID"]),
-                              builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
-                                if (snapshot.hasData) {
-                                  author = snapshot.data!;
-                                  return Row(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          ClipOval(
-                                            child: CachedNetworkImage(
-                                              imageUrl: snapshot.data!.avatarUrl!,
-                                              height: 25,
-                                              width: 25,
-                                              fit: BoxFit.fill,
-                                              placeholder: (context, value) {
-                                                return const CircularProgressIndicator();
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(snapshot.data!.nickname!),
-                                          Text(widget.commentData["time2"],
-                                              style: const TextStyle(
-                                                  fontSize: 10,
-                                                  fontStyle: FontStyle.italic,
-                                                  color: Colors.grey)),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return const SizedBox(
-                                    height: 25,
-                                    width: 25,
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 5),
-                            Text(widget.commentData["content"]),
-                            if (isExpanded == false)
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isExpanded = !isExpanded;
-                                      });
-                                    },
-                                    child: Row(
+              margin: const EdgeInsets.only(top: 5),
+              width: double.infinity,
+              child: Container(
+                margin: EdgeInsets.only(left: 2, top: 2),
+                width: double.infinity,
+                padding: const EdgeInsets.only(left: 5, top: 10, bottom: 5),
+                decoration: BoxDecoration(
+                  color: globals.themeColor,
+                  // border: Border(
+                  //   left: BorderSide(
+                  //     width: 2,
+                  //     color: getBorderColor(),
+                  //   ),
+                  //   // bottom: BorderSide(
+                  //   //   width: 2,
+                  //   //   color: getBorderColor(),
+                  //   // ),
+                  //   top: BorderSide(
+                  //     width: 2,
+                  //     color: getBorderColor(),
+                  //   ),
+                  // ),
+
+                  // border: Border.merge(
+                  //   Border(top: BorderSide(color: getBorderColor(), width: 2)),
+                  //   Border(left: BorderSide(color: getBorderColor(), width: 2)),
+                  // ),
+
+                  // border: Border.all(width: 2, color: getBorderColor()),
+
+                  // Border.all(
+                  // width: 2,
+                  // color: widget.commentData["authorID"] == globals.myUser!.uid
+                  // ? globals.primaryColor!
+                  // : globals.primarySwatch!,
+                  // ),
+
+                  // borderRadius: BorderRadius.circular(10),
+                  // shape: BoxShape.circle,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FutureBuilder(
+                                future: getAuthor(widget.commentData["authorID"]),
+                                builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+                                  if (snapshot.hasData) {
+                                    author = snapshot.data!;
+                                    return Row(
                                       children: [
-                                        (!isExpanded)
-                                            ? const Text("expand")
-                                            : const Text("collapse"),
-                                        Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
+                                        Column(
+                                          children: [
+                                            ClipOval(
+                                              child: CachedNetworkImage(
+                                                imageUrl: snapshot.data!.avatarUrl!,
+                                                height: 25,
+                                                width: 25,
+                                                fit: BoxFit.fill,
+                                                placeholder: (context, value) {
+                                                  return const CircularProgressIndicator();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(snapshot.data!.nickname!),
+                                            Text(widget.commentData["time2"],
+                                                style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontStyle: FontStyle.italic,
+                                                    color: Colors.grey)),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return const SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 5),
+                              Text(widget.commentData["content"]),
+                              if (isExpanded == false)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          isExpanded = !isExpanded;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          (!isExpanded)
+                                              ? const Text("expand")
+                                              : const Text("collapse"),
+                                          Icon((!isExpanded)
+                                              ? Icons.expand_more
+                                              : Icons.expand_less),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+
+                        (isExpanded)
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              addComment = !addComment;
+                                            });
+                                          },
+                                          child: Text((addComment) ? "hide comment" : "add comment",
+                                              style: const TextStyle(
+                                                  fontStyle: FontStyle.italic, color: Colors.grey)),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              isExpanded = !isExpanded;
+                                            });
+                                          },
+                                          child: Row(
+                                            children: [
+                                              (!isExpanded)
+                                                  ? const Text("expand")
+                                                  : const Text("collapse"),
+                                              Icon((!isExpanded)
+                                                  ? Icons.expand_more
+                                                  : Icons.expand_less),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-
-                      (isExpanded)
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 5),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            addComment = !addComment;
-                                          });
-                                        },
-                                        child: Text((addComment) ? "hide comment" : "add comment",
-                                            style: const TextStyle(
-                                                fontStyle: FontStyle.italic, color: Colors.grey)),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isExpanded = !isExpanded;
-                                          });
-                                        },
-                                        child: Row(
+                                  (addComment)
+                                      ? Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            (!isExpanded)
-                                                ? const Text("expand")
-                                                : const Text("collapse"),
-                                            Icon((!isExpanded)
-                                                ? Icons.expand_more
-                                                : Icons.expand_less),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                (addComment)
-                                    ? Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            // margin: const EdgeInsets.only(top: 10),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  width: 2, color: globals.primaryColor!),
-                                            ),
-                                            child: Form(
-                                              key: formKey,
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                                child: TextFormField(
-                                                  minLines: 1,
-                                                  maxLines: 10,
-                                                  controller: commentController,
-                                                  scrollPadding:
-                                                      const EdgeInsets.symmetric(vertical: 0),
-                                                  decoration: const InputDecoration(
-                                                    isDense: true,
-                                                    hintText: "enter your comment here",
-                                                    focusedBorder: InputBorder.none,
-                                                    border: InputBorder.none,
+                                            Container(
+                                              // margin: const EdgeInsets.only(top: 10),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(10),
+                                                border: Border.all(
+                                                    width: 2, color: globals.primaryColor!),
+                                              ),
+                                              child: Form(
+                                                key: formKey,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(horizontal: 10),
+                                                  child: TextFormField(
+                                                    minLines: 1,
+                                                    maxLines: 10,
+                                                    controller: commentOnCommentController,
+                                                    validator: (value) {
+                                                      if (value == null)
+                                                        return "enter a valid comment";
+                                                      if (value.isEmpty)
+                                                        return "put a thing into the comment dum dum";
+                                                      if (value == " ")
+                                                        return "please enter a valid comment";
+                                                    },
+                                                    scrollPadding:
+                                                        const EdgeInsets.symmetric(vertical: 0),
+                                                    decoration: const InputDecoration(
+                                                      isDense: true,
+                                                      hintText: "enter your comment here",
+                                                      focusedBorder: InputBorder.none,
+                                                      border: InputBorder.none,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          SizedBox(
-                                            height: 25,
-                                            child: ElevatedButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor: MaterialStateProperty.all(
-                                                      globals.primaryColor!),
-                                                ),
-                                                onPressed: (() =>
-                                                    postComment(commentController.text)),
-                                                child: const Text("post comment")),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                if (widget.commentData["comments"] != null)
-                                  StreamBuilder(
-                                      stream: FirebaseFirestore.instance
-                                          .collection("Posts")
-                                          .doc(widget.postData["uid"])
-                                          .collection("comments")
-                                          .orderBy('time', descending: false)
-                                          .snapshots(),
-                                      builder:
-                                          (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                                        return (snapshot.connectionState == ConnectionState.waiting)
-                                            ? const Center(
-                                                child: CircularProgressIndicator(),
-                                              )
-                                            : Container(
-                                                // constraints: BoxConstraints(
-                                                // maxHeight: 1000,
-                                                // ),
+                                            const SizedBox(height: 5),
+                                            SizedBox(
+                                              height: 25,
+                                              child: ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor: MaterialStateProperty.all(
+                                                        globals.primaryColor!),
+                                                  ),
+                                                  onPressed: (() =>
+                                                      postComment(commentOnCommentController.text)),
+                                                  child: const Text("post comment")),
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
+                                  if (widget.commentData["comments"] != null)
+                                    StreamBuilder(
+                                        stream: FirebaseFirestore.instance
+                                            .collection("Posts")
+                                            .doc(widget.postData["uid"])
+                                            .collection("comments")
+                                            .orderBy('time', descending: false)
+                                            .snapshots(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<dynamic> snapshot) {
+                                          return (snapshot.connectionState ==
+                                                  ConnectionState.waiting)
+                                              ? const Center(
+                                                  child: CircularProgressIndicator(),
+                                                )
+                                              : Container(
+                                                  // constraints: BoxConstraints(
+                                                  // maxHeight: 1000,
+                                                  // ),
 
-                                                child: Column(
-                                                  children: [
-                                                    for (int i = 0;
-                                                        i < snapshot.data!.docs.length;
-                                                        i++)
-                                                      if (widget.commentData["comments"].contains(
-                                                          snapshot.data!.docs[i].data()["uid"]))
-                                                        CommentInstance(
-                                                            postData: widget.postData,
-                                                            commentData: snapshot.data!.docs[i]
-                                                                .data() as Map<String, dynamic>,
-                                                            isExpanded: false),
-                                                  ],
-                                                ),
-                                              );
-                                      }),
-                                // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
-                                //   CommentInstance(postData: widget.data, commentData: comment),
-                                // const SizedBox(height: 5),
-                              ],
-                            )
-                          : Container(),
-                      // const SizedBox(height: 15),
-                    ],
-                  ),
-                ],
+                                                  child: Column(
+                                                    children: [
+                                                      for (int i = 0;
+                                                          i < snapshot.data!.docs.length;
+                                                          i++)
+                                                        if (widget.commentData["comments"].contains(
+                                                            snapshot.data!.docs[i].data()["uid"]))
+                                                          CommentInstance(
+                                                              postData: widget.postData,
+                                                              commentData: snapshot.data!.docs[i]
+                                                                  .data() as Map<String, dynamic>,
+                                                              isExpanded: false),
+                                                    ],
+                                                  ),
+                                                );
+                                        }),
+                                  // for (Map<String, dynamic> comment in widget.data["comments"].reversed)
+                                  //   CommentInstance(postData: widget.data, commentData: comment),
+                                  // const SizedBox(height: 5),
+                                ],
+                              )
+                            : Container(),
+                        // const SizedBox(height: 15),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1271,6 +1302,7 @@ class _CommentInstanceState extends State<CommentInstance> {
   }
 
   postComment(String content) {
+    if (formKey.currentState!.validate() == false) return;
     String commentID = "${globals.myUser!.uid!}${DateTime.now().millisecondsSinceEpoch}";
     Map<String, dynamic> commentMap = {
       "uid": commentID,
@@ -1296,7 +1328,7 @@ class _CommentInstanceState extends State<CommentInstance> {
         .set({
       "comments": FieldValue.arrayUnion([commentID])
     }, SetOptions(merge: true));
-    commentController.text = "";
+    commentOnCommentController.text = "";
     addComment = false;
 
     FirebaseFirestore.instance

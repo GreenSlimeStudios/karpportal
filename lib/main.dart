@@ -33,10 +33,11 @@ ThemeColor? theme;
 // bool isDarkTheme = false;
 
 void main() async {
+  // debugRepaintRainbowEnabled = true;
   if (kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
-    final Future<FirebaseApp> _initializiation = Firebase.initializeApp();
+    final Future<FirebaseApp> initializiation = Firebase.initializeApp();
 
     runApp(const MyApp());
   } else {
@@ -211,6 +212,7 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     LocalNotificationService.initialize();
+    // var debugRepaintRainbowEnable = true;
     runApp(const MyApp());
   }
 }
@@ -219,7 +221,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
-
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -255,7 +256,7 @@ class MyApp extends StatelessWidget {
                   inputDecorationTheme: InputDecorationTheme(
                       iconColor: globals.primaryColor,
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
                         borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
                       ),
                       fillColor: globals.primarySwatch,
@@ -304,7 +305,7 @@ class MyApp extends StatelessWidget {
                   inputDecorationTheme: InputDecorationTheme(
                       iconColor: globals.primaryColor,
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
                         borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
                       ),
                       fillColor: globals.primarySwatch,
