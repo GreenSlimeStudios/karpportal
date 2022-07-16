@@ -112,7 +112,10 @@ class _SearchPageState extends State<SearchPage> {
           stream: (name != '' && name != null)
               ? FirebaseFirestore.instance
                   .collection("users")
-                  .where('fullName', isGreaterThanOrEqualTo: name)
+                  .where(
+                    'nickname',
+                    isGreaterThanOrEqualTo: name,
+                  )
                   .snapshots()
               : FirebaseFirestore.instance.collection("users").snapshots(),
           builder: (context, snapshot) {
