@@ -908,14 +908,11 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text("OK"),
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
-                  Navigator.of(context).pop();
+					Navigator.of(context).pop();
                   await FirebaseFirestore.instance.collection("bugReports").add({
                     "title": reportBugTitleController.text,
                     "content": reportBugContentController.text
                   });
-                  reportBugContentController.text = "";
-                  reportBugTitleController.text = "";
-                  Fluttertoast.showToast(msg: "reported bug successfully");
                 }
               },
             ),
@@ -969,14 +966,11 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text("OK"),
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
-                  Navigator.of(context).pop();
                   await FirebaseFirestore.instance.collection("ideaReports").add({
                     "title": reportBugTitleController.text,
                     "content": reportBugContentController.text
                   });
-                  reportIdeaContentController.text = "";
-                  reportIdeaTitleController.text = "";
-                  Fluttertoast.showToast(msg: "reported bug successfully");
+                  Navigator.of(context).pop();
                 }
               },
             ),
