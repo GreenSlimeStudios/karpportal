@@ -237,6 +237,10 @@ class MyApp extends StatelessWidget {
       theme: globals.isDarkTheme!
           ? (globals.theme == ThemeColor.Dark)
               ? ThemeData.dark().copyWith(
+                  colorScheme: ColorScheme.fromSwatch(
+                      primarySwatch: globals.primarySwatch!, cardColor: globals.themeColor!),
+                  appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade800),
+
                   // accentColor: globals.primaryColor,
                   splashColor: globals.primaryColor,
                   scrollbarTheme: ScrollbarThemeData(
@@ -278,6 +282,8 @@ class MyApp extends StatelessWidget {
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
               : ThemeData.dark().copyWith(
+                  colorScheme: ColorScheme.fromSwatch(
+                      primarySwatch: globals.primarySwatch!, cardColor: globals.themeColor!),
                   scaffoldBackgroundColor: globals.themeColor,
                   appBarTheme: AppBarTheme(backgroundColor: globals.themeColor),
                   dialogTheme: DialogTheme(backgroundColor: globals.themeColor),
