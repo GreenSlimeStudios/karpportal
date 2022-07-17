@@ -303,55 +303,14 @@ class _PostInstanceState extends State<PostInstance> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: SingleChildScrollView(
-                      // controller:
-                      child: Column(
-                        children: [
-                          for (String url in widget.data["ImageURLs"])
-                            Container(
-                              // padding: EdgeInsets.symmetric(vertical: 5),
-                              child: GestureDetector(
-                                child: Hero(
-                                  tag: url,
-                                  child: CachedNetworkImage(
-                                    imageUrl: url,
-                                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                        Container(
-                                      height: 180,
-                                      alignment: Alignment.center,
-                                      child: CircularProgressIndicator(
-                                          value: downloadProgress.progress),
-                                    ),
-                                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => InteractiveViewer(
-                                        child: Hero(
-                                          tag: url,
-                                          child: CachedNetworkImage(
-                                            imageUrl: url,
-                                            progressIndicatorBuilder:
-                                                (context, url, downloadProgress) =>
-                                                    CircularProgressIndicator(
-                                                        value: downloadProgress.progress),
-                                            errorWidget: (context, url, error) =>
-                                                const Icon(Icons.error),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
+                    child: (isExpanded)
+                        ? getImagesColumn()
+                        : SingleChildScrollView(
+                            // controller:
+                            child: getImagesColumn(),
+                          ),
                   ),
+
                 (isExpanded)
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -584,6 +543,49 @@ class _PostInstanceState extends State<PostInstance> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget getImagesColumn() {
+    return Column(
+      children: [
+        for (String url in widget.data["ImageURLs"])
+          Container(
+            // padding: EdgeInsets.symmetric(vertical: 5),
+            child: GestureDetector(
+              child: Hero(
+                tag: url,
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                  progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+                    height: 180,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(value: downloadProgress.progress),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InteractiveViewer(
+                      child: Hero(
+                        tag: url,
+                        child: CachedNetworkImage(
+                          imageUrl: url,
+                          progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              CircularProgressIndicator(value: downloadProgress.progress),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 
