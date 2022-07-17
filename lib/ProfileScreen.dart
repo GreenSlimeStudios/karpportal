@@ -289,7 +289,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        const Padding(padding: EdgeInsets.only(top: 10)),
+                        const Padding(padding: EdgeInsets.only(top: 5)),
                         Container(
                           margin: EdgeInsets.only(left: 5, right: 5),
                           width: double.infinity,
@@ -323,7 +323,83 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        const Padding(padding: EdgeInsets.only(top: 10)),
+                        const Padding(padding: EdgeInsets.only(top: 5)),
+                        Container(
+                          margin: EdgeInsets.only(left: 5, right: 5),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: globals.themeColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child:
+                              // (globals.myUser!.token == null)
+                              (true)
+                                  ? TextButton(
+                                      onPressed: reportBug,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(
+                                            Icons.bug_report,
+                                            color: Colors.orange,
+                                          ),
+                                          Padding(padding: EdgeInsets.only(right: 5)),
+                                          Text(
+                                            'Report Bug',
+                                            style: TextStyle(color: Colors.orange),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                        ),
+                        const Padding(padding: EdgeInsets.only(top: 5)),
+                        Container(
+                          margin: EdgeInsets.only(left: 5, right: 5),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: globals.themeColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child:
+                              // (globals.myUser!.token == null)
+                              (true)
+                                  ? TextButton(
+                                      onPressed: setToken,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(
+                                            Icons.mark_as_unread,
+                                            color: Colors.yellow,
+                                          ),
+                                          Padding(padding: EdgeInsets.only(right: 5)),
+                                          Text(
+                                            'Report Idea For A Feature',
+                                            style: TextStyle(color: Colors.yellow),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                        ),
+                        const Padding(padding: EdgeInsets.only(top: 5)),
                         Container(
                           margin: EdgeInsets.only(left: 5, right: 5),
                           width: double.infinity,
@@ -780,4 +856,6 @@ class _ProfilePageState extends State<ProfilePage> {
     Fluttertoast.showToast(msg: 'restart app to see changes');
     setState(() {});
   }
+
+  void reportBug() {}
 }
