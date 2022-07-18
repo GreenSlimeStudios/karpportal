@@ -108,7 +108,8 @@ void main() async {
       for (int i = 1; i < 11; i++) {
         String? colorString = prefs.getString('shade$i');
         print(colorString);
-        String? valueString = colorString?.split('(0x')[1].split(')')[0]; // kind of hacky..
+        String? valueString =
+            colorString?.split('(0x')[1].split(')')[0]; // kind of hacky..
         if (i == 6) {
           //Color(0xffe91e63)
           primary = colorString!.substring(6, 16);
@@ -156,7 +157,8 @@ void main() async {
       for (int i = 1; i < 11; i++) {
         String? colorStringS = prefs.getString('shadeS$i');
         print(colorStringS);
-        String? valueString = colorStringS?.split('(0x')[1].split(')')[0]; // kind of hacky..
+        String? valueString =
+            colorStringS?.split('(0x')[1].split(')')[0]; // kind of hacky..
         if (i == 6) {
           //Color(0xffe91e63)
           primaryS = colorStringS!.substring(6, 16);
@@ -238,15 +240,20 @@ class MyApp extends StatelessWidget {
           ? (globals.theme == ThemeColor.Dark)
               ? ThemeData.dark().copyWith(
                   colorScheme: ColorScheme.fromSwatch(
-                      primarySwatch: globals.primarySwatch!, cardColor: globals.themeColor!),
-                  appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade800),
+                      primarySwatch: globals.primarySwatch!,
+                      cardColor: globals.themeColor!),
+                  appBarTheme:
+                      AppBarTheme(backgroundColor: Colors.grey.shade800),
 
                   // accentColor: globals.primaryColor,
                   splashColor: globals.primaryColor,
                   scrollbarTheme: ScrollbarThemeData(
-                      trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primaryColor)),
+                      trackBorderColor:
+                          MaterialStateProperty.all(globals.primaryColor),
+                      thumbColor:
+                          MaterialStateProperty.all(globals.primaryColor),
+                      trackColor:
+                          MaterialStateProperty.all(globals.primaryColor)),
 
                   // primarySwatch: globals.primarySwatch,
                   // accentColor: globals.primarySwatch,
@@ -260,8 +267,10 @@ class MyApp extends StatelessWidget {
                   inputDecorationTheme: InputDecorationTheme(
                       iconColor: globals.primaryColor,
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                        borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(15.0)),
+                        borderSide:
+                            BorderSide(color: globals.primarySwatch!, width: 3),
                       ),
                       fillColor: globals.primarySwatch,
                       // filled: true,
@@ -271,19 +280,25 @@ class MyApp extends StatelessWidget {
                       hoverColor: globals.primarySwatch),
                   // textSelectionColor: globals.primarySwatch,
                   switchTheme: SwitchThemeData(
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
-                  progressIndicatorTheme: ProgressIndicatorThemeData(color: globals.primarySwatch),
+                      thumbColor:
+                          MaterialStateProperty.all(globals.primaryColor),
+                      trackColor: MaterialStateProperty.all(
+                          globals.primarySwatch!.shade600)),
+                  progressIndicatorTheme:
+                      ProgressIndicatorThemeData(color: globals.primarySwatch),
                   primaryColor: globals.primarySwatch,
                   primaryColorDark: globals.primarySwatch,
                   primaryIconTheme: IconThemeData(color: globals.primarySwatch),
-                  buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
+                  buttonTheme:
+                      ButtonThemeData(buttonColor: globals.primarySwatch),
                   elevatedButtonTheme: ElevatedButtonThemeData(
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
+                          backgroundColor: MaterialStateProperty.all(
+                              globals.primarySwatch))))
               : ThemeData.dark().copyWith(
                   colorScheme: ColorScheme.fromSwatch(
-                      primarySwatch: globals.primarySwatch!, cardColor: globals.themeColor!),
+                      primarySwatch: globals.primarySwatch!,
+                      cardColor: globals.themeColor!),
                   scaffoldBackgroundColor: globals.themeColor,
                   appBarTheme: AppBarTheme(backgroundColor: globals.themeColor),
                   dialogTheme: DialogTheme(backgroundColor: globals.themeColor),
@@ -295,9 +310,12 @@ class MyApp extends StatelessWidget {
                   // accentColor: globals.primaryColor,
                   splashColor: globals.primaryColor,
                   scrollbarTheme: ScrollbarThemeData(
-                      trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primaryColor)),
+                      trackBorderColor:
+                          MaterialStateProperty.all(globals.primaryColor),
+                      thumbColor:
+                          MaterialStateProperty.all(globals.primaryColor),
+                      trackColor:
+                          MaterialStateProperty.all(globals.primaryColor)),
 
                   // primarySwatch: globals.primarySwatch,
                   // accentColor: globals.primarySwatch,
@@ -311,8 +329,10 @@ class MyApp extends StatelessWidget {
                   inputDecorationTheme: InputDecorationTheme(
                       iconColor: globals.primaryColor,
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                        borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(15.0)),
+                        borderSide:
+                            BorderSide(color: globals.primarySwatch!, width: 3),
                       ),
                       fillColor: globals.primarySwatch,
                       // filled: true,
@@ -322,16 +342,16 @@ class MyApp extends StatelessWidget {
                       hoverColor: globals.primarySwatch),
                   // textSelectionColor: globals.primarySwatch,
                   switchTheme: SwitchThemeData(
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
+                      thumbColor:
+                          MaterialStateProperty.all(globals.primaryColor),
+                      trackColor:
+                          MaterialStateProperty.all(globals.primarySwatch!.shade600)),
                   progressIndicatorTheme: ProgressIndicatorThemeData(color: globals.primarySwatch),
                   primaryColor: globals.primarySwatch,
                   primaryColorDark: globals.primarySwatch,
                   primaryIconTheme: IconThemeData(color: globals.primarySwatch),
                   buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
-                  elevatedButtonTheme: ElevatedButtonThemeData(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
+                  elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
           : ThemeData(
               primarySwatch: globals.primarySwatch,
             ),
