@@ -235,12 +235,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'karp portal',
       theme: globals.isDarkTheme!
           ? (globals.theme == ThemeColor.Dark)
               ? ThemeData.dark().copyWith(
                   colorScheme: ColorScheme.fromSwatch(
+                      accentColor: globals.primaryColor,
+                      backgroundColor: globals.themeColor!,
                       primarySwatch: globals.primarySwatch!,
+                      brightness: Brightness.dark,
                       cardColor: globals.themeColor!),
                   appBarTheme:
                       AppBarTheme(backgroundColor: Colors.grey.shade800),
@@ -297,6 +301,9 @@ class MyApp extends StatelessWidget {
                               globals.primarySwatch))))
               : ThemeData.dark().copyWith(
                   colorScheme: ColorScheme.fromSwatch(
+                      accentColor: globals.primaryColor,
+                      backgroundColor: globals.themeColor!,
+                      brightness: Brightness.dark,
                       primarySwatch: globals.primarySwatch!,
                       cardColor: globals.themeColor!),
                   scaffoldBackgroundColor: globals.themeColor,
