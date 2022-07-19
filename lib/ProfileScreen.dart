@@ -263,188 +263,36 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       children: [
                         const Padding(padding: EdgeInsets.only(top: 40)),
-                        Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: globals.themeColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: TextButton(
-                            onPressed: signOut,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.groups_rounded,
-                                  color: Colors.pinkAccent,
-                                ),
-                                Padding(padding: EdgeInsets.only(right: 5)),
-                                Text(
-                                  'Sign Out',
-                                  style: TextStyle(color: Colors.pinkAccent),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        ProfileButton(
+                            function: signOut,
+                            icon: Icons.groups_rounded,
+                            color: Colors.pinkAccent,
+                            title: 'Sign Out'),
                         const Padding(padding: EdgeInsets.only(top: 5)),
-                        Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: globals.themeColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: TextButton(
-                            onPressed: updateKarpportal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.upload,
-                                  color: Color.fromARGB(255, 64, 255, 105),
-                                ),
-                                Padding(padding: EdgeInsets.only(right: 5)),
-                                Text(
-                                  'Update Karpportal (google drive)',
-                                  style: TextStyle(color: Color.fromARGB(255, 64, 255, 105)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        ProfileButton(
+                            function: updateKarpportal,
+                            icon: Icons.download,
+                            color: Color.fromARGB(255, 64, 255, 105),
+                            title: 'Update Karpportal (google drive)'),
                         const Padding(padding: EdgeInsets.only(top: 5)),
-                        Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: globals.themeColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child:
-                              // (globals.myUser!.token == null)
-                              (true)
-                                  ? TextButton(
-                                      onPressed: reportBug,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(
-                                            Icons.bug_report,
-                                            color: Colors.orange,
-                                          ),
-                                          Padding(padding: EdgeInsets.only(right: 5)),
-                                          Text(
-                                            'Report Bug',
-                                            style: TextStyle(color: Colors.orange),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                        ),
+                        ProfileButton(
+                            function: reportBug,
+                            icon: Icons.bug_report,
+                            color: Colors.orange,
+                            title: 'Report Bug'),
                         const Padding(padding: EdgeInsets.only(top: 5)),
-                        Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: globals.themeColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child:
-                              // (globals.myUser!.token == null)
-                              (true)
-                                  ? TextButton(
-                                      onPressed: reportIdea,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(
-                                            Icons.mark_as_unread,
-                                            color: Colors.yellow,
-                                          ),
-                                          Padding(padding: EdgeInsets.only(right: 5)),
-                                          Text(
-                                            'Report Idea For A Feature',
-                                            style: TextStyle(color: Colors.yellow),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                        ),
+                        ProfileButton(
+                            function: reportIdea,
+                            icon: Icons.construction,
+                            color: Colors.yellow,
+                            title: 'Report Idea For A Feature'),
                         const Padding(padding: EdgeInsets.only(top: 5)),
-                        Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: globals.themeColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child:
-                              // (globals.myUser!.token == null)
-                              (true)
-                                  ? TextButton(
-                                      onPressed: setToken,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(
-                                            Icons.upload,
-                                            color: Color.fromARGB(255, 64, 255, 239),
-                                          ),
-                                          Padding(padding: EdgeInsets.only(right: 5)),
-                                          Text(
-                                            'set Token',
-                                            style:
-                                                TextStyle(color: Color.fromARGB(255, 64, 255, 239)),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                        ),
+                        ProfileButton(
+                            function: setToken,
+                            icon: Icons.token,
+                            color: Color.fromARGB(255, 64, 255, 239),
+                            title: 'Set Token'),
+                        const Padding(padding: EdgeInsets.only(top: 5)),
                         Padding(padding: EdgeInsets.only(bottom: 5)),
                         GestureDetector(
                           onTap: changeBackgroundImage,
@@ -983,6 +831,61 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         );
       },
+    );
+  }
+}
+
+class ProfileButton extends StatefulWidget {
+  ProfileButton(
+      {Key? key,
+      required this.function,
+      required this.icon,
+      required this.color,
+      required this.title})
+      : super(key: key);
+  final function;
+  final IconData icon;
+  final Color color;
+  final String title;
+  @override
+  State<ProfileButton> createState() => _ProfileButtonState();
+}
+
+class _ProfileButtonState extends State<ProfileButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(left: 5, right: 5),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: globals.themeColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: TextButton(
+        onPressed: widget.function,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              widget.icon,
+              color: widget.color,
+            ),
+            Padding(padding: EdgeInsets.only(right: 5)),
+            Text(
+              widget.title,
+              style: TextStyle(color: widget.color),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
