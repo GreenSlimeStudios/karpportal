@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'Encryption.dart';
+
+final encryptioner = EncryptionInstance();
+
 class DatabaseMethods {
   getByUserName(String username) async {
     // var x = await FirebaseFirestore.instance
@@ -146,5 +150,15 @@ class DatabaseMethods {
       day = '${DateTime.now().day}';
     }
     return '${DateTime.now().year}/${month}/${day} ${hour}:${minute}';
+  }
+
+  String encrypt(String data) {
+    return encryptioner.encrypt(data);
+  }
+
+  String decrypt(String data, Map<String, dynamic> map) {
+    if (map["supportsEncryption"] == null) return data;
+    if (map["supportsEncryption"] == false) return data;
+    return encryptioner.decrypt(data);
   }
 }
