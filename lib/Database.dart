@@ -159,6 +159,7 @@ class DatabaseMethods {
   String decrypt(String data, Map<String, dynamic> map) {
     if (map["supportsEncryption"] == null) return data;
     if (map["supportsEncryption"] == false) return data;
+    // return data;
     return encryptioner.decrypt(data);
   }
 }

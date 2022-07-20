@@ -4,10 +4,10 @@ class EncryptionInstance {
 
     for (int i = 0; i < data.length; i++) {
       String char = data[i];
-      int num = data.codeUnitAt(i);
+      int numb = data.codeUnitAt(i);
 
-      String mm = String.fromCharCode(num + 2);
-      print(num);
+      String mm = String.fromCharCode(numb + ((3 * (i + 12)) + data.length));
+      // print(numb);
       result += mm;
     }
 
@@ -18,10 +18,10 @@ class EncryptionInstance {
     String result = "";
     for (int i = 0; i < data.length; i++) {
       String char = data[i];
-      int num = data.codeUnitAt(i);
+      int numb = data.codeUnitAt(i);
 
-      String mm = String.fromCharCode(num - 2);
-      print(num);
+      String mm = String.fromCharCode(numb - ((3 * (i + 12)) + data.length));
+      // print(numb);
       result += mm;
     }
 
