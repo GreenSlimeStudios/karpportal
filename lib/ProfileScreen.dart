@@ -109,14 +109,24 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (globals.myUser!.avatarUrl != null)
                         Stack(
                           children: [
-                            ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: globals.myUser!.avatarUrl!,
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => CircularProgressIndicator(),
-                                errorWidget: (context, url, error) => Icon(Icons.error),
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => InteractiveViewer(
+                                    child: CachedNetworkImage(imageUrl: globals.myUser!.avatarUrl!),
+                                  ),
+                                ),
+                              ),
+                              child: ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: globals.myUser!.avatarUrl!,
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
                               ),
                             ),
                             Positioned(
@@ -145,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              constraints: BoxConstraints(maxHeight: 90, maxWidth: 210),
+                              constraints: BoxConstraints(maxHeight: 90, maxWidth: 200),
                               child: SingleChildScrollView(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -158,8 +168,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                       style: const TextStyle(
                                           fontSize: 30,
                                           // color: Colors.black,
-                                          fontWeight: FontWeight.w300),
+                                          fontWeight: FontWeight.w400),
                                     ),
+                                    SizedBox(height: 1),
                                     Text(
                                       (globals.myUser!.description != null)
                                           ? (globals.myUser!.description! != "")
@@ -791,7 +802,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text("OK"),
+              child: Text("OK", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
                   Navigator.of(context).pop();
@@ -852,7 +863,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text("OK"),
+              child: Text("OK", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
                   Navigator.of(context).pop();
@@ -892,7 +903,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text("OK"),
+              child: Text("OK", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 Navigator.of(context).pop();
                 await FirebaseFirestore.instance.collection("users").doc(globals.myUser!.uid).set({
