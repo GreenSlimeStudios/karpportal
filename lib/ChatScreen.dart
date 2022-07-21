@@ -151,7 +151,7 @@ class _ChatPageState extends State<ChatPage> {
     if (isImage == false) {
       if (messageController.text.isNotEmpty) {
         messageMap = {
-          "message": databaseMethods.encrypt(messageController.text),
+          "message": databaseMethods.encrypt(messageController.text.trim()),
           "sendBy": loggedInUser.fullName!,
           "time": DateTime.now().millisecondsSinceEpoch,
           "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
@@ -169,7 +169,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     } else {
       messageMap = {
-        "message": databaseMethods.encrypt(imageUrl!),
+        "message": databaseMethods.encrypt(imageUrl!.trim()),
         "sendBy": loggedInUser.fullName!,
         "time": DateTime.now().millisecondsSinceEpoch,
         "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',

@@ -149,10 +149,17 @@ class _SearchPageState extends State<SearchPage> {
                                       children: [
                                         Text(data['nickname']),
                                         Text(
-                                          (data["description"] != null && data["description"] != "")
-                                              ? (data["description"]!.length < 66)
+                                          (data["description"] != null &&
+                                                  data["description"].trim() != "")
+                                              ? (data["description"]!.trim().length < 66)
                                                   ? data["description"]!
-                                                  : data["description"]!.substring(0, 65) + "..."
+                                                      .trim()
+                                                      .replaceAll("\n", " ")
+                                                  : data["description"]!
+                                                          .trim()
+                                                          .replaceAll("\n", " ")
+                                                          .substring(0, 65) +
+                                                      "..."
                                               : "karpportal enjoyer",
                                           style: const TextStyle(
                                               fontWeight: FontWeight.w300, fontSize: 14),
@@ -199,17 +206,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void createChatRoom(Map<String, dynamic> data) async {
-    // await FirebaseFirestore.instance
-    //     .collection("users")
-    //     .doc(user!.uid)
-    //     .get()
-    //     .then(
-    //   (value) {
-    //     loggedInUser = UserModel.fromMap(value.data());
-    //     //setState(() {});
-    //   },
-    // );
-
     String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
     List<String> users = [data['fullName'], globals.myUser!.fullName!];
