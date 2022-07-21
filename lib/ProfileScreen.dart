@@ -38,6 +38,8 @@ TextEditingController reportIdeaTitleController = TextEditingController();
 final ideaKey = GlobalKey<FormState>();
 bool isDarkTheme = false;
 
+TextEditingController descriptionController = TextEditingController();
+
 class _ProfilePageState extends State<ProfilePage> {
   User? user = FirebaseAuth.instance.currentUser;
   //UserModel loggedInUser = UserModel();
@@ -105,15 +107,29 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Row(children: [
                       const Padding(padding: EdgeInsets.only(left: 10)),
                       if (globals.myUser!.avatarUrl != null)
-                        ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: globals.myUser!.avatarUrl!,
-                            width: 120,
-                            height: 120,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
-                          ),
+                        Stack(
+                          children: [
+                            ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: globals.myUser!.avatarUrl!,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                              ),
+                            ),
+                            Positioned(
+                              right: -10,
+                              bottom: -10,
+                              child: IconButton(
+                                  icon: const Icon(
+                                    Icons.add_photo_alternate,
+                                  ),
+                                  iconSize: 30,
+                                  onPressed: pickImage),
+                            ),
+                          ],
                         )
                       else
                         const Icon(
@@ -122,33 +138,55 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Color.fromARGB(255, 141, 141, 141),
                         ),
                       const Padding(padding: EdgeInsets.only(left: 10)),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            //'big fat and very very moch of a long text',
-                            globals.myUser!.firstName!,
-                            style: const TextStyle(
-                                fontSize: 30,
-                                // color: Colors.black,
-                                fontWeight: FontWeight.w300),
-                          ),
-                          Text(
-                            globals.myUser!.secondName!,
-                            style: const TextStyle(
-                              fontSize: 30,
-                              // color: Colors.black
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              constraints: BoxConstraints(maxHeight: 90, maxWidth: 210),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      //'big fat and very very moch of a long text',
+                                      globals.myUser!.nickname!,
+                                      // softWrap: true,
+                                      style: const TextStyle(
+                                          fontSize: 30,
+                                          // color: Colors.black,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    Text(
+                                      (globals.myUser!.description != null)
+                                          ? (globals.myUser!.description! != "")
+                                              ? globals.myUser!.description!
+                                              : "No description entered mmmmmmmmmmm \n~"
+                                          : "No description entered mmmmmmmmmmm \n~",
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        // color: Colors.black
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          ElevatedButton(
-                            onPressed: changeAvatar,
-                            child: const Text(
-                              'Change Avatar',
-                              style: TextStyle(color: Colors.white),
+                            Container(
+                              height: 25,
+                              child: ElevatedButton(
+                                onPressed: changeDescription,
+                                child: const Text(
+                                  'Change Description',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       )
                     ]),
                   ),
@@ -310,7 +348,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
-                        Padding(padding: EdgeInsets.only(bottom: 5)),
+                        Padding(padding: EdgeInsets.only(bottom: 10)),
                       ],
                     ),
                   )
@@ -826,6 +864,43 @@ class _ProfilePageState extends State<ProfilePage> {
                   reportIdeaTitleController.text = "";
                   Fluttertoast.showToast(msg: "reported bug successfully");
                 }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void changeDescription() {
+    if (globals.myUser!.description != null) {
+      descriptionController.text = globals.myUser!.description!;
+    }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Change Description"),
+          content: TextFormField(
+            minLines: 1,
+            maxLines: 15,
+            controller: descriptionController,
+            decoration: InputDecoration(
+                hintText: "enter description",
+                focusedBorder:
+                    UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey, width: 2))),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text("OK"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await FirebaseFirestore.instance.collection("users").doc(globals.myUser!.uid).set({
+                  "description": descriptionController.text,
+                }, SetOptions(merge: true));
+                Fluttertoast.showToast(msg: "changed description successfully");
+                globals.myUser!.description = descriptionController.text;
+                setState(() {});
               },
             ),
           ],

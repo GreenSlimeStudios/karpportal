@@ -92,8 +92,8 @@ class _SearchPageState extends State<SearchPage> {
           child: TextFormField(
             decoration: const InputDecoration(
                 hintText: 'find user',
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1))),
+                focusedBorder:
+                    UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey, width: 1))),
             controller: searchController,
             onChanged: (val) {
               setState(() {
@@ -128,8 +128,7 @@ class _SearchPageState extends State<SearchPage> {
                       itemCount: snapshot.data!.docs.length,
                       // itemCount: 2,
                       itemBuilder: (context, index) {
-                        var data = snapshot.data!.docs[index].data()
-                            as Map<String, dynamic>;
+                        var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                         print((snapshot.data!.docs[index].metadata.isFromCache)
                             ? "NOT FROM NETWORK"
                             : "FROM NETWORK");
@@ -145,16 +144,18 @@ class _SearchPageState extends State<SearchPage> {
                                 children: [
                                   ListTile(
                                     title: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(data['nickname']),
                                         Text(
-                                          data['nickname'],
+                                          (data["description"] != null && data["description"] != "")
+                                              ? (data["description"]!.length < 66)
+                                                  ? data["description"]!
+                                                  : data["description"]!.substring(0, 65) + "..."
+                                              : "karpportal enjoyer",
                                           style: const TextStyle(
-                                              fontWeight: FontWeight.w300),
+                                              fontWeight: FontWeight.w300, fontSize: 14),
                                         ),
                                       ],
                                     ),
@@ -209,8 +210,7 @@ class _SearchPageState extends State<SearchPage> {
     //   },
     // );
 
-    String chatRoomId =
-        getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
+    String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
     List<String> users = [data['fullName'], globals.myUser!.fullName!];
     //users.sort();
@@ -231,8 +231,7 @@ class _SearchPageState extends State<SearchPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
+            builder: (context) => ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
   }
 
   void initSearch() {

@@ -220,8 +220,12 @@ class _MessagesPageState extends State<MessagesPage> {
                     style: getRoomTextStyle(chatRoomId),
                   ),
                   Text(
-                    targetUserModel.nickname!,
-                    style: TextStyle(fontWeight: FontWeight.w300),
+                    (targetUserModel.description != null && targetUserModel.description != "")
+                        ? (targetUserModel.description!.length < 66)
+                            ? targetUserModel.description!
+                            : targetUserModel.description!.substring(0, 65) + "..."
+                        : "karpportal enjoyer",
+                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
                   ),
                 ],
               ),
