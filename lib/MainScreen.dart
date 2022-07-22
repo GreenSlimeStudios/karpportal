@@ -1140,9 +1140,12 @@ class _CommentInstanceState extends State<CommentInstance> {
                                     if (widget.commentData["comments"].length > 0)
                                       Row(children: [
                                         const SizedBox(width: 10),
-                                        Icon(Icons.comment, size: 17),
+                                        Icon(Icons.comment, size: 17, color: Colors.white),
                                         SizedBox(width: 2),
-                                        Text("${widget.commentData["comments"].length.toString()}"),
+                                        Text(
+                                          "${widget.commentData["comments"].length.toString()}",
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
                                       ]),
                                   const SizedBox(width: 10),
                                   // Row(children: [
@@ -1157,41 +1160,9 @@ class _CommentInstanceState extends State<CommentInstance> {
                               )),
                       )),
                 ),
-                // const SizedBox(width: 5),
-                // Container(
-                //   margin: const EdgeInsets.only(bottom: 25),
-                //   child: Text(
-                //     (widget.commentData["time2"] != null)
-                //         ? widget.commentData["time2"]
-                //         : "2022/07/12 00:00",
-                //     style: const TextStyle(
-                //         color: Colors.grey, fontStyle: FontStyle.italic, fontSize: 13),
-                //   ),
-                // ),
               ],
             ),
           ),
-          // Positioned(
-          //   bottom: 5,
-          //   right: 10,
-          //   child: Row(
-          //     children: [
-          //       GestureDetector(
-          //         onTap: () {
-          //           setState(() {
-          //             isExpanded = !isExpanded;
-          //           });
-          //         },
-          //         child: Row(
-          //           children: [
-          //             (!isExpanded) ? const Text("expand") : const Text("collapse"),
-          //             Icon((!isExpanded) ? Icons.expand_more : Icons.expand_less),
-          //           ],
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

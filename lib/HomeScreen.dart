@@ -1,13 +1,8 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:karpportal/ChatScreen.dart';
 import 'package:karpportal/MessagesScreen.dart';
 import 'package:karpportal/ProfileScreen.dart';
 import 'package:karpportal/Screen1.dart';
@@ -18,7 +13,6 @@ import 'package:karpportal/services/localPushNotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MainScreen.dart';
-import 'enums.dart';
 import 'globals.dart' as globals;
 
 class HomePage extends StatefulWidget {
@@ -31,15 +25,15 @@ class HomePage extends StatefulWidget {
 //int _index = 2;
 
 class _HomePageState extends State<HomePage> {
-  var screens = [MainPage(), SearchPage(), Page1(), MessagesPage(), ProfilePage()];
+  var screens = [
+    const MainPage(),
+    const SearchPage(),
+    const Page1(),
+    const MessagesPage(),
+    const ProfilePage()
+  ];
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   //makeUserGlobal();
-  // }
-
+  @override
   initState() {
     super.initState();
     FirebaseMessaging.onMessage.listen((event) {
@@ -67,23 +61,7 @@ class _HomePageState extends State<HomePage> {
   // }
 
   refresh() {
-    // await FirebaseFirestore.instance
-    //     .collection("users")
-    //     .doc(user!.uid)
-    //     .get()
-    //     .then(
-    //   (value) {
-    //     print(value.metadata.isFromCache);
-    //     loggedInUser = UserModel.fromMap(value.data());
-    //     globals.myUser = loggedInUser;
-
     setState(() {});
-    //   },
-    // );
-    // if (globals.myUser!.newMessages != [] ||
-    //     globals.myUser!.newMessages != null) {
-    //   hasNewMessages = true;
-    // }
   }
 
   // bool hasNewMessages = false;
@@ -94,7 +72,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             onPressed: refresh,
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
           )
         ],
         title: Text(
@@ -111,31 +89,31 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              child: Center(child: setIcon()),
               decoration: BoxDecoration(color: globals.primaryColor),
+              child: Center(child: setIcon()),
             ),
             ListTile(
                 title: Container(
-                  child: Row(
-                    children: [
-                      Padding(padding: EdgeInsets.only(right: 10)),
-                      Icon(
-                        Icons.home,
-                        color: drawerTextColor(0),
-                      ),
-                      Padding(padding: EdgeInsets.only(right: 10)),
-                      Text(
-                        'Home',
-                        style: TextStyle(color: drawerTextColor(0), fontSize: 18),
-                      )
-                    ],
-                  ),
                   decoration: BoxDecoration(
                       border: Border.all(width: 1, color: globals.primaryColor as Color),
                       borderRadius: BorderRadius.circular(10),
                       color: drawerBackColor(0)),
                   height: 40,
                   width: double.infinity,
+                  child: Row(
+                    children: [
+                      const Padding(padding: EdgeInsets.only(right: 10)),
+                      Icon(
+                        Icons.home,
+                        color: drawerTextColor(0),
+                      ),
+                      const Padding(padding: EdgeInsets.only(right: 10)),
+                      Text(
+                        'Home',
+                        style: TextStyle(color: drawerTextColor(0), fontSize: 18),
+                      )
+                    ],
+                  ),
                   //color: Colors.orange,
                 ),
                 onTap: () {
@@ -146,26 +124,26 @@ class _HomePageState extends State<HomePage> {
                 }),
             ListTile(
               title: Container(
-                child: Row(
-                  children: [
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Icon(
-                      Icons.search,
-                      color: drawerTextColor(1),
-                    ),
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Text(
-                      'Search',
-                      style: TextStyle(color: drawerTextColor(1), fontSize: 18),
-                    )
-                  ],
-                ),
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(1)),
                 height: 40,
                 width: double.infinity,
+                child: Row(
+                  children: [
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Icon(
+                      Icons.search,
+                      color: drawerTextColor(1),
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Text(
+                      'Search',
+                      style: TextStyle(color: drawerTextColor(1), fontSize: 18),
+                    )
+                  ],
+                ),
                 //color: Colors.orange,
               ),
               onTap: () => setState(() {
@@ -175,26 +153,26 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               title: Container(
-                child: Row(
-                  children: [
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    FaIcon(
-                      FontAwesomeIcons.fish,
-                      color: drawerTextColor(2),
-                    ),
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Text(
-                      'Karp',
-                      style: TextStyle(color: drawerTextColor(2), fontSize: 18),
-                    )
-                  ],
-                ),
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(2)),
                 height: 40,
                 width: double.infinity,
+                child: Row(
+                  children: [
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    FaIcon(
+                      FontAwesomeIcons.fish,
+                      color: drawerTextColor(2),
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Text(
+                      'Karp',
+                      style: TextStyle(color: drawerTextColor(2), fontSize: 18),
+                    )
+                  ],
+                ),
                 //color: Colors.orange,
               ),
               onTap: () => setState(() {
@@ -204,26 +182,26 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               title: Container(
-                child: Row(
-                  children: [
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Icon(
-                      Icons.comment,
-                      color: drawerTextColor(3),
-                    ),
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Text(
-                      'Messages',
-                      style: TextStyle(color: drawerTextColor(3), fontSize: 18),
-                    )
-                  ],
-                ),
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(3)),
                 height: 40,
                 width: double.infinity,
+                child: Row(
+                  children: [
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Icon(
+                      Icons.comment,
+                      color: drawerTextColor(3),
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Text(
+                      'Messages',
+                      style: TextStyle(color: drawerTextColor(3), fontSize: 18),
+                    )
+                  ],
+                ),
                 //color: Colors.orange,
               ),
               onTap: () => setState(() {
@@ -233,26 +211,26 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               title: Container(
-                child: Row(
-                  children: [
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Icon(
-                      Icons.account_circle,
-                      color: drawerTextColor(4),
-                    ),
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    Text(
-                      'Profile',
-                      style: TextStyle(color: drawerTextColor(4), fontSize: 18),
-                    )
-                  ],
-                ),
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: globals.primaryColor as Color),
                     borderRadius: BorderRadius.circular(10),
                     color: drawerBackColor(4)),
                 height: 40,
                 width: double.infinity,
+                child: Row(
+                  children: [
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Icon(
+                      Icons.account_circle,
+                      color: drawerTextColor(4),
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Text(
+                      'Profile',
+                      style: TextStyle(color: drawerTextColor(4), fontSize: 18),
+                    )
+                  ],
+                ),
                 //color: Colors.orange,
               ),
               onTap: () => setState(() {
@@ -266,12 +244,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: IndexedStack(index: globals.index, children: screens),
-      // appBar: AppBar(
-      //   title: Text(
-      //     'Karp Portal',
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      // ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`
@@ -286,11 +258,11 @@ class _HomePageState extends State<HomePage> {
           selectedItemColor: getColor(),
           currentIndex: globals.index,
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
-            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.fish), label: 'karp'),
+            const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+            const BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
+            const BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.fish), label: 'karp'),
             BottomNavigationBarItem(icon: pickIcon(), label: 'messages'),
-            BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'profile'),
+            const BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'profile'),
           ],
           onTap: (index) => setState(() => globals.index = index),
         ),
@@ -309,15 +281,17 @@ class _HomePageState extends State<HomePage> {
   drawerTextColor(int i) {
     if (globals.index == i) {
       return globals.primaryColor;
-    } else
+    } else {
       return Colors.white;
+    }
   }
 
   drawerBackColor(int i) {
     if (globals.index == i) {
       return Colors.white;
-    } else
+    } else {
       return globals.primaryColor;
+    }
   }
 
   setIcon() {
@@ -327,22 +301,23 @@ class _HomePageState extends State<HomePage> {
         imageUrl: globals.myUser!.avatarUrl!,
         progressIndicatorBuilder: (context, url, downloadProgress) =>
             CircularProgressIndicator(value: downloadProgress.progress),
-        errorWidget: (context, url, error) => Icon(Icons.error),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
     );
   }
 
   Widget pickIcon() {
     if (globals.myUser!.newMessages != null) {
-      if (!globals.myUser!.newMessages!.isEmpty) {
+      if (globals.myUser!.newMessages!.isNotEmpty) {
         return Icon(
           Icons.comment,
           color: globals.primaryColor!.shade800,
         );
-      } else
-        return Icon(Icons.comment
+      } else {
+        return const Icon(Icons.comment
             // color: Colors.white,
             );
+      }
     } else {
       return Icon(
         Icons.comment, color: getColor(),

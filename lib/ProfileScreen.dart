@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/LoginScreen.dart';
@@ -134,9 +135,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               bottom: -10,
                               child: IconButton(
                                   icon: const Icon(
-                                    Icons.add_photo_alternate,
+                                    FontAwesomeIcons.penToSquare,
+                                    // Icons.handyman,
                                   ),
-                                  iconSize: 30,
+                                  iconSize: 25,
                                   onPressed: pickImage),
                             ),
                           ],

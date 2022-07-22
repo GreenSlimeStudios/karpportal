@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
 
 class ProfileTitle extends StatefulWidget {
-  const ProfileTitle(
-      {Key? key, required this.title, required this.param, required this.func})
+  const ProfileTitle({Key? key, required this.title, required this.param, required this.func})
       : super(key: key);
 
   final String title;
