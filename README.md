@@ -27,8 +27,8 @@ This app currently contains those features:
 - reporting bugs and feature ideas
 ```
 
-| Dark | High Contrast | Light |
-| ---- | ------------- | ----- |
+| - | - | - |
+| - | - | - |
 | ![screenshot-2022-07-18_12 56 10 574](https://user-images.githubusercontent.com/86601983/179498862-32548f7d-2fb7-4f8e-ab4c-24cfa61652fc.png) | ![screenshot-2022-07-18_12 57 12 727](https://user-images.githubusercontent.com/86601983/179499154-27552f06-5aa7-49c5-8a59-81932c4dde56.png) | ![screenshot-2022-07-18_12 57 40 718](https://user-images.githubusercontent.com/86601983/179499540-1334faeb-37ac-4f23-9c75-b35d36753f44.png) |
 | ![screenshot-2022-07-18_12 59 18 347](https://user-images.githubusercontent.com/86601983/179498885-d3e27ddf-2e3c-4bed-a516-affefc215f3a.png) | ![screenshot-2022-07-18_12 59 37 965](https://user-images.githubusercontent.com/86601983/179499279-c510e9d8-bd86-4630-abf2-b1202bb547ea.png) | ![screenshot-2022-07-18_13 00 08 878](https://user-images.githubusercontent.com/86601983/179499554-75e75bb4-326d-424d-b64e-d92459f8afbf.png) |
 | ![screenshot-2022-07-18_12 59 22 4](https://user-images.githubusercontent.com/86601983/179498898-18e5b57b-45af-4fc1-b5ac-b32455544758.png) | ![screenshot-2022-07-18_12 59 40 641](https://user-images.githubusercontent.com/86601983/179499295-22bf7e29-518e-43ce-b885-3cc29cf86225.png) | ![screenshot-2022-07-18_13 00 11 224](https://user-images.githubusercontent.com/86601983/179499562-55a6b165-d99e-4fc8-a05a-be3e531cc6d6.png) |
