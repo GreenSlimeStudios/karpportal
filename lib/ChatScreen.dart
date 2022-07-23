@@ -164,6 +164,7 @@ class _ChatPageState extends State<ChatPage> {
         databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
         notifyUser(messageController.text);
         messageController.text = "";
+        imageUrls = [];
         // setState(() {
         //   //scrollToBottom();
         // });
@@ -182,6 +183,8 @@ class _ChatPageState extends State<ChatPage> {
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
       //messageController.text = "";
+      messageController.text = "";
+      imageUrls = [];
       notifyUser("image sent");
       // setState(() {
       //   isImage == false;
@@ -190,6 +193,7 @@ class _ChatPageState extends State<ChatPage> {
     }
     isImage = false;
     imageUrls = [];
+    setState(() {});
   }
 
   scroll() {
@@ -827,19 +831,20 @@ class _ChatPageState extends State<ChatPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          //title: Text('what do you?'),
+          title: Text("pick image type"),
           content: Container(
             height: 100,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextButton(
+                ElevatedButton(
                   onPressed: () {
                     pickImage();
                     Navigator.pop(context);
                   },
                   child: Text('image from gallery'),
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () async {
                     //copyMessage(data,"");
                     await pickImageUrl();
@@ -869,7 +874,14 @@ class _ChatPageState extends State<ChatPage> {
             height: 100,
             child: Column(
               children: [
-                TextField(controller: urlController),
+                TextField(
+                  controller: urlController,
+                  decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: globals.primarySwatch!, width: 2),
+                    ),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     // Fluttertoast.showToast(msg: "mmmmmmmmmmmmmmmmmmmmmm");
@@ -914,10 +926,20 @@ class _ImagesPreviewState extends State<ImagesPreview> {
           child: Column(
             children: [
               for (String url in imageUrls)
-                CachedNetworkImage(
-                  imageUrl: url,
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                GestureDetector(
+                  onTap: () async {
+                    await preImageOptions(context, url);
+                    setState(() {});
+                  },
+                  onLongPress: () async {
+                    await preImageOptions(context, url);
+                    setState(() {});
+                  },
+                  child: CachedNetworkImage(
+                    imageUrl: url,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
             ],
           ),
@@ -925,6 +947,31 @@ class _ImagesPreviewState extends State<ImagesPreview> {
       ),
     );
   }
+}
+
+preImageOptions(context, url) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('what do you?'),
+        content: Container(
+          height: 50,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton(
+                  child: Text("REMOVE"),
+                  onPressed: () {
+                    imageUrls.remove(url);
+                    Navigator.of(context).pop();
+                  })
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 void sendPushMessage(String token, String body, String title) async {
