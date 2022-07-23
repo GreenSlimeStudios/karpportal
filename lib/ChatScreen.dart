@@ -569,7 +569,7 @@ class _ChatPageState extends State<ChatPage> {
               ),
             );
     } else {
-      if (data["images"].isNotEmpty) {
+      if (data["images"] != null) {
         return Column(
           crossAxisAlignment: (data["authorID"] != globals.myUser!.uid!)
               ? CrossAxisAlignment.end
