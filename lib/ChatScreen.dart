@@ -40,6 +40,7 @@ class ChatPage extends StatefulWidget {
 bool isLink = false;
 String time3 = "";
 TextEditingController messageController = TextEditingController();
+List<String> imageUrls = [];
 
 class _ChatPageState extends State<ChatPage> {
   DatabaseMethods databaseMethods = DatabaseMethods();
@@ -148,7 +149,7 @@ class _ChatPageState extends State<ChatPage> {
     }
     Map<String, dynamic> messageMap;
     //time3 = DateTime.now().toString();
-    if (isImage == false) {
+    if (imageUrls.isEmpty) {
       if (messageController.text.isNotEmpty) {
         messageMap = {
           "message": databaseMethods.encrypt(messageController.text.trim()),
@@ -156,8 +157,8 @@ class _ChatPageState extends State<ChatPage> {
           "time": DateTime.now().millisecondsSinceEpoch,
           "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
           "time3": time3,
-          "isImage": isImage,
           "isLink": isLink,
+          // "images": imageUrls,
           "supportsEncryption": true,
         };
         databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
@@ -169,12 +170,12 @@ class _ChatPageState extends State<ChatPage> {
       }
     } else {
       messageMap = {
-        "message": databaseMethods.encrypt(imageUrl!.trim()),
+        "message": databaseMethods.encrypt(messageController.text.trim()),
         "sendBy": loggedInUser.fullName!,
         "time": DateTime.now().millisecondsSinceEpoch,
         "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
         "time3": time3,
-        "isImage": isImage,
+        "images": imageUrls,
         "isLink": isLink,
         "supportsEncryption": true,
       };
@@ -188,6 +189,7 @@ class _ChatPageState extends State<ChatPage> {
       // });
     }
     isImage = false;
+    imageUrls = [];
   }
 
   scroll() {
@@ -201,6 +203,11 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          IconButton(
+              onPressed: (() => () {
+                    setState(() {});
+                  }),
+              icon: Icon(Icons.refresh)),
           IconButton(
             onPressed: () {
               //setState(() {});
@@ -236,8 +243,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
-          Expanded(
-              child: StreamBuilder<QuerySnapshot>(
+          StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection("ChatRoom")
                 .doc(widget.chatRoomId)
@@ -277,25 +283,20 @@ class _ChatPageState extends State<ChatPage> {
                                                   padding: const EdgeInsets.only(bottom: 5),
                                                   child: MessageImage(data),
                                                 ),
-                                                GestureDetector(
-                                                  onLongPress: () {
-                                                    messageActions(data);
-                                                  },
-                                                  child: Container(
-                                                    //height: 30,
-                                                    decoration: BoxDecoration(
-                                                        color: globals.primarySwatch,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    margin: const EdgeInsets.all(10),
-                                                    child: Padding(
-                                                      child: Container(
-                                                        constraints:
-                                                            const BoxConstraints(maxWidth: 250),
-                                                        child: generateMessage(data),
-                                                      ),
-                                                      padding: const EdgeInsets.only(
-                                                          left: 10, top: 5, right: 10, bottom: 5),
+                                                Container(
+                                                  //height: 30,
+                                                  decoration: BoxDecoration(
+                                                      color: globals.primarySwatch,
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  margin: const EdgeInsets.all(10),
+                                                  child: Padding(
+                                                    child: Container(
+                                                      constraints:
+                                                          const BoxConstraints(maxWidth: 250),
+                                                      child: generateMessage(data),
                                                     ),
+                                                    padding: const EdgeInsets.only(
+                                                        left: 10, top: 5, right: 10, bottom: 5),
                                                   ),
                                                 ),
                                               ],
@@ -335,25 +336,20 @@ class _ChatPageState extends State<ChatPage> {
                                               mainAxisAlignment: MainAxisAlignment.end,
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
-                                                GestureDetector(
-                                                  onLongPress: () {
-                                                    messageActions(data);
-                                                  },
-                                                  child: Container(
-                                                    //height: 30,
-                                                    decoration: BoxDecoration(
-                                                        color: getColor(),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    margin: const EdgeInsets.all(10),
-                                                    child: Padding(
-                                                      child: Container(
-                                                        constraints:
-                                                            const BoxConstraints(maxWidth: 250),
-                                                        child: generateMessage(data),
-                                                      ),
-                                                      padding: const EdgeInsets.only(
-                                                          left: 10, top: 5, right: 10, bottom: 5),
+                                                Container(
+                                                  //height: 30,
+                                                  decoration: BoxDecoration(
+                                                      color: getColor(),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  margin: const EdgeInsets.all(10),
+                                                  child: Padding(
+                                                    child: Container(
+                                                      constraints:
+                                                          const BoxConstraints(maxWidth: 250),
+                                                      child: generateMessage(data),
                                                     ),
+                                                    padding: const EdgeInsets.only(
+                                                        left: 10, top: 5, right: 10, bottom: 5),
                                                   ),
                                                 ),
                                                 Padding(
@@ -392,9 +388,8 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     );
             },
-          )
-              // child: ChatMessageList()
-              ),
+          ),
+          (imageUrls.isEmpty == false) ? ImagesPreview() : Container(),
           Container(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -472,24 +467,6 @@ class _ChatPageState extends State<ChatPage> {
           placeholder: (context, url) => CircularProgressIndicator(),
           errorWidget: (context, url, error) => Icon(Icons.error),
         ),
-        // Image.network(
-        //   globals.myUser!.avatarUrl!,
-        //   width: 35,
-        //   height: 35,
-        //   fit: BoxFit.cover,
-        //   loadingBuilder: (BuildContext context, Widget child,
-        //       ImageChunkEvent? loadingProgress) {
-        //     if (loadingProgress == null) return child;
-        //     return Center(
-        //       child: CircularProgressIndicator(
-        //         value: loadingProgress.expectedTotalBytes != null
-        //             ? loadingProgress.cumulativeBytesLoaded /
-        //                 loadingProgress.expectedTotalBytes!
-        //             : null,
-        //       ),
-        //     );
-        //   },
-        // ),
       );
     } else {
       return ClipOval(
@@ -501,24 +478,6 @@ class _ChatPageState extends State<ChatPage> {
           placeholder: (context, url) => CircularProgressIndicator(),
           errorWidget: (context, url, error) => Icon(Icons.error),
         ),
-        // child: Image.network(
-        //   widget.chatUserData['avatarUrl'],
-        //   width: 35,
-        //   height: 35,
-        //   fit: BoxFit.cover,
-        //   loadingBuilder: (BuildContext context, Widget child,
-        //       ImageChunkEvent? loadingProgress) {
-        //     if (loadingProgress == null) return child;
-        //     return Center(
-        //       child: CircularProgressIndicator(
-        //         value: loadingProgress.expectedTotalBytes != null
-        //             ? loadingProgress.cumulativeBytesLoaded /
-        //                 loadingProgress.expectedTotalBytes!
-        //             : null,
-        //       ),
-        //     );
-        //   },
-        // ),
       );
     }
   }
@@ -550,6 +509,7 @@ class _ChatPageState extends State<ChatPage> {
     } on PlatformException catch (e) {
       print('failed tp pick image $e');
     }
+    Fluttertoast.showToast(msg: "Uploading image... stay on page");
     //final ref = FirebaseStorage
     var snapshot = await _storage
         .ref()
@@ -559,16 +519,24 @@ class _ChatPageState extends State<ChatPage> {
     var downloadurl = await snapshot.ref.getDownloadURL();
 
     imageUrl = downloadurl;
-    isImage = true;
-    sendMessage();
-    isImage = false;
+    imageUrls.add(imageUrl!);
+    Fluttertoast.showToast(msg: "succesfully uploaded image");
+    setState(() {});
+    // isImage = true;
+    // sendMessage();
+    // isImage = false;
   }
 
   generateMessage(data) {
     if (data["isImage"] != null) {
       return (data["isImage"] == false)
-          ? pureText(data)
+          ? GestureDetector(
+              onLongPress: () => messageActions(data),
+              child: pureText(data),
+            )
           : GestureDetector(
+              onLongPress: () =>
+                  messageActions(data, url: databaseMethods.decrypt(data["message"], data)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -597,7 +565,52 @@ class _ChatPageState extends State<ChatPage> {
               ),
             );
     } else {
-      return pureText(data);
+      if (data["images"].isNotEmpty) {
+        return Column(
+          crossAxisAlignment: (data["authorID"] != globals.myUser!.uid!)
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            for (String url in data["images"])
+              GestureDetector(
+                onLongPress: () => messageActions(data, url: url),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InteractiveViewer(
+                        child: CachedNetworkImage(
+                          imageUrl: url,
+                          //fit: BoxFit.fill,
+                          progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              CircularProgressIndicator(value: downloadProgress.progress),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  child: CachedNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.fill,
+                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                        CircularProgressIndicator(value: downloadProgress.progress),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                ),
+              ),
+            if (data["message"].isNotEmpty)
+              GestureDetector(onLongPress: () => messageActions(data), child: pureText(data))
+          ],
+        );
+      } else {
+        return GestureDetector(
+          onLongPress: () => messageActions(data),
+          child: pureText(data),
+        );
+      }
     }
   }
 
@@ -628,8 +641,9 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  copyMessage(Map<String, dynamic> data, String message) {
-    Clipboard.setData(ClipboardData(text: databaseMethods.decrypt(data["message"], data)));
+  copyMessage(Map<String, dynamic> data, String message, {String? url}) {
+    Clipboard.setData(
+        ClipboardData(text: (url != null) ? url : databaseMethods.decrypt(data["message"], data)));
     Fluttertoast.showToast(msg: '${message} copied succesfully');
   }
 
@@ -654,9 +668,7 @@ class _ChatPageState extends State<ChatPage> {
     await ref.writeToFile(file);
   }
 
-  void messageActions(
-    Map<String, dynamic> data,
-  ) {
+  void messageActions(Map<String, dynamic> data, {String? url}) {
     if (data["isImage"] != null) {
       if (data["isImage"] == true) {
         createAlertDialog(data, context);
@@ -664,11 +676,15 @@ class _ChatPageState extends State<ChatPage> {
         copyMessage(data, "message");
       }
     } else {
-      copyMessage(data, "message");
+      if (url != null) {
+        createAlertDialog(data, context, url: url);
+      } else {
+        copyMessage(data, "message");
+      }
     }
   }
 
-  createAlertDialog(Map<String, dynamic> data, BuildContext context) {
+  createAlertDialog(Map<String, dynamic> data, BuildContext context, {String? url}) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -681,7 +697,10 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    copyMessage(data, 'image url');
+                    if (url != null)
+                      copyMessage(data, 'image url', url: url);
+                    else
+                      copyMessage(data, 'image url');
                     Navigator.pop(context);
                   },
                   child: Text('copy image url'),
@@ -689,7 +708,15 @@ class _ChatPageState extends State<ChatPage> {
                 ElevatedButton(
                   onPressed: () {
                     //copyMessage(data,"");
-                    downloadImage(data, databaseMethods.decrypt(data["message"], data));
+                    downloadImage(
+                        data,
+                        databaseMethods.decrypt(
+                            (url != null)
+                                ? url
+                                : (url != null)
+                                    ? url
+                                    : data["message"],
+                            data));
                     //Navigator.pop(context);
                   },
                   child: Text('download image'),
@@ -813,10 +840,11 @@ class _ChatPageState extends State<ChatPage> {
                   child: Text('image from gallery'),
                 ),
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     //copyMessage(data,"");
-                    pickImageUrl();
-                    //Navigator.pop(context);
+                    await pickImageUrl();
+                    Navigator.pop(context);
+                    setState(() {});
                   },
                   child: Text('image from url'),
                 ),
@@ -844,11 +872,13 @@ class _ChatPageState extends State<ChatPage> {
                 TextField(controller: urlController),
                 ElevatedButton(
                   onPressed: () async {
+                    // Fluttertoast.showToast(msg: "mmmmmmmmmmmmmmmmmmmmmm");
+                    Navigator.of(context).pop();
                     imageUrl = urlController.text;
-                    isImage = true;
-                    sendMessage();
-                    isImage = false;
-                    Navigator.pop(context);
+                    imageUrls.add(imageUrl!);
+                    // isImage = true;
+                    // sendMessage();
+                    // isImage = false;
                   },
                   child: Text('accept'),
                 ),
@@ -857,6 +887,42 @@ class _ChatPageState extends State<ChatPage> {
           ),
         );
       },
+    );
+  }
+}
+
+class ImagesPreview extends StatefulWidget {
+  ImagesPreview({Key? key}) : super(key: key);
+
+  @override
+  State<ImagesPreview> createState() => _ImagesPreviewState();
+}
+
+class _ImagesPreviewState extends State<ImagesPreview> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: globals.primaryColor!, width: 2),
+      ),
+      // color: globals.primaryColor,
+      constraints: BoxConstraints(maxHeight: 200),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              for (String url in imageUrls)
+                CachedNetworkImage(
+                  imageUrl: url,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

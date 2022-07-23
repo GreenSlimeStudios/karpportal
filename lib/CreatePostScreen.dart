@@ -247,6 +247,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     } on PlatformException catch (e) {
       print('failed tp pick image $e');
     }
+    Fluttertoast.showToast(msg: "Uploading image... stay on page");
     //final ref = FirebaseStorage
     var snapshot = await _storage
         .ref()
