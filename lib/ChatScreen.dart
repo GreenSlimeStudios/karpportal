@@ -186,6 +186,7 @@ class _ChatPageState extends State<ChatPage> {
       messageController.text = "";
       imageUrls = [];
       notifyUser("image sent");
+      setState(() {});
       // setState(() {
       //   isImage == false;
       //   //scrollToBottom();
@@ -193,7 +194,6 @@ class _ChatPageState extends State<ChatPage> {
     }
     isImage = false;
     imageUrls = [];
-    setState(() {});
   }
 
   scroll() {
@@ -256,9 +256,7 @@ class _ChatPageState extends State<ChatPage> {
                 .snapshots(),
             builder: (context, snapshot) {
               return (snapshot.connectionState == ConnectionState.waiting)
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ? Expanded(child: Center(child: CircularProgressIndicator()))
                   : Expanded(
                       child: ListView.builder(
                         reverse: true,
