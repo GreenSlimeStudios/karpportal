@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,8 +13,10 @@ import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'package:karpportal/services/localPushNotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 import 'MainScreen.dart';
+import 'enums.dart';
 import 'globals.dart' as globals;
 
 class HomePage extends StatefulWidget {
@@ -40,6 +44,10 @@ class _HomePageState extends State<HomePage> {
       print("MessageRecived");
       LocalNotificationService.display(event);
     });
+    if (Platform.isAndroid && globals.isDarkTheme == true) {
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Colors.black));
+    }
   }
 
   User? user = FirebaseAuth.instance.currentUser;
