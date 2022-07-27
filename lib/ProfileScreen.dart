@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/ProfileTitle.dart';
+import 'package:karpportal/SearchScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'package:karpportal/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -771,35 +772,40 @@ class _ProfilePageState extends State<ProfilePage> {
           title: Text("Report a bug"),
           content: Form(
             key: bugKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  validator: (val) {
-                    if (val == null) return "title cannot be null";
-                    if (val.isEmpty) return "title cannot be empty";
-                    if (val == " ") return "tfuj stary winiary";
-                  },
-                  controller: reportBugTitleController,
-                  decoration: InputDecoration(
-                      hintText: "title",
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2))),
-                ),
-                TextFormField(
-                  minLines: 1,
-                  maxLines: 15,
-                  validator: (val) {
-                    if (val == null) return "content cannot be null";
-                    if (val.isEmpty) return "content cannot be empty";
-                    if (val == " ") return "tfuj stary winiary";
-                  },
-                  controller: reportBugContentController,
-                  decoration: InputDecoration(
-                      hintText: "content",
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2))),
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextFormField(
+                    validator: (val) {
+                      if (val == null) return "title cannot be null";
+                      if (val.isEmpty) return "title cannot be empty";
+                      if (val == " ") return "tfuj stary winiary";
+                    },
+                    controller: reportBugTitleController,
+                    decoration: InputDecoration(
+                        hintText: "title",
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                  ),
+                  TextFormField(
+                    minLines: 1,
+                    maxLines: 15,
+                    validator: (val) {
+                      if (val == null) return "content cannot be null";
+                      if (val.isEmpty) return "content cannot be empty";
+                      if (val == " ") return "tfuj stary winiary";
+                    },
+                    controller: reportBugContentController,
+                    decoration: InputDecoration(
+                        hintText: "content",
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                      "Make sure you are up to date with the latest version of karpportal to check if the bug hasn't been already resolved"),
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
@@ -812,6 +818,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     "title": reportBugTitleController.text,
                     "content": reportBugContentController.text
                   });
+                  databaseMethods.sendNotification(
+                      "New bug report from ${globals.myUser!.nickname!}",
+                      "${reportBugTitleController.text}: ${reportBugContentController.text}",
+                      "eC5MyY3BTpK6Z3yNw56tM8:APA91bFFHtBGl_qXLotKVX89JsNtjTN22yUsAAOvubLSKvJ_0r7TOwuk8AVaY5Ue3h6g6G3QO6S_Bvri4-A0Typ_eG856b6mkLzzzgkkgLoSjRevgsMx1H1iGPasIVpO3NHtYXIWdBU7");
                   reportBugContentController.text = "";
                   reportBugTitleController.text = "";
                   Fluttertoast.showToast(msg: "reported bug successfully");
@@ -832,35 +842,40 @@ class _ProfilePageState extends State<ProfilePage> {
           title: Text("Report Idea for a new feature"),
           content: Form(
             key: bugKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  validator: (val) {
-                    if (val == null) return "title cannot be null";
-                    if (val.isEmpty) return "title cannot be empty";
-                    if (val == " ") return "tfuj stary winiary";
-                  },
-                  controller: reportIdeaTitleController,
-                  decoration: InputDecoration(
-                      hintText: "title",
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2))),
-                ),
-                TextFormField(
-                  minLines: 1,
-                  maxLines: 15,
-                  validator: (val) {
-                    if (val == null) return "content cannot be null";
-                    if (val.isEmpty) return "content cannot be empty";
-                    if (val == " ") return "tfuj stary winiary";
-                  },
-                  controller: reportIdeaContentController,
-                  decoration: InputDecoration(
-                      hintText: "content",
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2))),
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextFormField(
+                    validator: (val) {
+                      if (val == null) return "title cannot be null";
+                      if (val.isEmpty) return "title cannot be empty";
+                      if (val == " ") return "tfuj stary winiary";
+                    },
+                    controller: reportIdeaTitleController,
+                    decoration: InputDecoration(
+                        hintText: "title",
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                  ),
+                  TextFormField(
+                    minLines: 1,
+                    maxLines: 15,
+                    validator: (val) {
+                      if (val == null) return "content cannot be null";
+                      if (val.isEmpty) return "content cannot be empty";
+                      if (val == " ") return "tfuj stary winiary";
+                    },
+                    controller: reportIdeaContentController,
+                    decoration: InputDecoration(
+                        hintText: "content",
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                      "Make sure you are up to date with the latest version of karpportal to check if the feature hasn't been already implemented"),
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
@@ -870,9 +885,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (bugKey.currentState!.validate()) {
                   Navigator.of(context).pop();
                   await FirebaseFirestore.instance.collection("ideaReports").add({
-                    "title": reportBugTitleController.text,
-                    "content": reportBugContentController.text
+                    "title": reportIdeaContentController.text,
+                    "content": reportIdeaContentController.text
                   });
+                  databaseMethods.sendNotification(
+                      "New feature idea report from ${globals.myUser!.nickname!}",
+                      "${reportIdeaTitleController.text}: ${reportIdeaContentController.text}",
+                      "eC5MyY3BTpK6Z3yNw56tM8:APA91bFFHtBGl_qXLotKVX89JsNtjTN22yUsAAOvubLSKvJ_0r7TOwuk8AVaY5Ue3h6g6G3QO6S_Bvri4-A0Typ_eG856b6mkLzzzgkkgLoSjRevgsMx1H1iGPasIVpO3NHtYXIWdBU7");
                   reportIdeaContentController.text = "";
                   reportIdeaTitleController.text = "";
                   Fluttertoast.showToast(msg: "reported bug successfully");
