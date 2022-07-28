@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:karpportal/SplashScreen.dart';
 import 'package:karpportal/services/localPushNotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -213,6 +214,10 @@ void main() async {
 
     LocalNotificationService.initialize();
     // var debugRepaintRainbowEnable = true;
+    if (Platform.isAndroid && globals.isDarkTheme == true) {
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(systemNavigationBarColor: Colors.black));
+    }
     runApp(const MyApp());
   }
 }

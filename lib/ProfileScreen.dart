@@ -159,33 +159,39 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             Container(
                               constraints: BoxConstraints(maxHeight: 90, maxWidth: 200),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      //'big fat and very very moch of a long text',
-                                      globals.myUser!.nickname!,
-                                      // softWrap: true,
-                                      style: const TextStyle(
-                                          fontSize: 30,
-                                          // color: Colors.black,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    SizedBox(height: 1),
-                                    Text(
-                                      (globals.myUser!.description != null)
-                                          ? (globals.myUser!.description! != "")
-                                              ? globals.myUser!.description!
-                                              : "No description entered mmmmmmmmmmm \n~"
-                                          : "No description entered mmmmmmmmmmm \n~",
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        // color: Colors.black
+                              child: NotificationListener<OverscrollIndicatorNotification>(
+                                onNotification: (overscroll) {
+                                  overscroll.disallowIndicator();
+                                  return true;
+                                },
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        //'big fat and very very moch of a long text',
+                                        globals.myUser!.nickname!,
+                                        // softWrap: true,
+                                        style: const TextStyle(
+                                            fontSize: 30,
+                                            // color: Colors.black,
+                                            fontWeight: FontWeight.w400),
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(height: 5),
+                                      Text(
+                                        (globals.myUser!.description != null)
+                                            ? (globals.myUser!.description! != "")
+                                                ? globals.myUser!.description!
+                                                : "No description entered mmmmmmmmmmm \n~"
+                                            : "No description entered mmmmmmmmmmm \n~",
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          // color: Colors.black
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -816,7 +822,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.of(context).pop();
                   await FirebaseFirestore.instance.collection("bugReports").add({
                     "title": reportBugTitleController.text,
-                    "content": reportBugContentController.text
+                    "content": reportBugContentController.text,
+                    "authorNickname": globals.myUser!.nickname,
+                    "authorID": globals.myUser!.uid,
                   });
                   databaseMethods.sendNotification(
                       "New bug report from ${globals.myUser!.nickname!}",
@@ -886,7 +894,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.of(context).pop();
                   await FirebaseFirestore.instance.collection("ideaReports").add({
                     "title": reportIdeaContentController.text,
-                    "content": reportIdeaContentController.text
+                    "content": reportIdeaContentController.text,
+                    "authorNickname": globals.myUser!.nickname,
+                    "authorID": globals.myUser!.uid,
                   });
                   databaseMethods.sendNotification(
                       "New feature idea report from ${globals.myUser!.nickname!}",
