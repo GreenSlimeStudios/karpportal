@@ -51,7 +51,7 @@ class _MainPageState extends State<MainPage> {
               child: Container(
                 alignment: Alignment.bottomCenter,
                 color: globals.themeColor,
-                margin: const EdgeInsets.only(top: 55),
+                margin: const EdgeInsets.only(top: 80),
                 padding: const EdgeInsets.all(10),
                 child: GestureDetector(
                   onTap: createPost,
@@ -62,7 +62,7 @@ class _MainPageState extends State<MainPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: globals.themeColor,
-                      border: Border.all(width: 4, color: globals.primarySwatch!.shade700),
+                      border: Border.all(width: 4, color: globals.primaryColor!),
                     ),
                     child: const Text("Tell the world something cool what's going on!"),
                   ),
@@ -70,7 +70,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             // Make the initial height of the SliverAppBar larger than normal.
-            expandedHeight: 140,
+            expandedHeight: 120,
           ),
           content(),
           const SliverToBoxAdapter(

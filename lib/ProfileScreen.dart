@@ -178,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             // color: Colors.black,
                                             fontWeight: FontWeight.w400),
                                       ),
-                                      SizedBox(height: 5),
+                                      SizedBox(height: 3),
                                       Text(
                                         (globals.myUser!.description != null)
                                             ? (globals.myUser!.description! != "")

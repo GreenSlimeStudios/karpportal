@@ -44,10 +44,6 @@ class _HomePageState extends State<HomePage> {
       print("MessageRecived");
       LocalNotificationService.display(event);
     });
-    if (Platform.isAndroid && globals.isDarkTheme == true) {
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(systemNavigationBarColor: Colors.black));
-    }
   }
 
   User? user = FirebaseAuth.instance.currentUser;
@@ -76,20 +72,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: refresh,
-            icon: const Icon(Icons.refresh),
-          )
-        ],
-        title: Text(
-          'Karp Portal',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.leagueScript(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        foregroundColor: Colors.white,
-      ),
+      appBar: (globals.index != 0)
+          ? AppBar(
+              actions: [
+                IconButton(
+                  onPressed: refresh,
+                  icon: const Icon(Icons.refresh),
+                )
+              ],
+              title: Text(
+                'Karp Portal',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.leagueScript(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              foregroundColor: Colors.white,
+            )
+          : null,
       //drawerScrimColor: Colors.white,
       drawer: Drawer(
         backgroundColor: globals.themeColor!,
@@ -98,7 +96,12 @@ class _HomePageState extends State<HomePage> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(color: globals.primaryColor),
-              child: Center(child: setIcon()),
+              // child: Center(child: setIcon()),
+              child: Text(
+                'Karp\nPortal',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.leagueScript(fontSize: 60, fontWeight: FontWeight.bold),
+              ),
             ),
             ListTile(
                 title: Container(
