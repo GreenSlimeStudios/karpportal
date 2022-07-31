@@ -50,7 +50,9 @@ void main() async {
       );
     } else {
       if (!Platform.isLinux) {
+        print("itializing linux");
         await Firebase.initializeApp();
+        print("done");
       }
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();

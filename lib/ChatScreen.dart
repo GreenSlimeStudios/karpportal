@@ -346,6 +346,8 @@ class _ChatPageState extends State<ChatPage> {
                                                   margin: const EdgeInsets.all(10),
                                                   child: Padding(
                                                     child: Container(
+                                                      // alignment: Alignment.centerRight,
+
                                                       constraints:
                                                           const BoxConstraints(maxWidth: 250),
                                                       child: generateMessage(data),
