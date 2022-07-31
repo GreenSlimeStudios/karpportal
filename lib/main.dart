@@ -18,6 +18,7 @@ import 'globals.dart' as globals;
 import 'HomeScreen.dart';
 
 int? valuePrimary;
+
 String? primary;
 Color? otherColor;
 MaterialColor? colorCustom;

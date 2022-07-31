@@ -825,11 +825,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     "content": reportBugContentController.text,
                     "authorNickname": globals.myUser!.nickname,
                     "authorID": globals.myUser!.uid,
+                    "time": DateTime.now().millisecondsSinceEpoch,
                   });
                   databaseMethods.sendNotification(
                       "New bug report from ${globals.myUser!.nickname!}",
                       "${reportBugTitleController.text}: ${reportBugContentController.text}",
-                      "eC5MyY3BTpK6Z3yNw56tM8:APA91bFFHtBGl_qXLotKVX89JsNtjTN22yUsAAOvubLSKvJ_0r7TOwuk8AVaY5Ue3h6g6G3QO6S_Bvri4-A0Typ_eG856b6mkLzzzgkkgLoSjRevgsMx1H1iGPasIVpO3NHtYXIWdBU7");
+                      await FirebaseFirestore.instance
+                          .collection("users")
+                          .doc("iH0WyWRmRbU8aGZHzvMupbrAkMZ2")
+                          .get()
+                          .then((value) {
+                        return value.data()!["token"];
+                      }));
                   reportBugContentController.text = "";
                   reportBugTitleController.text = "";
                   Fluttertoast.showToast(msg: "reported bug successfully");
@@ -897,11 +904,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     "content": reportIdeaContentController.text,
                     "authorNickname": globals.myUser!.nickname,
                     "authorID": globals.myUser!.uid,
+                    "time": DateTime.now().millisecondsSinceEpoch,
                   });
                   databaseMethods.sendNotification(
                       "New feature idea report from ${globals.myUser!.nickname!}",
                       "${reportIdeaTitleController.text}: ${reportIdeaContentController.text}",
-                      "eC5MyY3BTpK6Z3yNw56tM8:APA91bFFHtBGl_qXLotKVX89JsNtjTN22yUsAAOvubLSKvJ_0r7TOwuk8AVaY5Ue3h6g6G3QO6S_Bvri4-A0Typ_eG856b6mkLzzzgkkgLoSjRevgsMx1H1iGPasIVpO3NHtYXIWdBU7");
+                      await FirebaseFirestore.instance
+                          .collection("users")
+                          .doc("iH0WyWRmRbU8aGZHzvMupbrAkMZ2")
+                          .get()
+                          .then((value) {
+                        return value.data()!["token"];
+                      }));
                   reportIdeaContentController.text = "";
                   reportIdeaTitleController.text = "";
                   Fluttertoast.showToast(msg: "reported bug successfully");
