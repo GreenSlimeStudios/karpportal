@@ -162,4 +162,15 @@ class DatabaseMethods {
     // return data;
     return encryptioner.decrypt(data);
   }
+
+  String decryptImageIfNeeded(String url) {
+    print(url);
+    if (url.contains("http")) return url;
+
+    // if (encryptioner.decrypt(url).contains("http")) {
+    return encryptioner.decrypt(url);
+    // }
+    // String sus = databaseMethods.decrypt(url, {});
+    // return url;
+  }
 }

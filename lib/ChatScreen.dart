@@ -183,9 +183,9 @@ class _ChatPageState extends State<ChatPage> {
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
       //messageController.text = "";
+      notifyUser("image sent");
       messageController.text = "";
       imageUrls = [];
-      notifyUser("image sent");
       setState(() {});
       // setState(() {
       //   isImage == false;
@@ -521,7 +521,7 @@ class _ChatPageState extends State<ChatPage> {
     var downloadurl = await snapshot.ref.getDownloadURL();
 
     imageUrl = downloadurl;
-    imageUrls.add(imageUrl!);
+    imageUrls.add(databaseMethods.encrypt(imageUrl!));
     Fluttertoast.showToast(msg: "succesfully uploaded image");
     setState(() {});
     // isImage = true;
@@ -575,15 +575,15 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             for (String url in data["images"])
               GestureDetector(
-                onLongPress: () => messageActions(data, url: url),
+                onLongPress: () =>
+                    messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => InteractiveViewer(
                         child: CachedNetworkImage(
-                          imageUrl: url,
-                          //fit: BoxFit.fill,
+                          imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
                           progressIndicatorBuilder: (context, url, downloadProgress) =>
                               CircularProgressIndicator(value: downloadProgress.progress),
                           errorWidget: (context, url, error) => Icon(Icons.error),
@@ -595,7 +595,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 5, bottom: 5),
                   child: CachedNetworkImage(
-                    imageUrl: url,
+                    imageUrl: databaseMethods.decryptImageIfNeeded(url),
                     fit: BoxFit.fill,
                     progressIndicatorBuilder: (context, url, downloadProgress) =>
                         CircularProgressIndicator(value: downloadProgress.progress),
@@ -711,14 +711,13 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () {
                     //copyMessage(data,"");
                     downloadImage(
-                        data,
-                        databaseMethods.decrypt(
-                            (url != null)
-                                ? url
-                                : (url != null)
-                                    ? url
-                                    : data["message"],
-                            data));
+                      data,
+                      (url != null)
+                          ? url
+                          : (url != null)
+                              ? url
+                              : data["message"],
+                    );
                     //Navigator.pop(context);
                   },
                   child: Text('download image'),
@@ -885,7 +884,7 @@ class _ChatPageState extends State<ChatPage> {
                     // Fluttertoast.showToast(msg: "mmmmmmmmmmmmmmmmmmmmmm");
                     Navigator.of(context).pop();
                     imageUrl = urlController.text;
-                    imageUrls.add(imageUrl!);
+                    imageUrls.add(databaseMethods.encrypt(imageUrl!));
                     // isImage = true;
                     // sendMessage();
                     // isImage = false;
@@ -934,7 +933,7 @@ class _ImagesPreviewState extends State<ImagesPreview> {
                     setState(() {});
                   },
                   child: CachedNetworkImage(
-                    imageUrl: url,
+                    imageUrl: databaseMethods.decrypt(url, {"supportsEncryption": true}),
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
