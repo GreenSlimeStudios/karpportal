@@ -835,7 +835,7 @@ class _PostInstanceState extends State<PostInstance> {
       return value.data()!;
     });
     if (data != null) return data;
-    return {};
+    return {"none": "none"};
   }
 }
 

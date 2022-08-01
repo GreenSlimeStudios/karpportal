@@ -55,15 +55,23 @@ void main() async {
         print("done");
       }
     }
+    print("isgood");
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // prefs.setString('test', 'cholipka');
+    print(prefs.getString('test'));
+
+    print(prefs.getBool('isDarkTheme'));
     if (prefs.getBool('isDarkTheme') != null) {
       // isDarkTheme = prefs.getBool('isDarkTheme')!;
-      themeSring = prefs.getString('theme');
+      print("dark mode detected");
+      themeSring = await prefs.getString('theme');
     }
     if (themeSring != null) {
       switch (themeSring) {
         case "ThemeColor.Light":
           {
+            print("switching to light mode");
             globals.theme = ThemeColor.Light;
             globals.themeColor = Colors.white;
             globals.isDarkTheme = false;
@@ -71,6 +79,7 @@ void main() async {
           break;
         case "ThemeColor.Dark":
           {
+            print("switching to dark mode");
             globals.theme = ThemeColor.Dark;
             globals.themeColor = Colors.grey.shade900;
             globals.isDarkTheme = true;
@@ -78,6 +87,7 @@ void main() async {
           break;
         case "ThemeColor.Contrast":
           {
+            print("switching to contrast mode");
             globals.theme = ThemeColor.Contrast;
             globals.themeColor = Colors.black;
             globals.isDarkTheme = true;
@@ -89,6 +99,7 @@ void main() async {
       globals.themeColor = Colors.grey.shade900;
       globals.isDarkTheme = true;
     }
+    print("isgood 2");
     // if (isDarkTheme) {
     //   globals.themeColor = Colors.grey.shade900;
     // } else {
@@ -110,16 +121,20 @@ void main() async {
     ];
     if (prefs.getString('shade1') != null) {
       for (int i = 1; i < 11; i++) {
-        String? colorString = prefs.getString('shade$i');
+        if (prefs.getString('shade$i') == null) {
+          print('sus');
+          continue;
+        }
+        String colorString = prefs.getString('shade$i')!;
         print(colorString);
-        String? valueString = colorString?.split('(0x')[1].split(')')[0]; // kind of hacky..
+        String valueString = colorString.split('(0x')[1].split(')')[0]; // kind of hacky..
         if (i == 6) {
           //Color(0xffe91e63)
-          primary = colorString!.substring(6, 16);
+          primary = colorString.substring(6, 16);
           print(primary);
-          valuePrimary = int.parse(valueString!, radix: 16);
+          valuePrimary = int.parse(valueString, radix: 16);
         }
-        int value = int.parse(valueString!, radix: 16);
+        int value = int.parse(valueString, radix: 16);
         otherColor = Color(value);
         colorShades[i - 1] = otherColor!;
       }
@@ -143,6 +158,8 @@ void main() async {
       colorCustom = Colors.deepOrange;
       globals.primaryColor = Colors.deepOrange;
     }
+
+    print("isgood 3");
     //primarySwatch
     List<Color> colorSwatchShades = [
       Colors.black,
@@ -171,6 +188,8 @@ void main() async {
         otherColorS = Color(value);
         colorSwatchShades[i - 1] = otherColor!;
       }
+
+      print("isgood 4");
       print(colorSwatchShades);
 
       materialColorS = {
@@ -193,6 +212,7 @@ void main() async {
     }
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+    print("isgood5");
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,

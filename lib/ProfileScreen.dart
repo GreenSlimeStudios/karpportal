@@ -628,7 +628,10 @@ class _ProfilePageState extends State<ProfilePage> {
   changeThemeColor(ThemeColor theme) async {
     globals.theme = theme;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setBool('isDarkTheme', isDarkTheme);
+    if (theme == ThemeColor.Light)
+      prefs.setBool('isDarkTheme', false);
+    else
+      prefs.setBool('isDarkTheme', true);
     prefs.setString('theme', theme.toString());
     Fluttertoast.showToast(msg: 'restart app to see changes');
     setState(() {});
