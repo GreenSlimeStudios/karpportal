@@ -175,6 +175,10 @@ void main() async {
     ];
     if (prefs.getString('shadeS1') != null) {
       for (int i = 1; i < 11; i++) {
+        if (prefs.getString('shadeS$i') == null) {
+          print('sus2');
+          continue;
+        }
         String? colorStringS = prefs.getString('shadeS$i');
         print(colorStringS);
         String? valueString = colorStringS?.split('(0x')[1].split(')')[0]; // kind of hacky..

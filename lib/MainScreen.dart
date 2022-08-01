@@ -747,6 +747,7 @@ class _PostInstanceState extends State<PostInstance> {
         .collection("Comments")
         .doc("Comments")
         .set({commentID: commentMap}, SetOptions(merge: true));
+    // FirebaseFirestore.instance.collection("Posts").doc(…)
 
     commentController.text = "";
     addComment = false;
@@ -763,8 +764,11 @@ class _PostInstanceState extends State<PostInstance> {
   }
 
   Widget optimizedComments(Map<String, dynamic> replies) {
+    print("generating comments gcc");
     if (widget.data["mainComments"] != null) {
       List<dynamic> commentIDs = widget.data["mainComments"];
+      print("COMMENTIDS INCOMING ===================================================:");
+      print(commentIDs);
       // List<String> commentIDs = ["njsbR2mPfSPdJRAfHtKsKeksfRn21659295141390"];
       // commentIDs.sort((a, b) => (b['time']).compareTo(a['time']));
 
@@ -772,6 +776,7 @@ class _PostInstanceState extends State<PostInstance> {
           future: getAllComments(),
           builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
+              print("loading comments");
               List<Map<String, dynamic>> comments = [];
               print("printing comments");
               for (Map<String, dynamic> comment in snapshot.data!.values) {
@@ -825,6 +830,19 @@ class _PostInstanceState extends State<PostInstance> {
   }
 
   Future<Map<String, dynamic>> getReplies() async {
+    return await FirebaseFirestore.instance
+        .collection("Posts")
+        .doc(widget.data["uid"])
+        .collection("Replies")
+        .doc("Replies")
+        .get()
+        .then((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data()!;
+      }
+      return {};
+    });
+
     Map<String, dynamic>? data = await FirebaseFirestore.instance
         .collection("Posts")
         .doc(widget.data["uid"])
