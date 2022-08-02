@@ -413,7 +413,7 @@ class _PostInstanceState extends State<PostInstance> {
                                     optimizedComments(snapshot.data![0], snapshot.data![1]),
                                   ]);
                                 }
-                                return Container();
+                                return CircularProgressIndicator();
                               }),
                           if (widget.data["comments"] != null)
                             StreamBuilder(
@@ -1259,17 +1259,20 @@ class _CommentInstanceState extends State<CommentInstance> {
                                         style: const TextStyle(color: Colors.white),
                                       ),
                                     ]),
-                                  if (widget.commentData["comments"] != null)
-                                    if (widget.commentData["comments"].length > 0)
+                                  if (widget.replies[widget.commentData["uid"]] != null)
+                                    // Text(widget.replies[widget.commentData["uid"]].toString()),
+                                    if (getRepliesLengt(widget.replies[widget.commentData["uid"]]) >
+                                        0)
                                       Row(children: [
                                         const SizedBox(width: 10),
                                         Icon(Icons.comment, size: 17, color: Colors.white),
                                         SizedBox(width: 2),
                                         Text(
-                                          "${widget.commentData["comments"].length.toString()}",
+                                          "${getRepliesLengt(widget.replies[widget.commentData["uid"]])}",
                                           style: const TextStyle(color: Colors.white),
                                         ),
                                       ]),
+
                                   const SizedBox(width: 10),
                                   // Row(children: [
                                   //   SizedBox(width: 10),
@@ -1375,7 +1378,9 @@ class _CommentInstanceState extends State<CommentInstance> {
           .doc("Comments")
           .set({
         widget.commentData["uid"]: {
-          reaction: FieldValue.arrayRemove([globals.myUser!.uid!]),
+          "reactions": {
+            reaction: FieldValue.arrayRemove([globals.myUser!.uid!]),
+          },
         }
       }, SetOptions(merge: true));
     } else {
@@ -1386,7 +1391,9 @@ class _CommentInstanceState extends State<CommentInstance> {
           .doc("Comments")
           .set({
         widget.commentData["uid"]: {
-          reaction: FieldValue.arrayUnion([globals.myUser!.uid!]),
+          "reactions": {
+            reaction: FieldValue.arrayUnion([globals.myUser!.uid!]),
+          },
         }
       }, SetOptions(merge: true));
     }
@@ -1500,5 +1507,21 @@ class _CommentInstanceState extends State<CommentInstance> {
       return value.data()! as Map<String, dynamic>;
     });
     return comments;
+  }
+
+  int getRepliesLengt(replies) {
+    int length = 0;
+    List<dynamic> repliesList = replies;
+    length += repliesList.length;
+    // print(repliesList.length);
+    if (repliesList.length > 0) {
+      for (String id in repliesList) {
+        if (widget.replies[id] != null) {
+          length += getRepliesLengt(widget.replies[id]);
+        }
+      }
+    }
+
+    return length;
   }
 }
