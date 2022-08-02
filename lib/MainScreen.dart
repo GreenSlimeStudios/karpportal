@@ -404,12 +404,13 @@ class _PostInstanceState extends State<PostInstance> {
                                   ],
                                 )
                               : Container(),
-                          FutureBuilder<Map<String, dynamic>>(
-                              future: getReplies(),
-                              builder: (builder, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          FutureBuilder<List<Map<String, dynamic>>>(
+                              future: getRepliesAndAllComments(),
+                              builder:
+                                  (builder, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                                 if (snapshot.hasData) {
                                   return Column(children: [
-                                    optimizedComments(snapshot.data!),
+                                    optimizedComments(snapshot.data![0], snapshot.data![1]),
                                   ]);
                                 }
                                 return Container();
@@ -439,6 +440,7 @@ class _PostInstanceState extends State<PostInstance> {
                                                     .contains(snapshot.data!.docs[i].data()["uid"]))
                                                   CommentInstance(
                                                       replies: {},
+                                                      allComments: {},
                                                       postData: widget.data,
                                                       commentData: snapshot.data!.docs[i].data()
                                                           as Map<String, dynamic>,
@@ -763,7 +765,7 @@ class _PostInstanceState extends State<PostInstance> {
     databaseMethods.sendNotification(title, content, widget.snapshot.data!.token!);
   }
 
-  Widget optimizedComments(Map<String, dynamic> replies) {
+  Widget optimizedComments(Map<String, dynamic> replies, Map<String, dynamic> allComments) {
     print("generating comments gcc");
     if (widget.data["mainComments"] != null) {
       List<dynamic> commentIDs = widget.data["mainComments"];
@@ -772,39 +774,32 @@ class _PostInstanceState extends State<PostInstance> {
       // List<String> commentIDs = ["njsbR2mPfSPdJRAfHtKsKeksfRn21659295141390"];
       // commentIDs.sort((a, b) => (b['time']).compareTo(a['time']));
 
-      return FutureBuilder<Map<String, dynamic>>(
-          future: getAllComments(),
-          builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              print("loading comments");
-              List<Map<String, dynamic>> comments = [];
-              print("printing comments");
-              for (Map<String, dynamic> comment in snapshot.data!.values) {
-                // for (Map<String, dynamic> pointer in commentIDs) {
-                //   if (pointer["commentID"] == comment["uid"]) comments.add(comment);
-                // }
-                if (commentIDs.contains(comment["uid"])) {
-                  comments.add(comment);
-                }
-              }
-              print(comments.toString());
+      print("loading comments");
+      List<Map<String, dynamic>> comments = [];
+      print("printing comments");
+      for (Map<String, dynamic> comment in allComments.values) {
+        // for (Map<String, dynamic> pointer in commentIDs) {
+        //   if (pointer["commentID"] == comment["uid"]) comments.add(comment);
+        // }
+        if (commentIDs.contains(comment["uid"])) {
+          comments.add(comment);
+        }
+      }
+      print(comments.toString());
 
-              comments.sort((b, a) => (b['time']).compareTo(a['time']));
-              // comments = comments.reversed.toList();
-              return Column(children: [
-                for (int i = 0; i < comments.length; i++)
-                  CommentInstance(
-                      replies: replies,
-                      postData: widget.data,
-                      commentData: comments[i],
-                      isExpanded: true),
-              ]);
+      comments.sort((b, a) => (b['time']).compareTo(a['time']));
+      // comments = comments.reversed.toList();
+      return Column(children: [
+        for (int i = 0; i < comments.length; i++)
+          CommentInstance(
+              allComments: allComments,
+              replies: replies,
+              postData: widget.data,
+              commentData: comments[i],
+              isExpanded: true),
+      ]);
 
-              return CircularProgressIndicator();
-            } else {
-              return CircularProgressIndicator();
-            }
-          });
+      return CircularProgressIndicator();
 
       // return Column(children: [
       //   for (int i = 0; i < commentIDs.length; i++)
@@ -829,8 +824,9 @@ class _PostInstanceState extends State<PostInstance> {
     return comments;
   }
 
-  Future<Map<String, dynamic>> getReplies() async {
-    return await FirebaseFirestore.instance
+  Future<List<Map<String, dynamic>>> getRepliesAndAllComments() async {
+    List<Map<String, dynamic>> mapList = [];
+    mapList.add(await FirebaseFirestore.instance
         .collection("Posts")
         .doc(widget.data["uid"])
         .collection("Replies")
@@ -841,19 +837,19 @@ class _PostInstanceState extends State<PostInstance> {
         return snapshot.data()!;
       }
       return {};
-    });
-
-    Map<String, dynamic>? data = await FirebaseFirestore.instance
+    }));
+    Map<String, dynamic> comments = await FirebaseFirestore.instance
         .collection("Posts")
         .doc(widget.data["uid"])
-        .collection("Replies")
-        .doc("Replies")
+        .collection("Comments")
+        .doc("Comments")
         .get()
         .then((value) {
-      return value.data()!;
+      return value.data()! as Map<String, dynamic>;
     });
-    if (data != null) return data;
-    return {"none": "none"};
+    mapList.add(comments);
+
+    return mapList;
   }
 }
 
@@ -865,12 +861,14 @@ class CommentInstance extends StatefulWidget {
       required this.postData,
       required this.commentData,
       required this.isExpanded,
-      required this.replies})
+      required this.replies,
+      required this.allComments})
       : super(key: key);
   final Map<String, dynamic> postData;
   final Map<String, dynamic> commentData;
   final bool isExpanded;
   final Map<String, dynamic> replies;
+  final Map<String, dynamic> allComments;
   @override
   State<CommentInstance> createState() => _CommentInstanceState();
 }
@@ -917,6 +915,7 @@ class _CommentInstanceState extends State<CommentInstance> {
                               child: Column(
                             children: [
                               CommentInstance(
+                                  allComments: widget.allComments,
                                   replies: widget.replies,
                                   postData: widget.postData,
                                   commentData: widget.commentData,
@@ -1189,6 +1188,7 @@ class _CommentInstanceState extends State<CommentInstance> {
                                                       if (widget.commentData["comments"].contains(
                                                           snapshot.data!.docs[i].data()["uid"]))
                                                         CommentInstance(
+                                                            allComments: widget.allComments,
                                                             replies: widget.replies,
                                                             postData: widget.postData,
                                                             commentData: snapshot.data!.docs[i]
@@ -1371,10 +1371,10 @@ class _CommentInstanceState extends State<CommentInstance> {
       await FirebaseFirestore.instance
           .collection("Posts")
           .doc(widget.postData["uid"])
-          .collection("comments")
-          .doc(widget.commentData["uid"])
+          .collection("Comments")
+          .doc("Comments")
           .set({
-        "reactions": {
+        widget.commentData["uid"]: {
           reaction: FieldValue.arrayRemove([globals.myUser!.uid!]),
         }
       }, SetOptions(merge: true));
@@ -1382,10 +1382,10 @@ class _CommentInstanceState extends State<CommentInstance> {
       await FirebaseFirestore.instance
           .collection("Posts")
           .doc(widget.postData["uid"])
-          .collection("comments")
-          .doc(widget.commentData["uid"])
+          .collection("Comments")
+          .doc("Comments")
           .set({
-        "reactions": {
+        widget.commentData["uid"]: {
           reaction: FieldValue.arrayUnion([globals.myUser!.uid!]),
         }
       }, SetOptions(merge: true));
@@ -1464,45 +1464,29 @@ class _CommentInstanceState extends State<CommentInstance> {
     // commentIDs.sort((a, b) => (b['time']).compareTo(a['time']));
     if (commentIDs == null) return Container();
 
-    return FutureBuilder<Map<String, dynamic>>(
-        future: getAllComments(),
-        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            List<Map<String, dynamic>> comments = [];
-            print("printing comments");
-            for (Map<String, dynamic> comment in snapshot.data!.values) {
-              // for (Map<String, dynamic> pointer in commentIDs) {
-              //   if (pointer["commentID"] == comment["uid"]) comments.add(comment);
-              // }
-              if (commentIDs.contains(comment["uid"])) {
-                comments.add(comment);
-              }
-            }
-            print(comments.toString());
+    List<Map<String, dynamic>> comments = [];
+    print("printing comments");
+    for (Map<String, dynamic> comment in widget.allComments.values) {
+      // for (Map<String, dynamic> pointer in commentIDs) {
+      //   if (pointer["commentID"] == comment["uid"]) comments.add(comment);
+      // }
+      if (commentIDs.contains(comment["uid"])) {
+        comments.add(comment);
+      }
+    }
+    print(comments.toString());
 
-            comments.sort((b, a) => (b['time']).compareTo(a['time']));
-            // comments = comments.reversed.toList();
-            return Column(children: [
-              for (int i = 0; i < comments.length; i++)
-                CommentInstance(
-                    replies: widget.replies,
-                    postData: widget.postData,
-                    commentData: comments[i],
-                    isExpanded: true),
-            ]);
-
-            return CircularProgressIndicator();
-          } else {
-            return CircularProgressIndicator();
-          }
-        });
-
-    // return Column(children: [
-    //   for (int i = 0; i < commentIDs.length; i++)
-    //     CommentInstance(
-    //         postData: widget.data, commentData: widget.data["full"], isExpanded: true),
-    // ]);
-    return Container();
+    comments.sort((b, a) => (b['time']).compareTo(a['time']));
+    // comments = comments.reversed.toList();
+    return Column(children: [
+      for (int i = 0; i < comments.length; i++)
+        CommentInstance(
+            allComments: widget.allComments,
+            replies: widget.replies,
+            postData: widget.postData,
+            commentData: comments[i],
+            isExpanded: true),
+    ]);
   }
 
   Future<Map<String, dynamic>> getAllComments() async {
