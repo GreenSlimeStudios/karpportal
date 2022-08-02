@@ -324,7 +324,8 @@ class _PostInstanceState extends State<PostInstance> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("Comments ${widget.data["comments"].length}"),
+                                  Text(
+                                      "Comments ${(widget.data["allComments"] != null) ? widget.data["allComments"].length : "none"}"),
                                   const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
@@ -404,17 +405,18 @@ class _PostInstanceState extends State<PostInstance> {
                                   ],
                                 )
                               : Container(),
-                          FutureBuilder<List<Map<String, dynamic>>>(
-                              future: getRepliesAndAllComments(),
-                              builder:
-                                  (builder, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-                                if (snapshot.hasData) {
-                                  return Column(children: [
-                                    optimizedComments(snapshot.data![0], snapshot.data![1]),
-                                  ]);
-                                }
-                                return CircularProgressIndicator();
-                              }),
+                          if (widget.data["allComments"] != null)
+                            FutureBuilder<List<Map<String, dynamic>>>(
+                                future: getRepliesAndAllComments(),
+                                builder:
+                                    (builder, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Column(children: [
+                                      optimizedComments(snapshot.data![0], snapshot.data![1]),
+                                    ]);
+                                  }
+                                  return CircularProgressIndicator();
+                                }),
                           if (widget.data["comments"] != null)
                             StreamBuilder(
                                 stream: FirebaseFirestore.instance
