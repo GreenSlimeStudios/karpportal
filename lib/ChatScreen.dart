@@ -546,6 +546,7 @@ class _ChatPageState extends State<ChatPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => InteractiveViewer(
+                      maxScale: 10,
                       child: CachedNetworkImage(
                         imageUrl: databaseMethods.decrypt(data["message"], data),
                         //fit: BoxFit.fill,
@@ -587,6 +588,7 @@ class _ChatPageState extends State<ChatPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => InteractiveViewer(
+                        maxScale: 10,
                         child: CachedNetworkImage(
                           imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
                           progressIndicatorBuilder: (context, url, downloadProgress) => Center(

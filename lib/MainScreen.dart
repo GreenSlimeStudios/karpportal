@@ -586,6 +586,7 @@ class _PostInstanceState extends State<PostInstance> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => InteractiveViewer(
+                      maxScale: 10,
                       child: Hero(
                         tag: url,
                         child: CachedNetworkImage(

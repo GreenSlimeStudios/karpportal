@@ -78,8 +78,8 @@ class _ProfilePageState extends State<ProfilePage> {
               imageUrl: getBackroundUrl(),
               colorBlendMode: BlendMode.clear,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  Container(width: 50, height: 50, child: CircularProgressIndicator()),
+              placeholder: (context, url) => Container(
+                  width: 50, height: 50, child: Center(child: CircularProgressIndicator())),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
@@ -116,7 +116,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => InteractiveViewer(
-                                    child: CachedNetworkImage(imageUrl: globals.myUser!.avatarUrl!),
+                                    maxScale: 10,
+                                    child: CachedNetworkImage(
+                                        imageUrl: globals.myUser!.avatarUrl!,
+                                        progressIndicatorBuilder: (context, url, progress) =>
+                                            CircularProgressIndicator(value: progress.progress)),
                                   ),
                                 ),
                               ),
