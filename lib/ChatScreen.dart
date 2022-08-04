@@ -256,7 +256,7 @@ class _ChatPageState extends State<ChatPage> {
                 .snapshots(),
             builder: (context, snapshot) {
               return (snapshot.connectionState == ConnectionState.waiting)
-                  ? Expanded(child: Center(child: CircularProgressIndicator()))
+                  ? Expanded(child: Center(child: CircularProgressIndicator(color: Colors.white)))
                   : Expanded(
                       child: ListView.builder(
                         reverse: true,
@@ -468,7 +468,7 @@ class _ChatPageState extends State<ChatPage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => CircularProgressIndicator(),
+          placeholder: (context, url) => CircularProgressIndicator(color: Colors.white),
           errorWidget: (context, url, error) => Icon(Icons.error),
         ),
       );
@@ -479,7 +479,7 @@ class _ChatPageState extends State<ChatPage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => CircularProgressIndicator(),
+          placeholder: (context, url) => CircularProgressIndicator(color: Colors.white),
           errorWidget: (context, url, error) => Icon(Icons.error),
         ),
       );
@@ -549,8 +549,10 @@ class _ChatPageState extends State<ChatPage> {
                       child: CachedNetworkImage(
                         imageUrl: databaseMethods.decrypt(data["message"], data),
                         //fit: BoxFit.fill,
-                        progressIndicatorBuilder: (context, url, downloadProgress) =>
-                            CircularProgressIndicator(value: downloadProgress.progress),
+                        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                          child: CircularProgressIndicator(
+                              value: downloadProgress.progress, color: Colors.white),
+                        ),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
@@ -563,7 +565,8 @@ class _ChatPageState extends State<ChatPage> {
                   imageUrl: databaseMethods.decrypt(data["message"], data),
                   fit: BoxFit.fill,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(value: downloadProgress.progress),
+                      CircularProgressIndicator(
+                          value: downloadProgress.progress, color: Colors.white),
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
@@ -586,8 +589,10 @@ class _ChatPageState extends State<ChatPage> {
                       builder: (context) => InteractiveViewer(
                         child: CachedNetworkImage(
                           imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
-                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              CircularProgressIndicator(value: downloadProgress.progress),
+                          progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                            child: CircularProgressIndicator(
+                                value: downloadProgress.progress, color: Colors.white),
+                          ),
                           errorWidget: (context, url, error) => Icon(Icons.error),
                         ),
                       ),
@@ -600,7 +605,8 @@ class _ChatPageState extends State<ChatPage> {
                     imageUrl: databaseMethods.decryptImageIfNeeded(url),
                     fit: BoxFit.fill,
                     progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        CircularProgressIndicator(value: downloadProgress.progress),
+                        CircularProgressIndicator(
+                            value: downloadProgress.progress, color: Colors.white),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
