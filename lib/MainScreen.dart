@@ -405,7 +405,7 @@ class _PostInstanceState extends State<PostInstance> {
                                   ],
                                 )
                               : Container(),
-                          if (widget.data["allComments"] != null)
+                          if (widget.data["mainComments"] != null)
                             FutureBuilder<List<Map<String, dynamic>>>(
                                 future: getRepliesAndAllComments(),
                                 builder:
