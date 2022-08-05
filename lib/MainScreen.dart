@@ -64,13 +64,13 @@ class _MainPageState extends State<MainPage> {
                       color: globals.themeColor,
                       border: Border.all(width: 4, color: globals.primaryColor!),
                     ),
-                    child: const Text("Tell the world something cool what's going on!"),
+                    child: const Text("Create a brand new post!"),
                   ),
                 ),
               ),
             ),
             // Make the initial height of the SliverAppBar larger than normal.
-            expandedHeight: 120,
+            expandedHeight: databaseMethods.getAppBarHeight() + 65,
           ),
           content(),
           const SliverToBoxAdapter(

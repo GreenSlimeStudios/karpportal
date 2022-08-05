@@ -173,4 +173,11 @@ class DatabaseMethods {
     // String sus = databaseMethods.decrypt(url, {});
     // return url;
   }
+
+  double getAppBarHeight() {
+    AppBar appBar = AppBar(
+      title: Text('Demo'),
+    );
+    return appBar.preferredSize.height;
+  }
 }
