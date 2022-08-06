@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firedart/firedart.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/preferences_store.dart';
+import 'package:karpportal/secrets/apiKeys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'InitUserScreen.dart';
@@ -30,13 +31,13 @@ class _LinuxLoadPageState extends State<LinuxLoadPage> {
       logindetailstouse = await prefs.getStringList('logindetails') as List<String>;
 
       // FirebaseAuth.initialize(
-      //     'AIzaSyA151Up5KqDmbiKEub8g6WzwIOZZc4HgDA', await HiveStore.create());
+      //     Secrets().firebaseAuthApiKey, await HiveStore.create());
       // await FirebaseAuth.instance
       //     .signIn(logindetailstouse[0], logindetailstouse[1]);
       // var user = await FirebaseAuth.instance.getUser();
 
       var firebaseAuth =
-          FirebaseAuth('AIzaSyA151Up5KqDmbiKEub8g6WzwIOZZc4HgDA', await PreferencesStore.create());
+          FirebaseAuth(Secrets().firebaseAuthApiKey, await PreferencesStore.create());
       await firebaseAuth.signIn(logindetailstouse[0], logindetailstouse[1]);
       var user = await firebaseAuth.getUser();
 
