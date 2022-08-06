@@ -1,1 +1,8 @@
+.dart_tool/*
 build/*
+lib/secrets/*
+ios/*
+android/*
+web/*
+linux/*
+windows/*
