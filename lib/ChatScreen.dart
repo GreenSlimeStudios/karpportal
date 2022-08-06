@@ -155,7 +155,7 @@ class _ChatPageState extends State<ChatPage> {
           "message": databaseMethods.encrypt(messageController.text.trim()),
           "sendBy": loggedInUser.fullName!,
           "time": DateTime.now().millisecondsSinceEpoch,
-          "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
+          "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
           "time3": time3,
           "isLink": isLink,
           // "images": imageUrls,
@@ -174,7 +174,7 @@ class _ChatPageState extends State<ChatPage> {
         "message": databaseMethods.encrypt(messageController.text.trim()),
         "sendBy": loggedInUser.fullName!,
         "time": DateTime.now().millisecondsSinceEpoch,
-        "time2": '${DateTime.now().year}/${month}/${day} ${hour}:${minute}',
+        "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
         "time3": time3,
         "images": imageUrls,
         "isLink": isLink,
@@ -182,8 +182,11 @@ class _ChatPageState extends State<ChatPage> {
       };
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
-      //messageController.text = "";
-      notifyUser("image sent");
+      if (messageController.text != "") {
+        notifyUser("image sent (${imageUrls.length})\n${messageController.text}");
+      } else {
+        notifyUser("image sent (${imageUrls.length})");
+      }
       messageController.text = "";
       imageUrls = [];
       setState(() {});
@@ -211,7 +214,7 @@ class _ChatPageState extends State<ChatPage> {
               onPressed: (() => () {
                     setState(() {});
                   }),
-              icon: Icon(Icons.refresh)),
+              icon: const Icon(Icons.refresh)),
           IconButton(
             onPressed: () {
               //setState(() {});
@@ -236,8 +239,8 @@ class _ChatPageState extends State<ChatPage> {
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ),
@@ -256,7 +259,8 @@ class _ChatPageState extends State<ChatPage> {
                 .snapshots(),
             builder: (context, snapshot) {
               return (snapshot.connectionState == ConnectionState.waiting)
-                  ? Expanded(child: Center(child: CircularProgressIndicator(color: Colors.white)))
+                  ? const Expanded(
+                      child: Center(child: CircularProgressIndicator(color: Colors.white)))
                   : Expanded(
                       child: ListView.builder(
                         reverse: true,
@@ -292,13 +296,13 @@ class _ChatPageState extends State<ChatPage> {
                                                       borderRadius: BorderRadius.circular(10)),
                                                   margin: const EdgeInsets.all(10),
                                                   child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        left: 10, top: 5, right: 10, bottom: 5),
                                                     child: Container(
                                                       constraints:
                                                           const BoxConstraints(maxWidth: 250),
                                                       child: generateMessage(data),
                                                     ),
-                                                    padding: const EdgeInsets.only(
-                                                        left: 10, top: 5, right: 10, bottom: 5),
                                                   ),
                                                 ),
                                               ],
@@ -345,6 +349,8 @@ class _ChatPageState extends State<ChatPage> {
                                                       borderRadius: BorderRadius.circular(10)),
                                                   margin: const EdgeInsets.all(10),
                                                   child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        left: 10, top: 5, right: 10, bottom: 5),
                                                     child: Container(
                                                       // alignment: Alignment.centerRight,
 
@@ -352,8 +358,6 @@ class _ChatPageState extends State<ChatPage> {
                                                           const BoxConstraints(maxWidth: 250),
                                                       child: generateMessage(data),
                                                     ),
-                                                    padding: const EdgeInsets.only(
-                                                        left: 10, top: 5, right: 10, bottom: 5),
                                                   ),
                                                 ),
                                                 Padding(
@@ -393,7 +397,7 @@ class _ChatPageState extends State<ChatPage> {
                     );
             },
           ),
-          (imageUrls.isEmpty == false) ? ImagesPreview() : Container(),
+          (imageUrls.isEmpty == false) ? const ImagesPreview() : Container(),
           Container(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -402,7 +406,7 @@ class _ChatPageState extends State<ChatPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 10),
+                    margin: const EdgeInsets.only(top: 10),
                     width: 50,
                     child: TextButton(
                       onPressed: sendImage,
@@ -439,7 +443,7 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   const Padding(padding: EdgeInsets.only(left: 5)),
                   Container(
-                    margin: EdgeInsets.only(top: 10),
+                    margin: const EdgeInsets.only(top: 10),
                     height: 50,
                     width: 50,
                     child: FloatingActionButton(
@@ -468,8 +472,8 @@ class _ChatPageState extends State<ChatPage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => CircularProgressIndicator(color: Colors.white),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       );
     } else {
@@ -479,8 +483,8 @@ class _ChatPageState extends State<ChatPage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => CircularProgressIndicator(color: Colors.white),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       );
     }
@@ -554,21 +558,21 @@ class _ChatPageState extends State<ChatPage> {
                           child: CircularProgressIndicator(
                               value: downloadProgress.progress, color: Colors.white),
                         ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
                     ),
                   ),
                 );
               },
               child: Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 5),
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
                 child: CachedNetworkImage(
                   imageUrl: databaseMethods.decrypt(data["message"], data),
                   fit: BoxFit.fill,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CircularProgressIndicator(
                           value: downloadProgress.progress, color: Colors.white),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
             );
@@ -595,21 +599,21 @@ class _ChatPageState extends State<ChatPage> {
                             child: CircularProgressIndicator(
                                 value: downloadProgress.progress, color: Colors.white),
                           ),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
                         ),
                       ),
                     ),
                   );
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
                   child: CachedNetworkImage(
                     imageUrl: databaseMethods.decryptImageIfNeeded(url),
                     fit: BoxFit.fill,
                     progressIndicatorBuilder: (context, url, downloadProgress) =>
                         CircularProgressIndicator(
                             value: downloadProgress.progress, color: Colors.white),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ),
@@ -656,7 +660,7 @@ class _ChatPageState extends State<ChatPage> {
   copyMessage(Map<String, dynamic> data, String message, {String? url}) {
     Clipboard.setData(
         ClipboardData(text: (url != null) ? url : databaseMethods.decrypt(data["message"], data)));
-    Fluttertoast.showToast(msg: '${message} copied succesfully');
+    Fluttertoast.showToast(msg: '$message copied succesfully');
   }
 
   downloadImage(Map<String, dynamic> data, String url) async {
@@ -701,21 +705,22 @@ class _ChatPageState extends State<ChatPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('what do you?'),
-          content: Container(
+          title: const Text('what do you?'),
+          content: SizedBox(
             height: 100,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    if (url != null)
+                    if (url != null) {
                       copyMessage(data, 'image url', url: url);
-                    else
+                    } else {
                       copyMessage(data, 'image url');
+                    }
                     Navigator.pop(context);
                   },
-                  child: Text('copy image url'),
+                  child: const Text('copy image url'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -730,7 +735,7 @@ class _ChatPageState extends State<ChatPage> {
                     );
                     //Navigator.pop(context);
                   },
-                  child: Text('download image'),
+                  child: const Text('download image'),
                 ),
               ],
             ),
@@ -838,8 +843,8 @@ class _ChatPageState extends State<ChatPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("pick image type"),
-          content: Container(
+          title: const Text("pick image type"),
+          content: SizedBox(
             height: 100,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -849,7 +854,7 @@ class _ChatPageState extends State<ChatPage> {
                     pickImage();
                     Navigator.pop(context);
                   },
-                  child: Text('image from gallery'),
+                  child: const Text('image from gallery'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -858,7 +863,7 @@ class _ChatPageState extends State<ChatPage> {
                     Navigator.pop(context);
                     setState(() {});
                   },
-                  child: Text('image from url'),
+                  child: const Text('image from url'),
                 ),
               ],
             ),
@@ -877,7 +882,7 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context) {
         return AlertDialog(
           //title: Text('what do you?'),
-          content: Container(
+          content: SizedBox(
             height: 100,
             child: Column(
               children: [
@@ -895,11 +900,9 @@ class _ChatPageState extends State<ChatPage> {
                     Navigator.of(context).pop();
                     imageUrl = urlController.text;
                     imageUrls.add(databaseMethods.encrypt(imageUrl!));
-                    // isImage = true;
-                    // sendMessage();
-                    // isImage = false;
+                    urlController.text = "";
                   },
-                  child: Text('accept'),
+                  child: const Text('accept'),
                 ),
               ],
             ),
@@ -911,7 +914,7 @@ class _ChatPageState extends State<ChatPage> {
 }
 
 class ImagesPreview extends StatefulWidget {
-  ImagesPreview({Key? key}) : super(key: key);
+  const ImagesPreview({Key? key}) : super(key: key);
 
   @override
   State<ImagesPreview> createState() => _ImagesPreviewState();
@@ -926,7 +929,7 @@ class _ImagesPreviewState extends State<ImagesPreview> {
         border: Border.all(color: globals.primaryColor!, width: 2),
       ),
       // color: globals.primaryColor,
-      constraints: BoxConstraints(maxHeight: 200),
+      constraints: const BoxConstraints(maxHeight: 200),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -944,8 +947,8 @@ class _ImagesPreviewState extends State<ImagesPreview> {
                   },
                   child: CachedNetworkImage(
                     imageUrl: databaseMethods.decrypt(url, {"supportsEncryption": true}),
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
             ],
@@ -961,14 +964,14 @@ preImageOptions(context, url) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('what do you?'),
-        content: Container(
+        title: const Text('what do you?'),
+        content: SizedBox(
           height: 50,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ElevatedButton(
-                  child: Text("REMOVE"),
+                  child: const Text("REMOVE"),
                   onPressed: () {
                     imageUrls.remove(url);
                     Navigator.of(context).pop();
