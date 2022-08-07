@@ -1,14 +1,10 @@
-import 'dart:convert';
-import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:karpportal/ChatScreen.dart';
+import 'package:karpportal/CreateGroupChatScreen.dart';
 import 'package:karpportal/Database.dart';
-import 'package:karpportal/MyClipper.dart';
 
 import 'UserModel.dart';
 
@@ -58,7 +54,7 @@ class _MessagesPageState extends State<MessagesPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: globals.primarySwatch,
         onPressed: refresh,
-        child: Icon(
+        child: const Icon(
           Icons.refresh,
           color: Colors.white,
         ),
@@ -66,11 +62,11 @@ class _MessagesPageState extends State<MessagesPage> {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(left: 20, right: 20),
+            margin: const EdgeInsets.only(left: 20, right: 20),
             //child: Form(
             child: Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Text(
+              margin: const EdgeInsets.only(top: 10),
+              child: const Text(
                 'Recent Messages',
                 style: TextStyle(
                     fontSize: 20,
@@ -80,11 +76,12 @@ class _MessagesPageState extends State<MessagesPage> {
               ),
             ),
           ),
-          Padding(padding: EdgeInsets.only(top: 10)),
+          const Padding(padding: EdgeInsets.only(top: 10)),
           //for (int i = 0; i < 4; i++)
           Expanded(
             child: ListView(
               children: [
+                createGroupChatTab(),
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return New Messages
@@ -114,8 +111,8 @@ class _MessagesPageState extends State<MessagesPage> {
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         } else {
-          return Center(
-              child: Container(
+          return const Center(
+              child: SizedBox(
                   height: 60,
                   width: 60,
                   child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator())));
@@ -206,7 +203,7 @@ class _MessagesPageState extends State<MessagesPage> {
         );
       },
       child: Container(
-        padding: EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -224,13 +221,9 @@ class _MessagesPageState extends State<MessagesPage> {
                             targetUserModel.description!.trim() != "")
                         ? (targetUserModel.description!.trim().length < 66)
                             ? targetUserModel.description!.trim().replaceAll("\n", " ")
-                            : targetUserModel.description!
-                                    .trim()
-                                    .replaceAll("\n", " ")
-                                    .substring(0, 65) +
-                                "..."
+                            : "${targetUserModel.description!.trim().replaceAll("\n", " ").substring(0, 65)}..."
                         : "karpportal enjoyer",
-                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
+                    style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
                   ),
                 ],
               ),
@@ -243,8 +236,8 @@ class _MessagesPageState extends State<MessagesPage> {
                     width: 55,
                     height: 55,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ),
@@ -280,9 +273,9 @@ class _MessagesPageState extends State<MessagesPage> {
       }
     }
     if (isNewMessage) {
-      return TextStyle(fontWeight: FontWeight.w800);
+      return const TextStyle(fontWeight: FontWeight.w800);
     } else {
-      return TextStyle(fontWeight: FontWeight.w400);
+      return const TextStyle(fontWeight: FontWeight.w400);
     }
   }
 
@@ -299,6 +292,52 @@ class _MessagesPageState extends State<MessagesPage> {
     }
     return isNewMessage;
   }
+
+  Widget createGroupChatTab() {
+    return GestureDetector(
+      onTap: createGroupChat,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        height: 55,
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                ClipOval(
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    alignment: Alignment.center,
+                    color: globals.primarySwatch,
+                    child: const Icon(Icons.add, size: 30),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text("Create Group Chat",
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    Text("chat with friends all in one go",
+                        style: TextStyle(fontWeight: FontWeight.w400)),
+                  ],
+                ),
+              ],
+            ),
+            Icon(Icons.add_circle),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void createGroupChat() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => GroupChatCreator()));
+  }
 }
 
 getChatRoomId(String a, String b) {
@@ -313,7 +352,7 @@ class SearchTitle extends StatelessWidget {
   final String userName;
   final String userEmail;
 
-  SearchTitle({required this.userName, required this.userEmail});
+  const SearchTitle({required this.userName, required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
