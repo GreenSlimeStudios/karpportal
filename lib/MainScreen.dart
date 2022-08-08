@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:karpportal/MessagesScreen.dart';
 
 import 'CreatePostScreen.dart';
@@ -581,19 +582,25 @@ class _PostInstanceState extends State<PostInstance> {
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
+              onLongPress: () {
+                showImageActions(url);
+              },
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => InteractiveViewer(
-                      maxScale: 10,
-                      child: Hero(
-                        tag: url,
-                        child: CachedNetworkImage(
-                          imageUrl: url,
-                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              CircularProgressIndicator(value: downloadProgress.progress),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                    builder: (context) => GestureDetector(
+                      onLongPress: () => showImageActions(url),
+                      child: InteractiveViewer(
+                        maxScale: 10,
+                        child: Hero(
+                          tag: url,
+                          child: CachedNetworkImage(
+                            imageUrl: url,
+                            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                CircularProgressIndicator(value: downloadProgress.progress),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                          ),
                         ),
                       ),
                     ),
@@ -853,6 +860,48 @@ class _PostInstanceState extends State<PostInstance> {
     mapList.add(comments);
 
     return mapList;
+  }
+
+  showImageActions(String url) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("what to do?"),
+          content: Container(
+            height: 101,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await Clipboard.setData(ClipboardData(text: url));
+                    Fluttertoast.showToast(msg: "url copied succesfully");
+                  },
+                  child: Text("copy image url"),
+                ),
+                SizedBox(height: 5),
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    try {
+                      await ImageDownloader.downloadImage(url,
+                          destination: AndroidDestinationType.directoryDownloads
+                            ..subDirectory("karpportal.png"));
+                      Fluttertoast.showToast(msg: "image downloaded succesfully");
+                    } on PlatformException catch (error) {
+                      print(error);
+                    }
+                  },
+                  child: Text("download image"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

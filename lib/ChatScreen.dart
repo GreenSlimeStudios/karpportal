@@ -594,13 +594,17 @@ class _ChatPageState extends State<ChatPage> {
                     MaterialPageRoute(
                       builder: (context) => InteractiveViewer(
                         maxScale: 10,
-                        child: CachedNetworkImage(
-                          imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
-                          progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                            child: CircularProgressIndicator(
-                                value: downloadProgress.progress, color: Colors.white),
+                        child: GestureDetector(
+                          onLongPress: () =>
+                              messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
+                          child: CachedNetworkImage(
+                            imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
+                            progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress, color: Colors.white),
+                            ),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
                           ),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
                         ),
                       ),
                     ),
@@ -668,6 +672,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       await ImageDownloader.downloadImage(url,
           destination: AndroidDestinationType.directoryDownloads..subDirectory("karpportal.png"));
+      Fluttertoast.showToast(msg: "image downloaded succesfully");
     } on PlatformException catch (error) {
       print(error);
     }
@@ -726,6 +731,7 @@ class _ChatPageState extends State<ChatPage> {
                 ElevatedButton(
                   onPressed: () {
                     //copyMessage(data,"");
+                    Navigator.pop(context);
                     downloadImage(
                       data,
                       (url != null)
