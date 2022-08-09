@@ -38,12 +38,19 @@ void main() async {
   // debugRepaintRainbowEnabled = true;
   if (kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
+    // await Firebase.initializeApp();
     final Future<FirebaseApp> initializiation = Firebase.initializeApp();
 
     runApp(const MyApp());
   } else {
     WidgetsFlutterBinding.ensureInitialized();
+	if (Platform.isLinux){
+
+        print("itializing linux");
+    WidgetsFlutterBinding.ensureInitialized();
+        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+        print("done");
+	}
     if (Platform.isIOS) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -256,6 +263,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
+class MyWebApp extends StatelessWidget {
+	MyWebApp({Key? key}) : super(key: key); 
+
+	@override
+	Widget build(BuildContext context){
+		return MaterialApp(debugShowCheckedModeBanner:false,title:"karp portal",theme:ThemeData.dark(),home:SplashScreen());
+	}
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -267,7 +283,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'karp portal',
-      theme: globals.isDarkTheme!
+      theme: (kIsWeb)?ThemeData.dark():globals.isDarkTheme!
           ? (globals.theme == ThemeColor.Dark)
               ? ThemeData.dark().copyWith(
                   colorScheme: ColorScheme.fromSwatch(

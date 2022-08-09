@@ -1,0 +1,382 @@
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter run linux
+Target file "linux" not found.
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter run -d linux
+Launching lib/main.dart on Linux in debug mode...
+Building Linux application...                                           
+flutter: isgood
+flutter: null
+flutter: null
+flutter: isgood 2
+flutter: isgood 3
+[ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+#0      MethodChannelFirebase.app (package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart:193:5)
+#1      Firebase.app (package:firebase_core/src/firebase.dart:53:41)
+#2      FirebaseMessaging.instance (package:firebase_messaging/src/messaging.dart:32:47)
+#3      main (package:karpportal/main.dart:217:53)
+<asynchronous suspension>
+
+Syncing files to device Linux...                                   151ms
+
+Flutter run key commands.
+r Hot reload. 🔥🔥🔥
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+💪 Running with sound null safety 💪
+
+An Observatory debugger and profiler on Linux is available at: http://127.0.0.1:45923/U7IIDdTOUMM=/
+The Flutter DevTools debugger and profiler on Linux is available at: http://127.0.0.1:9100?uri=http://127.0.0.1:45923/U7IIDdTOUMM=/
+Application finished.
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter run -d linux
+Launching lib/main.dart on Linux in debug mode...
+Building Linux application...                                           
+flutter: itializing linux
+[ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Binding has not yet been initialized.
+The "instance" getter on the ServicesBinding binding mixin is only available once that binding has been initialized.
+Typically, this is done by calling "WidgetsFlutterBinding.ensureInitialized()" or "runApp()" (the latter calls the former). Typically this call is done in the "void main()" method. The "ensureInitialized" method is idempotent; calling it multiple times is not harmful. After calling that method, the "instance" getter will return the binding.
+In a test, one can call "TestWidgetsFlutterBinding.ensureInitialized()" as the first line in the test's "main()" method to initialize the binding.
+If ServicesBinding is a custom binding mixin, there must also be a custom binding class, like WidgetsFlutterBinding, but that mixes in the selected binding, and that is the class that must be constructed before using the "instance" getter.
+#0      BindingBase.checkInstance.<anonymous closure> (package:flutter/src/foundation/binding.dart:284:9)
+#1      BindingBase.checkInstance (package:flutter/src/foundation/binding.dart:366:6)
+#2      ServicesBinding.instance (package:flutter/src/services/binding.dart:54:54)
+#3      BasicMessageChannel.binaryMessenger (package:flutter/src/services/platform_channel.dart:166:45)
+#4      BasicMessageChannel.send (package:flutter/src/services/platform_channel.dart:180:38)
+#5      FirebaseCoreHostApi.initializeCore (package:firebase_core_platform_interface/src/pigeon/messages.pigeon.dart:203:23)
+#6      MethodChannelFirebase._initializeCore (package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart:29:54)
+#7      MethodChannelFirebase.initializeApp (package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart:73:13)
+#8      Firebase.initializeApp (package:firebase_core/src/firebase.dart:40:47)
+#9      main (package:karpportal/main.dart:41:24)
+#10     _runMain.<anonymous closure> (dart:ui/hooks.dart:131:23)
+#11     _delayEntrypointInvocation.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:297:19)
+#12     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:192:12)
+
+Syncing files to device Linux...                                   151ms
+
+Flutter run key commands.
+r Hot reload. 🔥🔥🔥
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+💪 Running with sound null safety 💪
+
+An Observatory debugger and profiler on Linux is available at: http://127.0.0.1:45237/cigSObH4vrs=/
+Application finished.
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter run -d linux
+Launching lib/main.dart on Linux in debug mode...
+Building Linux application...                                           
+flutter: itializing linux
+[ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel., null, null)
+#0      FirebaseCoreHostApi.initializeCore (package:firebase_core_platform_interface/src/pigeon/messages.pigeon.dart:205:7)
+<asynchronous suspension>
+#1      MethodChannelFirebase._initializeCore (package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart:29:44)
+<asynchronous suspension>
+#2      MethodChannelFirebase.initializeApp (package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart:73:7)
+<asynchronous suspension>
+#3      Firebase.initializeApp (package:firebase_core/src/firebase.dart:40:31)
+<asynchronous suspension>
+#4      main (package:karpportal/main.dart:42:9)
+<asynchronous suspension>
+
+Syncing files to device Linux...                                   143ms
+
+Flutter run key commands.
+r Hot reload. 🔥🔥🔥
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+💪 Running with sound null safety 💪
+
+An Observatory debugger and profiler on Linux is available at: http://127.0.0.1:36927/rhl34C48QbY=/
+The Flutter DevTools debugger and profiler on Linux is available at: http://127.0.0.1:9100?uri=http://127.0.0.1:36927/rhl34C48QbY=/
+Application finished.
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter pub add firebase_core_desktop
+Resolving dependencies...
+  archive 3.3.0 (3.3.1 available)
+  cloud_firestore 3.2.1 (3.4.3 available)
+  cloud_firestore_platform_interface 5.5.10 (5.7.0 available)
+  cloud_firestore_web 2.6.19 (2.8.3 available)
+  dbus 0.7.6 (0.7.7 available)
+  firebase_auth 3.4.1 (3.6.2 available)
+  firebase_auth_platform_interface 6.3.1 (6.5.2 available)
+  firebase_auth_web 3.3.19 (4.2.2 available)
+  firebase_core 1.19.1 (1.20.0 available)
++ firebase_core_dart 1.0.1
++ firebase_core_desktop 1.0.1
+  firebase_core_platform_interface 4.4.3 (4.5.0 available)
+  firebase_core_web 1.6.6 (1.7.1 available)
+  firebase_messaging 11.4.4 (12.0.1 available)
+  firebase_messaging_platform_interface 3.5.4 (4.1.0 available)
+  firebase_messaging_web 2.4.4 (3.1.0 available)
+  firebase_storage 10.3.1 (10.3.4 available)
+  firebase_storage_platform_interface 4.1.10 (4.1.12 available)
+  firebase_storage_web 3.2.19 (3.3.2 available)
+  flutter_launcher_icons 0.9.3 (0.10.0 available)
+  flutter_local_notifications_linux 0.5.0+1 (0.5.1 available)
+  flutter_plugin_android_lifecycle 2.0.6 (2.0.7 available)
+  http 0.13.4 (0.13.5 available)
+  image_picker_android 0.8.5+1 (0.8.5+2 available)
+  image_picker_platform_interface 2.5.0 (2.6.1 available)
+  path_provider_android 2.0.16 (2.0.17 available)
+  path_provider_ios 2.0.10 (2.0.11 available)
+  path_provider_windows 2.1.0 (2.1.2 available)
+  rxdart 0.27.4 (0.27.5 available)
+  sqflite 2.0.3 (2.0.3+1 available)
+  url_launcher 6.1.4 (6.1.5 available)
+  url_launcher_web 2.0.12 (2.0.13 available)
+Downloading firebase_core_desktop 1.0.1...
+Downloading firebase_core_dart 1.0.1...
+Changed 2 dependencies!
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter pub add firebase_auth_desktop
+Resolving dependencies...
++ _discoveryapis_commons 1.0.3
+  archive 3.3.0 (3.3.1 available)
+  cloud_firestore 3.2.1 (3.4.3 available)
+  cloud_firestore_platform_interface 5.5.10 (5.7.0 available)
+  cloud_firestore_web 2.6.19 (2.8.3 available)
+  dbus 0.7.6 (0.7.7 available)
++ desktop_webview_auth 0.0.9
+  firebase_auth 3.4.1 (3.6.2 available)
++ firebase_auth_dart 1.0.1
++ firebase_auth_desktop 1.0.1
+  firebase_auth_platform_interface 6.3.1 (6.5.2 available)
+  firebase_auth_web 3.3.19 (4.2.2 available)
+  firebase_core 1.19.1 (1.20.0 available)
+  firebase_core_platform_interface 4.4.3 (4.5.0 available)
+  firebase_core_web 1.6.6 (1.7.1 available)
+  firebase_messaging 11.4.4 (12.0.1 available)
+  firebase_messaging_platform_interface 3.5.4 (4.1.0 available)
+  firebase_messaging_web 2.4.4 (3.1.0 available)
+  firebase_storage 10.3.1 (10.3.4 available)
+  firebase_storage_platform_interface 4.1.10 (4.1.12 available)
+  firebase_storage_web 3.2.19 (3.3.2 available)
++ firebaseapis 0.1.2
+  flutter_launcher_icons 0.9.3 (0.10.0 available)
+  flutter_local_notifications_linux 0.5.0+1 (0.5.1 available)
+  flutter_plugin_android_lifecycle 2.0.6 (2.0.7 available)
+  http 0.13.4 (0.13.5 available)
+  image_picker_android 0.8.5+1 (0.8.5+2 available)
+  image_picker_platform_interface 2.5.0 (2.6.1 available)
+  path_provider_android 2.0.16 (2.0.17 available)
+  path_provider_ios 2.0.10 (2.0.11 available)
+  path_provider_windows 2.1.0 (2.1.2 available)
+  rxdart 0.27.4 (0.27.5 available)
+  sqflite 2.0.3 (2.0.3+1 available)
++ storagebox 0.1.0+3
+  url_launcher 6.1.4 (6.1.5 available)
+  url_launcher_web 2.0.12 (2.0.13 available)
+Downloading firebase_auth_desktop 1.0.1...
+Downloading firebase_auth_dart 1.0.1...
+Downloading desktop_webview_auth 0.0.9...
+Downloading storagebox 0.1.0+3...
+Downloading firebaseapis 0.1.2...
+Downloading _discoveryapis_commons 1.0.3...
+Changed 6 dependencies!
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter pub add firebase_coreflutter
+Because karpportal depends on firebase_coreflutter any which doesn't exist (could not find package firebase_coreflutter at https://pub.dartlang.org), version solving failed.
+pub finished with exit code 65
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ dart pub global activate flutterfire_cli
++ ansi_styles 0.3.2+1s... (1.8s)
++ args 2.3.1
++ async 2.9.0
++ characters 1.2.1
++ ci 0.1.0
++ cli_util 0.3.5
++ clock 1.1.1
++ collection 1.16.0
++ dart_console 1.1.2
++ deep_pick 0.10.0
++ ffi 2.0.1
++ file 6.1.2
++ flutterfire_cli 0.2.4
++ http 0.13.5
++ http_parser 4.0.1
++ interact 2.1.1
++ intl 0.17.0
++ json_annotation 4.6.0
++ matcher 0.12.12
++ meta 1.8.0
++ path 1.8.2
++ petitparser 5.0.0
++ platform 3.1.0
++ process 4.2.4
++ pub_semver 2.1.1
++ pub_updater 0.2.2
++ pubspec 2.3.0
++ quiver 3.1.0
++ source_span 1.9.1
++ stack_trace 1.10.0
++ string_scanner 1.1.1
++ term_glyph 1.2.1
++ tint 2.0.0
++ typed_data 1.3.1
++ uri 1.0.0
++ win32 2.7.0
++ xml 5.4.1 (6.1.0 available)
++ yaml 3.1.1
+Downloading flutterfire_cli 0.2.4...
+Downloading pub_updater 0.2.2...
+Downloading interact 2.1.1...
+Downloading deep_pick 0.10.0...
+Downloading cli_util 0.3.5...
+Downloading ci 0.1.0...
+Downloading ansi_styles 0.3.2+1...
+Downloading tint 2.0.0...
+Downloading xml 5.4.1...
+Downloading pubspec 2.3.0...
+Downloading uri 1.0.0...
+Downloading quiver 3.1.0...
+Downloading dart_console 1.1.2...
+Building package executables... (2.8s)
+Built flutterfire_cli:flutterfire.
+Installed executable flutterfire.
+Warning: Pub installs executables into $HOME/.pub-cache/bin, which is not on your path.
+You can fix that by adding this to your shell's config file (.bashrc, .bash_profile, etc.):
+
+  export PATH="$PATH":"$HOME/.pub-cache/bin"
+
+Activated flutterfire_cli 0.2.4.
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutterfire configure
+flutterfire: command not found
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ cat ~/.bashrc
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+. "$HOME/.cargo/env"
+
+export PATH="$PATH:~/flutter/bin"
+export PATH=$PATH:/usr/local/go/bin
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ export PATH=$HOME/.pub-cache/bin
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutterfire configure
+/usr/bin/env: ‘sh’: No such file or directory
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter run -d linux
+Command 'flutter' not found, but can be installed with:
+sudo snap install flutter
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ export PATH=$HOME/flutter/bin
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter run -d linux
+/usr/bin/env: ‘bash’: No such file or directory
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ flutter
+/usr/bin/env: ‘bash’: No such file or directory
+max@max-ubuntu:~/Desktop/Flutter/karpportal$ 

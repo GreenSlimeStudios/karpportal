@@ -297,7 +297,7 @@ class _MessagesPageState extends State<MessagesPage> {
     return GestureDetector(
       onTap: createGroupChat,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
+        margin: const EdgeInsets.only(left: 20, right: 16),
         height: 55,
         width: double.infinity,
         child: Row(
