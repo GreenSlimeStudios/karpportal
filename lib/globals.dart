@@ -19,3 +19,5 @@ User? authUser;
 ThemeColor? theme;
 
 UserModel? myUser;
+
+Map<String, UserModel> loadedUsers = {};

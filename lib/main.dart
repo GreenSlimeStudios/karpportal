@@ -263,14 +263,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
-class MyWebApp extends StatelessWidget {
-	MyWebApp({Key? key}) : super(key: key); 
+// class MyWebApp extends StatelessWidget {
+// 	MyWebApp({Key? key}) : super(key: key); 
 
-	@override
-	Widget build(BuildContext context){
-		return MaterialApp(debugShowCheckedModeBanner:false,title:"karp portal",theme:ThemeData.dark(),home:SplashScreen());
-	}
-}
+// 	@override
+// 	Widget build(BuildContext context){
+// 		return MaterialApp(debugShowCheckedModeBanner:false,title:"karp portal",theme:ThemeData.dark(),home:SplashScreen());
+// 	}
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

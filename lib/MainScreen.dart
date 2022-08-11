@@ -138,14 +138,22 @@ class _MainPageState extends State<MainPage> {
 
 Future<UserModel> getAuthor(uid) async {
   UserModel author = UserModel();
-  await FirebaseFirestore.instance.collection("users").doc(uid).get().then(
-    (value) {
-      print(value.metadata.isFromCache);
+  if (globals.loadedUsers.keys.contains(uid)) {
+    print("LOADED USER FROM cache");
+    return globals.loadedUsers[uid]!;
+  } else {
+    await FirebaseFirestore.instance.collection("users").doc(uid).get().then(
+      (value) {
+        print(value.metadata.isFromCache);
 
-      author = UserModel.fromMap(value.data());
-    },
-  );
-  return author;
+        author = UserModel.fromMap(value.data());
+        globals.loadedUsers[uid] = author;
+        print(globals.loadedUsers);
+      },
+    );
+    print("LOADED USER FROM firebase");
+    return author;
+  }
 }
 
 // Future heart(Map<String, dynamic> data) async {}
