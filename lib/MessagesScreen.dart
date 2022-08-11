@@ -162,21 +162,35 @@ class _MessagesPageState extends State<MessagesPage> {
     print(roomData.metadata.isFromCache);
 
     if (roomData["uids"][0] != globals.myUser!.uid) {
-      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
-        (value) {
-          print(value.metadata.isFromCache);
+      if (globals.loadedUsers.keys.contains(roomData["uids"][0])) {
+        targetUserModel = globals.loadedUsers[roomData["uids"][0]]!;
+        print("LOADED USER FROM cache");
+      } else {
+        await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
+          (value) {
+            print(value.metadata.isFromCache);
 
-          targetUserModel = UserModel.fromMap(value.data());
-        },
-      );
+            targetUserModel = UserModel.fromMap(value.data());
+            globals.loadedUsers[roomData["uids"][0]] = targetUserModel;
+            print("LOADED USER FROM firebase");
+          },
+        );
+      }
     } else {
-      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
-        (value) {
-          print(value.metadata.isFromCache);
+      if (globals.loadedUsers.keys.contains(roomData["uids"][1])) {
+        targetUserModel = globals.loadedUsers[roomData["uids"][1]]!;
+        print("LOADED USER FROM cache");
+      } else {
+        await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
+          (value) {
+            print(value.metadata.isFromCache);
 
-          targetUserModel = UserModel.fromMap(value.data());
-        },
-      );
+            targetUserModel = UserModel.fromMap(value.data());
+            globals.loadedUsers[roomData["uids"][1]] = targetUserModel;
+            print("LOADED USER FROM firebase");
+          },
+        );
+      }
     }
 
     // print('///////////////////////////////////////////////////');
