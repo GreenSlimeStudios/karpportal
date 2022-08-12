@@ -116,6 +116,7 @@ class _SearchPageState extends State<SearchPage> {
                     'nickname',
                     isGreaterThanOrEqualTo: name,
                   )
+                  .limit(10)
                   .snapshots()
               : FirebaseFirestore.instance.collection("users").snapshots(),
           builder: (context, snapshot) {
