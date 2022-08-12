@@ -29,10 +29,12 @@ import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.chatRoomId, required this.chatUserData})
+  const ChatPage(
+      {Key? key, required this.chatRoomId, required this.chatUserDatas, required this.isGroupChat})
       : super(key: key);
   final String chatRoomId;
-  final Map<String, dynamic> chatUserData;
+  final Map<String, UserModel> chatUserDatas;
+  final bool isGroupChat;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -158,6 +160,7 @@ class _ChatPageState extends State<ChatPage> {
           "time": DateTime.now().millisecondsSinceEpoch,
           "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
           "time3": time3,
+          "authorID": loggedInUser.uid!,
           "isLink": isLink,
           // "images": imageUrls,
           "supportsEncryption": true,
@@ -174,6 +177,7 @@ class _ChatPageState extends State<ChatPage> {
       messageMap = {
         "message": databaseMethods.encrypt(messageController.text.trim()),
         "sendBy": loggedInUser.fullName!,
+        "authorID": loggedInUser.uid!,
         "time": DateTime.now().millisecondsSinceEpoch,
         "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
         "time3": time3,
@@ -225,29 +229,31 @@ class _ChatPageState extends State<ChatPage> {
           )
         ],
         foregroundColor: Colors.white,
-        title: Container(
-          alignment: Alignment.centerLeft,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(widget.chatUserData["nickname"]),
-              const Padding(padding: EdgeInsets.only(right: 10)),
-              Hero(
-                tag: widget.chatUserData['uid'],
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: widget.chatUserData['avatarUrl'],
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  ),
+        title: (widget.isGroupChat)
+            ? Container(child: Text("group chat"))
+            : Container(
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(widget.chatUserDatas.values.toList()[0].nickname!),
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+                    Hero(
+                      tag: widget.chatUserDatas.values.toList()[0].uid!,
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: widget.chatUserDatas.values.toList()[0].avatarUrl!,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
       body: Column(
         children: [
@@ -480,7 +486,9 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return ClipOval(
         child: CachedNetworkImage(
-          imageUrl: widget.chatUserData['avatarUrl'],
+          imageUrl: (data['authorID'] != null)
+              ? widget.chatUserDatas[data['authorID']]!.avatarUrl!
+              : widget.chatUserDatas.values.toList()[0].avatarUrl!,
           width: 35,
           height: 35,
           fit: BoxFit.cover,
@@ -522,7 +530,7 @@ class _ChatPageState extends State<ChatPage> {
     //final ref = FirebaseStorage
     var snapshot = await _storage
         .ref()
-        .child('ChatImages/${loggedInUser.uid} $time3 ${widget.chatUserData['uid']}')
+        .child('ChatImages/${loggedInUser.uid} $time3 ${widget.chatUserDatas['uid']}')
         .putFile(imageTemporary!);
 
     var downloadurl = await snapshot.ref.getDownloadURL();

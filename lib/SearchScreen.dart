@@ -228,7 +228,10 @@ class _SearchPageState extends State<SearchPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
+            builder: (context) => ChatPage(
+                chatRoomId: chatRoomId,
+                chatUserDatas: {data['uid']: UserModel.fromMap(data)},
+                isGroupChat: false)));
   }
 
   void initSearch() {

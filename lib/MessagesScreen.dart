@@ -150,7 +150,10 @@ class _MessagesPageState extends State<MessagesPage> {
     await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ChatPage(chatRoomId: chatRoomId, chatUserData: data)));
+            builder: (context) => ChatPage(
+                chatRoomId: chatRoomId,
+                chatUserDatas: {data['uid']: UserModel.fromMap(data)},
+                isGroupChat: false)));
 
     setState(() {});
   }
