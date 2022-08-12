@@ -348,6 +348,7 @@ class _SingUpPageState extends State<SingUpPage> {
 
     UserModel userModel = UserModel();
     String? token = await FirebaseMessaging.instance.getToken();
+    // String token = "";
 
     // writing all the values
     userModel.email = user!.email;

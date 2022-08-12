@@ -130,6 +130,42 @@ class _MessagesPageState extends State<MessagesPage> {
   //   });
   // }
 
+  void createGroupChatRoom(Map<String, dynamic> data) async {
+    String chatRoomId = data["chatRoomId"];
+
+    //List<String> users = [data['fullName'], globals.myUser!.fullName!];
+    ////users.sort();
+    //List<String> uids = [data['uid'], globals.myUser!.uid!];
+    //uids.sort();
+
+    // Map<String, dynamic> chatRoomMap = {
+    //   "users": users,
+    //   "uids": uids,
+    //   "chatRoomId": chatRoomId,
+    // };
+
+    // databaseMethods.createChatRoom(chatRoomId, chatRoomMap);
+    //globals.index = 3;
+
+    Map<String, UserModel> userModels = {};
+    for (String userID in data['uids']) {
+      userModels[userID] = (globals.loadedUsers.containsKey(userID))
+          ? globals.loadedUsers[userID]!
+          : await FirebaseFirestore.instance.collection("users").doc(userID).get().then((valur) {
+              globals.loadedUsers[userID] = UserModel.fromMap(valur.data()!);
+              return UserModel.fromMap(valur.data());
+            });
+    }
+
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ChatPage(chatRoomId: chatRoomId, chatUserDatas: userModels, isGroupChat: true)));
+
+    setState(() {});
+  }
+
   void createChatRoom(Map<String, dynamic> data) async {
     String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
@@ -159,65 +195,75 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   Future<Widget> getRecentRooms(chatRoomId) async {
+    bool isGroupChat = false;
     UserModel targetUserModel = UserModel();
 
     final roomData = await FirebaseFirestore.instance.collection('ChatRoom').doc(chatRoomId).get();
     print(roomData.metadata.isFromCache);
-
-    if (roomData["uids"][0] != globals.myUser!.uid) {
-      if (globals.loadedUsers.keys.contains(roomData["uids"][0])) {
-        targetUserModel = globals.loadedUsers[roomData["uids"][0]]!;
-        print("LOADED USER FROM cache");
-      } else {
-        await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
-          (value) {
-            print(value.metadata.isFromCache);
-
-            targetUserModel = UserModel.fromMap(value.data());
-            globals.loadedUsers[roomData["uids"][0]] = targetUserModel;
-            print("LOADED USER FROM firebase");
-          },
-        );
-      }
-    } else {
-      if (globals.loadedUsers.keys.contains(roomData["uids"][1])) {
-        targetUserModel = globals.loadedUsers[roomData["uids"][1]]!;
-        print("LOADED USER FROM cache");
-      } else {
-        await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
-          (value) {
-            print(value.metadata.isFromCache);
-
-            targetUserModel = UserModel.fromMap(value.data());
-            globals.loadedUsers[roomData["uids"][1]] = targetUserModel;
-            print("LOADED USER FROM firebase");
-          },
-        );
-      }
+    print(roomData.data());
+    if (roomData.data()!["isGroupChat"] != null) {
+      print("GROUP CHAT FOUND");
+      isGroupChat = roomData.data()!["isGroupChat"];
     }
+    if (isGroupChat == false) {
+      if (roomData["uids"][0] != globals.myUser!.uid) {
+        if (globals.loadedUsers.keys.contains(roomData["uids"][0])) {
+          targetUserModel = globals.loadedUsers[roomData["uids"][0]]!;
+          print("LOADED USER FROM cache");
+        } else {
+          await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
+            (value) {
+              print(value.metadata.isFromCache);
 
-    // print('///////////////////////////////////////////////////');
-    // print(targetUserModel.toMap());
-    // print('///////////////////////////////////////////////////');
-    List<String> users = [targetUserModel.fullName!, globals.myUser!.fullName!];
-    //users.sort();
-    List<String> uids = [targetUserModel.uid!, globals.myUser!.uid!];
-    //uids.sort();
+              targetUserModel = UserModel.fromMap(value.data());
+              globals.loadedUsers[roomData["uids"][0]] = targetUserModel;
+              print("LOADED USER FROM firebase");
+            },
+          );
+        }
+      } else {
+        if (globals.loadedUsers.keys.contains(roomData["uids"][1])) {
+          targetUserModel = globals.loadedUsers[roomData["uids"][1]]!;
+          print("LOADED USER FROM cache");
+        } else {
+          await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
+            (value) {
+              print(value.metadata.isFromCache);
 
-    Map<String, dynamic> chatRoomMap = {
-      "time": DateTime.now(),
-      "time2": DateTime.now().millisecond,
-      "users": users,
-      "uids": uids,
-      "chatRoomId": chatRoomId,
-    };
+              targetUserModel = UserModel.fromMap(value.data());
+              globals.loadedUsers[roomData["uids"][1]] = targetUserModel;
+              print("LOADED USER FROM firebase");
+            },
+          );
+        }
+      }
+      // print('///////////////////////////////////////////////////');
+      // print(targetUserModel.toMap());
+      // print('///////////////////////////////////////////////////');
+      List<String> users = [targetUserModel.fullName!, globals.myUser!.fullName!];
+      //users.sort();
+      List<String> uids = [targetUserModel.uid!, globals.myUser!.uid!];
+      //uids.sort();
+
+      Map<String, dynamic> chatRoomMap = {
+        "time": DateTime.now(),
+        "time2": DateTime.now().millisecond,
+        "users": users,
+        "uids": uids,
+        "chatRoomId": chatRoomId,
+      };
+    }
 
     //globals.myUser?.newMessages?.forEach((element) {
     return GestureDetector(
       onTap: () {
-        createChatRoom(
-          targetUserModel.toMap(),
-        );
+        if (isGroupChat) {
+          createGroupChatRoom(roomData.data()!);
+        } else {
+          createChatRoom(
+            targetUserModel.toMap(),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.only(top: 10),
@@ -230,26 +276,35 @@ class _MessagesPageState extends State<MessagesPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    targetUserModel.nickname!,
+                    (isGroupChat) ? roomData.data()!["groupName"] : targetUserModel.nickname!,
                     style: getRoomTextStyle(chatRoomId),
                   ),
                   Text(
-                    (targetUserModel.description != null &&
-                            targetUserModel.description!.trim() != "")
-                        ? (targetUserModel.description!.trim().length < 66)
-                            ? targetUserModel.description!.trim().replaceAll("\n", " ")
-                            : "${targetUserModel.description!.trim().replaceAll("\n", " ").substring(0, 65)}..."
-                        : "karpportal enjoyer",
+                    (isGroupChat)
+                        ? (roomData.data()!["groupDescription"] != null &&
+                                roomData.data()!["groupDescription"]!.trim() != "")
+                            ? (roomData.data()!["groupDescription"]!.trim().length < 66)
+                                ? roomData.data()!["groupDescription"]!.trim().replaceAll("\n", " ")
+                                : "${roomData.data()!["groupDescription"]!.trim().replaceAll("\n", " ").substring(0, 65)}..."
+                            : "karpportal enjoyer"
+                        : (targetUserModel.description != null &&
+                                targetUserModel.description!.trim() != "")
+                            ? (targetUserModel.description!.trim().length < 66)
+                                ? targetUserModel.description!.trim().replaceAll("\n", " ")
+                                : "${targetUserModel.description!.trim().replaceAll("\n", " ").substring(0, 65)}..."
+                            : "karpportal enjoyer",
                     style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
                   ),
                 ],
               ),
               leading: Hero(
-                tag: targetUserModel.uid!,
+                tag: (isGroupChat) ? roomData.data()!["groupDescription"] : targetUserModel.uid!,
                 child: ClipOval(
                   //clipper: MyClipper(),
                   child: CachedNetworkImage(
-                    imageUrl: targetUserModel.avatarUrl!,
+                    imageUrl: (isGroupChat)
+                        ? "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1"
+                        : targetUserModel.avatarUrl!,
                     width: 55,
                     height: 55,
                     fit: BoxFit.cover,

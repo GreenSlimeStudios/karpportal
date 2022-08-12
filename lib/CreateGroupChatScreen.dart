@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import 'ChatScreen.dart';
+import 'MessagesScreen.dart';
 import 'Stylings.dart';
+import 'UserModel.dart';
+import 'globals.dart' as globals;
 
 class GroupChatCreator extends StatefulWidget {
   const GroupChatCreator({Key? key}) : super(key: key);
@@ -10,6 +16,7 @@ class GroupChatCreator extends StatefulWidget {
 }
 
 TextEditingController groupNameController = TextEditingController();
+TextEditingController groupDescriptionController = TextEditingController();
 final formKey = GlobalKey<FormState>();
 
 class _GroupChatCreatorState extends State<GroupChatCreator> {
@@ -53,7 +60,7 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
                       style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
                 ),
                 TextFormField(
-                  controller: groupNameController,
+                  controller: groupDescriptionController,
                   decoration: InputDecoration(
                     hintText: "Group Description",
                     border: inactiveRoundBorder(),
@@ -74,7 +81,7 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
                         side: BorderSide(),
                       )),
                     ),
-                    onPressed: () {},
+                    onPressed: createGroupChat,
                     child: Text("Create Group Chat"),
                   ),
                 ),
@@ -84,5 +91,78 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
         ),
       ),
     );
+  }
+
+  void createGroupChat() async {
+    String chatRoomId = getChatRoomId();
+    print("got room id");
+
+    List<String> users = [globals.myUser!.fullName!];
+    //users.sort();
+    List<String> uids = [
+      globals.myUser!.uid!,
+      "njsbR2mPfSPdJRAfHtKsKeksfRn2",
+      "83jnvcAHO7O0H5A284klQOhNXcs2"
+    ];
+    print("created list of uids");
+    //uids.sort();
+
+    Map<String, dynamic> chatRoomMap = {
+      "users": users,
+      "uids": uids,
+      "chatRoomId": chatRoomId,
+      "isGroupChat": true,
+      "groupName": groupNameController.text,
+      "groupDescription": groupDescriptionController.text,
+      "avatarUrl":
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1",
+    };
+    print("created chat room map");
+
+    await databaseMethods.createChatRoom(chatRoomId, chatRoomMap);
+    Fluttertoast.showToast(msg: "Creation of group");
+    //globals.index = 3;
+
+    Map<String, UserModel> userModels = {
+      globals.myUser!.uid!: globals.myUser!,
+      "njsbR2mPfSPdJRAfHtKsKeksfRn2": await FirebaseFirestore.instance
+          .collection("users")
+          .doc("njsbR2mPfSPdJRAfHtKsKeksfRn2")
+          .get()
+          .then((valur) {
+        print("returning srtefan");
+        return UserModel.fromMap(valur.data());
+      }),
+      "83jnvcAHO7O0H5A284klQOhNXcs2": await FirebaseFirestore.instance
+          .collection("users")
+          .doc("83jnvcAHO7O0H5A284klQOhNXcs2")
+          .get()
+          .then((valur) {
+        print("returning gandalf");
+        return UserModel.fromMap(valur.data());
+      })
+    };
+    print("created user models");
+    for (String userID in uids) {
+      print("notifying user");
+      await FirebaseFirestore.instance.collection("users").doc(userID).set({
+        "recentRooms": FieldValue.arrayUnion([chatRoomId])
+      }, SetOptions(merge: true));
+    }
+    print("notified users");
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChatPage(chatRoomId: chatRoomId, chatUserDatas: userModels, isGroupChat: true),
+      ),
+    );
+
+    setState(() {});
+  }
+
+  String getChatRoomId() {
+    return "${globals.myUser!.uid!}-${DateTime.now().millisecondsSinceEpoch}";
   }
 }

@@ -26,12 +26,9 @@ class _InitUserPageState extends State<InitUserPage> {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       UserModel loggedInUser = UserModel();
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user!.uid)
-          .get()
-          .then(
+      await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
         (value) async {
+          print(value.data());
           loggedInUser = UserModel.fromMap(value.data());
           globals.myUser = loggedInUser;
           print('//////////////////////////////////////////////////');
@@ -41,27 +38,24 @@ class _InitUserPageState extends State<InitUserPage> {
 
           //User? authUser = await FirebaseAuth.instance.currentUser;
           globals.authUser = user;
-          await Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
           goToHomePage();
         },
       );
     } on FirebaseAuthException {
-      await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      print("NOT GOOD AT ALL");
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
       goToLoginPage();
     }
   }
 
   goToLoginPage() async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
     goToLoginPage();
   }
 
   goToHomePage() async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     goToHomePage();
   }
 
@@ -79,8 +73,7 @@ class _InitUserPageState extends State<InitUserPage> {
               child: Text(
                 'Karp\nPortal',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.leagueScript(
-                    fontSize: 60, fontWeight: FontWeight.bold),
+                style: GoogleFonts.leagueScript(fontSize: 60, fontWeight: FontWeight.bold),
               ),
             ),
           ),
