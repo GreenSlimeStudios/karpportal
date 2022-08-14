@@ -276,6 +276,14 @@ class _ChatPageState extends State<ChatPage> {
 
                         itemBuilder: (context, index) {
                           var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                          Map<String, dynamic>? dataAfter;
+                          Map<String, dynamic>? dataPrevious;
+                          if (index != snapshot.data!.docs.length - 1)
+                            dataAfter =
+                                snapshot.data!.docs[index + 1].data() as Map<String, dynamic>;
+                          if (index != 0)
+                            dataPrevious =
+                                snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
                           if (data != null) {
                             return (data['sendBy'] != globals.myUser!.fullName)
                                 ? ChatMessage(
@@ -283,13 +291,19 @@ class _ChatPageState extends State<ChatPage> {
                                     chatRoomId: widget.chatRoomId,
                                     chatUserDatas: widget.chatUserDatas,
                                     isGroupChat: widget.isGroupChat,
-                                    isMyMessage: false)
+                                    isMyMessage: false,
+                                    dataPrevious: dataPrevious,
+                                    dataAfter: dataAfter,
+                                  )
                                 : ChatMessage(
                                     data: data,
                                     chatRoomId: widget.chatRoomId,
                                     chatUserDatas: widget.chatUserDatas,
                                     isGroupChat: widget.isGroupChat,
-                                    isMyMessage: true);
+                                    isMyMessage: true,
+                                    dataPrevious: dataPrevious,
+                                    dataAfter: dataAfter,
+                                  );
                           } else {
                             return Container(
                               child: const Text('null'),
@@ -679,128 +693,213 @@ class ChatMessage extends StatefulWidget {
       required this.chatRoomId,
       required this.chatUserDatas,
       required this.isGroupChat,
-      required this.isMyMessage})
+      required this.isMyMessage,
+      this.dataPrevious,
+      this.dataAfter})
       : super(key: key);
   final Map<String, dynamic> data;
   final String chatRoomId;
   final Map<String, UserModel> chatUserDatas;
   final bool isGroupChat;
   final bool isMyMessage;
+  final Map<String, dynamic>? dataPrevious;
+  final Map<String, dynamic>? dataAfter;
 
   @override
   State<ChatMessage> createState() => _ChatMessageState();
 }
 
 class _ChatMessageState extends State<ChatMessage> {
+  bool isExpanded = false;
+  bool isAvatarVisible = true;
+  bool isBottomStack = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.dataPrevious != null) {
+      if (widget.dataPrevious!["time"] - widget.data["time"] < 300000) {
+        if (widget.dataPrevious!["authorID"] != null) {
+          if (widget.dataPrevious!["authorID"] == widget.data["authorID"]) {
+            isAvatarVisible = false;
+          } else {
+            isBottomStack = true;
+            isExpanded = true;
+          }
+        } else {
+          isBottomStack = true;
+          isExpanded = true;
+        }
+      } else {
+        isBottomStack = true;
+        isExpanded = true;
+      }
+    } else {
+      isBottomStack = true;
+      isExpanded = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return (!widget.isMyMessage)
-        ? Container(
-            margin: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-            ),
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 5),
-                          child: MessageImage(widget.data),
-                        ),
-                        Container(
-                          //height: 30,
-                          decoration: BoxDecoration(
-                              color: globals.primarySwatch,
-                              borderRadius: BorderRadius.circular(10)),
-                          margin: const EdgeInsets.all(10),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
-                            child: Container(
-                              constraints: const BoxConstraints(maxWidth: 250),
-                              child: generateMessage(widget.data),
+    // return (!widget.isMyMessage)
+    return (true)
+        ? GestureDetector(
+            onTap: () {
+              isExpanded = !isExpanded;
+              setState(() {});
+            },
+            child: Container(
+              alignment: (widget.isMyMessage) ? Alignment.centerRight : Alignment.centerLeft,
+              margin: EdgeInsets.only(
+                left: 10,
+                right: 10,
+                // bottom: getBottomExpansion(),
+
+                bottom: (isBottomStack) ? 10 : 0,
+              ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  if (!widget.isMyMessage)
+                    Positioned(left: 0, bottom: 0, child: generateAvatar(widget.data)),
+                  if (widget.isMyMessage)
+                    Positioned(right: 0, bottom: 0, child: generateAvatar(widget.data)),
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment:
+                            (widget.isMyMessage) ? MainAxisAlignment.end : MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // generateAvatar(widget.data),
+                          if (widget.isMyMessage == false) SizedBox(width: 33),
+                          Container(
+                            //height: 30,
+                            decoration: getDecoration(widget.isMyMessage),
+
+                            margin: (isExpanded)
+                                ? const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                    bottom: 10,
+                                  )
+                                : const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                  ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+                              child: Container(
+                                constraints: const BoxConstraints(maxWidth: 250),
+                                child: generateMessage(widget.data),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(bottom: 5)),
-                  ],
-                ),
-                if (widget.data['time2'] != null)
-                  Positioned(
-                    bottom: 0,
-                    left: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          widget.data['time2'].toString(),
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
-                        ),
-                      ],
-                    ),
+                          if (widget.isMyMessage) SizedBox(width: 33),
+                        ],
+                      ),
+                      const Padding(padding: EdgeInsets.only(bottom: 5)),
+                    ],
                   ),
-              ],
+                  if (widget.data['time2'] != null && isExpanded == true)
+                    (widget.isMyMessage)
+                        ? Positioned(
+                            bottom: 1,
+                            right: 43,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  widget.data['time2'].toString(),
+                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Positioned(
+                            bottom: 1,
+                            left: 43,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  widget.data['time2'].toString(),
+                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                                ),
+                              ],
+                            ),
+                          ),
+                ],
+              ),
             ),
           )
-        : Container(
-            alignment: Alignment.centerRight,
-            margin: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-            ),
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          //height: 30,
-                          decoration: BoxDecoration(
-                              color: getColor(), borderRadius: BorderRadius.circular(10)),
-                          margin: const EdgeInsets.all(10),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
-                            child: Container(
-                              // alignment: Alignment.centerRight,
+        : GestureDetector(
+            onTap: () {
+              isExpanded = !isExpanded;
+              setState(() {});
+            },
+            child: Container(
+              alignment: Alignment.centerRight,
+              margin: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+              ),
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            //height: 30,
+                            decoration: BoxDecoration(
+                                color: getColor(), borderRadius: BorderRadius.circular(10)),
+                            margin: const EdgeInsets.all(10),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 10,
+                                top: 5,
+                                right: 10,
+                                bottom: 5,
+                              ),
+                              child: Container(
+                                // alignment: Alignment.centerRight,
 
-                              constraints: const BoxConstraints(maxWidth: 250),
-                              child: generateMessage(widget.data),
+                                constraints: const BoxConstraints(maxWidth: 250),
+                                child: generateMessage(widget.data),
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 5),
-                          child: MessageImage(widget.data),
-                        ),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(bottom: 5)),
-                  ],
-                ),
-                if (widget.data['time2'] != null)
-                  Positioned(
-                    bottom: 0,
-                    right: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          widget.data['time2'].toString(),
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
-                        ),
-                      ],
-                    ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: MessageImage(widget.data),
+                          ),
+                        ],
+                      ),
+                      const Padding(padding: EdgeInsets.only(bottom: 5)),
+                    ],
                   ),
-              ],
+                  if (widget.data['time2'] != null && isExpanded == true)
+                    Positioned(
+                      bottom: 0,
+                      right: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            widget.data['time2'].toString(),
+                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
           );
   }
@@ -1052,5 +1151,31 @@ class _ChatMessageState extends State<ChatMessage> {
         return Colors.orange;
       }
     }
+  }
+
+  Widget generateAvatar(Map<String, dynamic> data) {
+    if (isAvatarVisible) {
+      return (isExpanded)
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: MessageImage(data),
+            )
+          : MessageImage(data);
+    } else {
+      return SizedBox(width: 35);
+    }
+  }
+
+  getDecoration(bool isNewMessage) {
+    return (isNewMessage)
+        ? BoxDecoration(color: getColor(), borderRadius: BorderRadius.circular(10))
+        : BoxDecoration(color: globals.primarySwatch, borderRadius: BorderRadius.circular(10));
+  }
+
+  double getBottomExpansion() {
+    if (isBottomStack)
+      return 10;
+    else
+      return 0;
   }
 }
