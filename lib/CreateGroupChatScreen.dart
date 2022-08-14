@@ -108,6 +108,7 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
     //uids.sort();
 
     Map<String, dynamic> chatRoomMap = {
+      "adminIDs": [globals.myUser!.uid!],
       "users": users,
       "uids": uids,
       "chatRoomId": chatRoomId,

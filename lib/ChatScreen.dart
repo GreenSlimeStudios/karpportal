@@ -209,7 +209,6 @@ class _ChatPageState extends State<ChatPage> {
         duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
   }
 
-  bool showTime = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -279,121 +278,18 @@ class _ChatPageState extends State<ChatPage> {
                           var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                           if (data != null) {
                             return (data['sendBy'] != globals.myUser!.fullName)
-                                ? Container(
-                                    margin: const EdgeInsets.only(
-                                      left: 10,
-                                      right: 10,
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.only(bottom: 5),
-                                                  child: MessageImage(data),
-                                                ),
-                                                Container(
-                                                  //height: 30,
-                                                  decoration: BoxDecoration(
-                                                      color: globals.primarySwatch,
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  margin: const EdgeInsets.all(10),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(
-                                                        left: 10, top: 5, right: 10, bottom: 5),
-                                                    child: Container(
-                                                      constraints:
-                                                          const BoxConstraints(maxWidth: 250),
-                                                      child: generateMessage(data),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Padding(padding: EdgeInsets.only(bottom: 5)),
-                                          ],
-                                        ),
-                                        if (data['time2'] != null && showTime == true)
-                                          Positioned(
-                                            bottom: 0,
-                                            left: 50,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  data['time2'].toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 10, fontWeight: FontWeight.w200),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    alignment: Alignment.centerRight,
-                                    margin: const EdgeInsets.only(
-                                      left: 10,
-                                      right: 10,
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Container(
-                                                  //height: 30,
-                                                  decoration: BoxDecoration(
-                                                      color: getColor(),
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  margin: const EdgeInsets.all(10),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(
-                                                        left: 10, top: 5, right: 10, bottom: 5),
-                                                    child: Container(
-                                                      // alignment: Alignment.centerRight,
-
-                                                      constraints:
-                                                          const BoxConstraints(maxWidth: 250),
-                                                      child: generateMessage(data),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(bottom: 5),
-                                                  child: MessageImage(data),
-                                                ),
-                                              ],
-                                            ),
-                                            const Padding(padding: EdgeInsets.only(bottom: 5)),
-                                          ],
-                                        ),
-                                        if (data['time2'] != null && showTime == true)
-                                          Positioned(
-                                            bottom: 0,
-                                            right: 50,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  data['time2'].toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 10, fontWeight: FontWeight.w200),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  );
+                                ? ChatMessage(
+                                    data: data,
+                                    chatRoomId: widget.chatRoomId,
+                                    chatUserDatas: widget.chatUserDatas,
+                                    isGroupChat: widget.isGroupChat,
+                                    isMyMessage: false)
+                                : ChatMessage(
+                                    data: data,
+                                    chatRoomId: widget.chatRoomId,
+                                    chatUserDatas: widget.chatUserDatas,
+                                    isGroupChat: widget.isGroupChat,
+                                    isMyMessage: true);
                           } else {
                             return Container(
                               child: const Text('null'),
@@ -471,34 +367,6 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  MessageImage(data) {
-    if (data['sendBy'] == globals.myUser!.fullName) {
-      return ClipOval(
-        child: CachedNetworkImage(
-          imageUrl: globals.myUser!.avatarUrl!,
-          width: 35,
-          height: 35,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-        ),
-      );
-    } else {
-      return ClipOval(
-        child: CachedNetworkImage(
-          imageUrl: (data['authorID'] != null)
-              ? widget.chatUserDatas[data['authorID']]!.avatarUrl!
-              : widget.chatUserDatas.values.toList()[0].avatarUrl!,
-          width: 35,
-          height: 35,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-        ),
-      );
-    }
-  }
-
   void refresh() {
     setState(() {
       loggedInUser = loggedInUser;
@@ -544,220 +412,11 @@ class _ChatPageState extends State<ChatPage> {
     // isImage = false;
   }
 
-  generateMessage(data) {
-    if (data["isImage"] != null) {
-      return (data["isImage"] == false)
-          ? GestureDetector(
-              onLongPress: () => messageActions(data),
-              child: pureText(data),
-            )
-          : GestureDetector(
-              onLongPress: () =>
-                  messageActions(data, url: databaseMethods.decrypt(data["message"], data)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InteractiveViewer(
-                      maxScale: 10,
-                      child: CachedNetworkImage(
-                        imageUrl: databaseMethods.decrypt(data["message"], data),
-                        //fit: BoxFit.fill,
-                        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                          child: CircularProgressIndicator(
-                              value: downloadProgress.progress, color: Colors.white),
-                        ),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      ),
-                    ),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                child: CachedNetworkImage(
-                  imageUrl: databaseMethods.decrypt(data["message"], data),
-                  fit: BoxFit.fill,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(
-                          value: downloadProgress.progress, color: Colors.white),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
-              ),
-            );
-    } else {
-      if (data["images"] != null) {
-        return Column(
-          crossAxisAlignment: (data["authorID"] != globals.myUser!.uid!)
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
-          children: [
-            for (String url in data["images"])
-              GestureDetector(
-                onLongPress: () =>
-                    messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InteractiveViewer(
-                        maxScale: 10,
-                        child: GestureDetector(
-                          onLongPress: () =>
-                              messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
-                          child: CachedNetworkImage(
-                            imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
-                            progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                              child: CircularProgressIndicator(
-                                  value: downloadProgress.progress, color: Colors.white),
-                            ),
-                            errorWidget: (context, url, error) => const Icon(Icons.error),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5, bottom: 5),
-                  child: CachedNetworkImage(
-                    imageUrl: databaseMethods.decryptImageIfNeeded(url),
-                    fit: BoxFit.fill,
-                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        CircularProgressIndicator(
-                            value: downloadProgress.progress, color: Colors.white),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  ),
-                ),
-              ),
-            if (data["message"].isNotEmpty)
-              GestureDetector(onLongPress: () => messageActions(data), child: pureText(data))
-          ],
-        );
-      } else {
-        return GestureDetector(
-          onLongPress: () => messageActions(data),
-          child: pureText(data),
-        );
-      }
-    }
-  }
-
-  Widget pureText(data) {
-    if (data["isLink"] != null) {
-      return (data["isLink"] == true)
-          ? GestureDetector(
-              onTap: () {
-                launch(databaseMethods.decrypt(data['message'], data));
-              },
-              child: Text(
-                databaseMethods.decrypt(data["message"], data),
-                style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: Color.fromARGB(255, 0, 102, 255),
-                    decoration: TextDecoration.underline),
-              ),
-            )
-          : Text(
-              databaseMethods.decrypt(data["message"], data),
-              style: const TextStyle(color: Colors.white),
-            );
-    } else {
-      return Text(
-        databaseMethods.decrypt(data["message"], data),
-        style: const TextStyle(color: Colors.white),
-      );
-    }
-  }
-
-  copyMessage(Map<String, dynamic> data, String message, {String? url}) {
-    Clipboard.setData(
-        ClipboardData(text: (url != null) ? url : databaseMethods.decrypt(data["message"], data)));
-    Fluttertoast.showToast(msg: '$message copied succesfully');
-  }
-
-  downloadImage(Map<String, dynamic> data, String url) async {
-    try {
-      await ImageDownloader.downloadImage(url,
-          destination: AndroidDestinationType.directoryDownloads..subDirectory("karpportal.png"));
-      Fluttertoast.showToast(msg: "image downloaded succesfully");
-    } on PlatformException catch (error) {
-      print(error);
-    }
-
-    //ImageDownloader.downloadImage(url,destination: );
-
-    Fluttertoast.showToast(msg: 'Image downloaded sucessfully');
-    Navigator.pop(context);
-  }
-
   static Future downloadFile(Reference ref) async {
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/${ref.name}');
 
     await ref.writeToFile(file);
-  }
-
-  void messageActions(Map<String, dynamic> data, {String? url}) {
-    if (data["isImage"] != null) {
-      if (data["isImage"] == true) {
-        createAlertDialog(data, context);
-      } else {
-        copyMessage(data, "message");
-      }
-    } else {
-      if (url != null) {
-        createAlertDialog(data, context, url: url);
-      } else {
-        copyMessage(data, "message");
-      }
-    }
-  }
-
-  createAlertDialog(Map<String, dynamic> data, BuildContext context, {String? url}) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('what do you?'),
-          content: SizedBox(
-            height: 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    if (url != null) {
-                      copyMessage(data, 'image url', url: url);
-                    } else {
-                      copyMessage(data, 'image url');
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: const Text('copy image url'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    //copyMessage(data,"");
-                    Navigator.pop(context);
-                    downloadImage(
-                      data,
-                      (url != null)
-                          ? url
-                          : (url != null)
-                              ? url
-                              : data["message"],
-                    );
-                    //Navigator.pop(context);
-                  },
-                  child: const Text('download image'),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void notifyUser(String content) async {
@@ -839,18 +498,6 @@ class _ChatPageState extends State<ChatPage> {
 
     databaseMethods.sendNotification(title, content, targetUserModel.token!);
     setState(() {});
-  }
-
-  getColor() {
-    if (globals.primaryColor.toString() != globals.primarySwatch.toString()) {
-      return globals.primaryColor!;
-    } else {
-      if (globals.primaryColor.toString() != Colors.deepOrange.toString()) {
-        return Colors.deepOrange;
-      } else {
-        return Colors.orange;
-      }
-    }
   }
 
   Future sendImage() {
@@ -1022,5 +669,388 @@ void sendPushMessage(String token, String body, String title) async {
     );
   } catch (e) {
     print("error push notification");
+  }
+}
+
+class ChatMessage extends StatefulWidget {
+  ChatMessage(
+      {Key? key,
+      required this.data,
+      required this.chatRoomId,
+      required this.chatUserDatas,
+      required this.isGroupChat,
+      required this.isMyMessage})
+      : super(key: key);
+  final Map<String, dynamic> data;
+  final String chatRoomId;
+  final Map<String, UserModel> chatUserDatas;
+  final bool isGroupChat;
+  final bool isMyMessage;
+
+  @override
+  State<ChatMessage> createState() => _ChatMessageState();
+}
+
+class _ChatMessageState extends State<ChatMessage> {
+  @override
+  Widget build(BuildContext context) {
+    return (!widget.isMyMessage)
+        ? Container(
+            margin: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: MessageImage(widget.data),
+                        ),
+                        Container(
+                          //height: 30,
+                          decoration: BoxDecoration(
+                              color: globals.primarySwatch,
+                              borderRadius: BorderRadius.circular(10)),
+                          margin: const EdgeInsets.all(10),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 250),
+                              child: generateMessage(widget.data),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Padding(padding: EdgeInsets.only(bottom: 5)),
+                  ],
+                ),
+                if (widget.data['time2'] != null)
+                  Positioned(
+                    bottom: 0,
+                    left: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          widget.data['time2'].toString(),
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          )
+        : Container(
+            alignment: Alignment.centerRight,
+            margin: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          //height: 30,
+                          decoration: BoxDecoration(
+                              color: getColor(), borderRadius: BorderRadius.circular(10)),
+                          margin: const EdgeInsets.all(10),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+                            child: Container(
+                              // alignment: Alignment.centerRight,
+
+                              constraints: const BoxConstraints(maxWidth: 250),
+                              child: generateMessage(widget.data),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: MessageImage(widget.data),
+                        ),
+                      ],
+                    ),
+                    const Padding(padding: EdgeInsets.only(bottom: 5)),
+                  ],
+                ),
+                if (widget.data['time2'] != null)
+                  Positioned(
+                    bottom: 0,
+                    right: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          widget.data['time2'].toString(),
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          );
+  }
+
+  MessageImage(data) {
+    if (data['sendBy'] == globals.myUser!.fullName) {
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: globals.myUser!.avatarUrl!,
+          width: 35,
+          height: 35,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      );
+    } else {
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: (data['authorID'] != null)
+              ? widget.chatUserDatas[data['authorID']]!.avatarUrl!
+              : widget.chatUserDatas.values.toList()[0].avatarUrl!,
+          width: 35,
+          height: 35,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      );
+    }
+  }
+
+  generateMessage(data) {
+    if (data["isImage"] != null) {
+      return (data["isImage"] == false)
+          ? GestureDetector(
+              onLongPress: () => messageActions(data),
+              child: pureText(data),
+            )
+          : GestureDetector(
+              onLongPress: () =>
+                  messageActions(data, url: databaseMethods.decrypt(data["message"], data)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InteractiveViewer(
+                      maxScale: 10,
+                      child: CachedNetworkImage(
+                        imageUrl: databaseMethods.decrypt(data["message"], data),
+                        //fit: BoxFit.fill,
+                        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                          child: CircularProgressIndicator(
+                              value: downloadProgress.progress, color: Colors.white),
+                        ),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                child: CachedNetworkImage(
+                  imageUrl: databaseMethods.decrypt(data["message"], data),
+                  fit: BoxFit.fill,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(
+                          value: downloadProgress.progress, color: Colors.white),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+              ),
+            );
+    } else {
+      if (data["images"] != null) {
+        return Column(
+          crossAxisAlignment: (data["authorID"] != globals.myUser!.uid!)
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            for (String url in data["images"])
+              GestureDetector(
+                onLongPress: () =>
+                    messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InteractiveViewer(
+                        maxScale: 10,
+                        child: GestureDetector(
+                          onLongPress: () =>
+                              messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
+                          child: CachedNetworkImage(
+                            imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
+                            progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress, color: Colors.white),
+                            ),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  child: CachedNetworkImage(
+                    imageUrl: databaseMethods.decryptImageIfNeeded(url),
+                    fit: BoxFit.fill,
+                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                        CircularProgressIndicator(
+                            value: downloadProgress.progress, color: Colors.white),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                  ),
+                ),
+              ),
+            if (data["message"].isNotEmpty)
+              GestureDetector(onLongPress: () => messageActions(data), child: pureText(data))
+          ],
+        );
+      } else {
+        return GestureDetector(
+          onLongPress: () => messageActions(data),
+          child: pureText(data),
+        );
+      }
+    }
+  }
+
+  Widget pureText(data) {
+    if (data["isLink"] != null) {
+      return (data["isLink"] == true)
+          ? GestureDetector(
+              onTap: () {
+                launch(databaseMethods.decrypt(data['message'], data));
+              },
+              child: Text(
+                databaseMethods.decrypt(data["message"], data),
+                style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Color.fromARGB(255, 0, 102, 255),
+                    decoration: TextDecoration.underline),
+              ),
+            )
+          : Text(
+              databaseMethods.decrypt(data["message"], data),
+              style: const TextStyle(color: Colors.white),
+            );
+    } else {
+      return Text(
+        databaseMethods.decrypt(data["message"], data),
+        style: const TextStyle(color: Colors.white),
+      );
+    }
+  }
+
+  void messageActions(Map<String, dynamic> data, {String? url}) {
+    if (data["isImage"] != null) {
+      if (data["isImage"] == true) {
+        createAlertDialog(data, context);
+      } else {
+        copyMessage(data, "message");
+      }
+    } else {
+      if (url != null) {
+        createAlertDialog(data, context, url: url);
+      } else {
+        copyMessage(data, "message");
+      }
+    }
+  }
+
+  copyMessage(Map<String, dynamic> data, String message, {String? url}) {
+    Clipboard.setData(
+        ClipboardData(text: (url != null) ? url : databaseMethods.decrypt(data["message"], data)));
+    Fluttertoast.showToast(msg: '$message copied succesfully');
+  }
+
+  createAlertDialog(Map<String, dynamic> data, BuildContext context, {String? url}) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('what do you?'),
+          content: SizedBox(
+            height: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (url != null) {
+                      copyMessage(data, 'image url', url: url);
+                    } else {
+                      copyMessage(data, 'image url');
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: const Text('copy image url'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    //copyMessage(data,"");
+                    Navigator.pop(context);
+                    downloadImage(
+                      data,
+                      (url != null)
+                          ? url
+                          : (url != null)
+                              ? url
+                              : data["message"],
+                    );
+                    //Navigator.pop(context);
+                  },
+                  child: const Text('download image'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  downloadImage(Map<String, dynamic> data, String url) async {
+    try {
+      await ImageDownloader.downloadImage(url,
+          destination: AndroidDestinationType.directoryDownloads..subDirectory("karpportal.png"));
+      Fluttertoast.showToast(msg: "image downloaded succesfully");
+    } on PlatformException catch (error) {
+      print(error);
+    }
+
+    //ImageDownloader.downloadImage(url,destination: );
+
+    Fluttertoast.showToast(msg: 'Image downloaded sucessfully');
+    Navigator.pop(context);
+  }
+
+  getColor() {
+    if (globals.primaryColor.toString() != globals.primarySwatch.toString()) {
+      return globals.primaryColor!;
+    } else {
+      if (globals.primaryColor.toString() != Colors.deepOrange.toString()) {
+        return Colors.deepOrange;
+      } else {
+        return Colors.orange;
+      }
+    }
   }
 }
