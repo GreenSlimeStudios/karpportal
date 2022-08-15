@@ -81,7 +81,7 @@ class _MessagesPageState extends State<MessagesPage> {
           Expanded(
             child: ListView(
               children: [
-                createGroupChatTab(),
+                // createGroupChatTab(),
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return New Messages
