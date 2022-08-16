@@ -40,12 +40,15 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
+final ScrollController _scrollController = ScrollController();
 bool isLink = false;
 String time3 = "";
 TextEditingController messageController = TextEditingController();
 List<String> imageUrls = [];
 
 class _ChatPageState extends State<ChatPage> {
+  int messagesLimit = 40;
+  bool hasToJumpToTop = false;
   DatabaseMethods databaseMethods = DatabaseMethods();
   r() {
     setState(() {});
@@ -58,6 +61,24 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        bool isTop = _scrollController.position.pixels == 0;
+        if (isTop) {
+          print('At the top');
+        } else {
+          print('At the bottom');
+          // messagesLimit += 40;
+          // setState(() {
+          //   hasToJumpToTop = true;
+          // });
+          // // _scrollController.animateTo(_scrollController.position.minScrollExtent,
+          //     duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+        }
+      }
+    });
+
     // FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
     //   (value) {
     //     loggedInUser = UserModel.fromMap(value.data());
@@ -100,7 +121,6 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  final ScrollController _scrollController = ScrollController();
   bool isImage = false;
 
   void sendMessage() {
@@ -211,6 +231,13 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (hasToJumpToTop) {
+      print("JUMPING TO TOP");
+      // _scrollController.jumpTo(100);
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+      hasToJumpToTop = false;
+    }
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -262,6 +289,7 @@ class _ChatPageState extends State<ChatPage> {
                 .doc(widget.chatRoomId)
                 .collection("chat")
                 .orderBy('time', descending: true)
+                // .limit(messagesLimit)
                 .snapshots(),
             builder: (context, snapshot) {
               return (snapshot.connectionState == ConnectionState.waiting)
@@ -278,9 +306,9 @@ class _ChatPageState extends State<ChatPage> {
                           var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                           Map<String, dynamic>? dataAfter;
                           Map<String, dynamic>? dataPrevious;
-                          if (index != snapshot.data!.docs.length - 1)
+                          if (index > 1)
                             dataAfter =
-                                snapshot.data!.docs[index + 1].data() as Map<String, dynamic>;
+                                snapshot.data!.docs[index - 2].data() as Map<String, dynamic>;
                           if (index != 0)
                             dataPrevious =
                                 snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
@@ -719,7 +747,14 @@ class _ChatMessageState extends State<ChatMessage> {
     super.initState();
 
     if (widget.dataPrevious != null) {
-      if (widget.dataPrevious!["time"] - widget.data["time"] < 120000) {
+      // if (widget.dataAfter == null) {
+      //   if (DateTime.now().millisecondsSinceEpoch - widget.data["time"] > 180000) {
+      //     isBottomStack = true;
+      //     isExpanded = true;
+      //   }
+      //   return;
+      // }
+      if (widget.dataPrevious!["time"] - widget.data["time"] < 180000) {
         if (widget.dataPrevious!["authorID"] != null) {
           if (widget.dataPrevious!["authorID"] == widget.data["authorID"]) {
             isAvatarVisible = false;
@@ -728,8 +763,24 @@ class _ChatMessageState extends State<ChatMessage> {
             isExpanded = true;
           }
         } else {
-          isExpanded = true;
-          isBottomStack = true;
+          if (widget.data["sendBy"] != globals.myUser!.fullName!) {
+            if (widget.dataPrevious!["sendBy"] != globals.myUser!.fullName!) {
+              isAvatarVisible = false;
+            } else {
+              isBottomStack = true;
+              isExpanded = true;
+            }
+          } else {
+            if (widget.dataPrevious!["sendBy"] == globals.myUser!.fullName!) {
+              isAvatarVisible = false;
+            } else {
+              isBottomStack = true;
+              isExpanded = true;
+            }
+          }
+
+          // isExpanded = true;
+          // isBottomStack = true;
         }
         // else {
         // if (globals.loadedUsers[widget.data["authorID"]] != null) {
@@ -752,7 +803,7 @@ class _ChatMessageState extends State<ChatMessage> {
         isExpanded = true;
       }
     } else {
-      if (DateTime.now().millisecondsSinceEpoch - widget.data["time"] > 120000) {
+      if (DateTime.now().millisecondsSinceEpoch - widget.data["time"] > 180000) {
         isBottomStack = true;
         isExpanded = true;
       }
