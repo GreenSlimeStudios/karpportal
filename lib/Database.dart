@@ -113,8 +113,7 @@ class DatabaseMethods {
           }));
 
       if (response.statusCode == 200) {
-        print("Yeh notificatin is sended");
-        print("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+        print("Yeh notificatin is sent");
       } else {
         print("Error");
         print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");

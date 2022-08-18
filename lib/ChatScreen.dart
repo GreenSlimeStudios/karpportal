@@ -30,11 +30,16 @@ import 'globals.dart' as globals;
 
 class ChatPage extends StatefulWidget {
   const ChatPage(
-      {Key? key, required this.chatRoomId, required this.chatUserDatas, required this.isGroupChat})
+      {Key? key,
+      required this.chatRoomId,
+      required this.chatUserDatas,
+      required this.isGroupChat,
+      this.chatRoomData})
       : super(key: key);
   final String chatRoomId;
   final Map<String, UserModel> chatUserDatas;
   final bool isGroupChat;
+  final Map<String, dynamic>? chatRoomData;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -176,16 +181,17 @@ class _ChatPageState extends State<ChatPage> {
       if (messageController.text.isNotEmpty) {
         messageMap = {
           "message": databaseMethods.encrypt(messageController.text.trim()),
-          "sendBy": loggedInUser.fullName!,
+          "sendBy": globals.myUser!.fullName!,
           "time": DateTime.now().millisecondsSinceEpoch,
           "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
           "time3": time3,
-          "authorID": loggedInUser.uid!,
+          "authorID": globals.myUser!.uid!,
           "isLink": isLink,
           // "images": imageUrls,
           "supportsEncryption": true,
         };
         databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
+        print("lasagna");
         notifyUser(messageController.text);
         messageController.text = "";
         imageUrls = [];
@@ -196,8 +202,8 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       messageMap = {
         "message": databaseMethods.encrypt(messageController.text.trim()),
-        "sendBy": loggedInUser.fullName!,
-        "authorID": loggedInUser.uid!,
+        "sendBy": globals.myUser!.fullName!,
+        "authorID": globals.myUser!.uid!,
         "time": DateTime.now().millisecondsSinceEpoch,
         "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
         "time3": time3,
@@ -255,31 +261,33 @@ class _ChatPageState extends State<ChatPage> {
           )
         ],
         foregroundColor: Colors.white,
-        title: (widget.isGroupChat)
-            ? Container(child: Text("group chat"))
-            : Container(
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(widget.chatUserDatas.values.toList()[0].nickname!),
-                    const Padding(padding: EdgeInsets.only(right: 10)),
-                    Hero(
-                      tag: widget.chatUserDatas.values.toList()[0].uid!,
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: widget.chatUserDatas.values.toList()[0].avatarUrl!,
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                        ),
-                      ),
-                    ),
-                  ],
+        title: Container(
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text((widget.isGroupChat)
+                  ? widget.chatRoomData!["groupName"]
+                  : widget.chatUserDatas.values.toList()[0].nickname!),
+              const Padding(padding: EdgeInsets.only(right: 10)),
+              Hero(
+                tag: widget.chatUserDatas.values.toList()[0].uid!,
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: (widget.isGroupChat)
+                        ? widget.chatRoomData!["groupAvatarUrl"]
+                        : widget.chatUserDatas.values.toList()[0].avatarUrl!,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                  ),
                 ),
               ),
+            ],
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -462,84 +470,76 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void notifyUser(String content) async {
+    print("Notifying users");
+    // return;
     isImage = false;
     final roomData =
         await FirebaseFirestore.instance.collection('ChatRoom').doc(widget.chatRoomId).get();
 
     // print(roomData.metadata.isFromCache);
 
-    bool isAlready = false;
-    UserModel targetUserModel = UserModel();
+    for (UserModel user in widget.chatUserDatas.values) {
+      if (user.uid != globals.myUser!.uid!) {
+        UserModel targetUserModel = UserModel();
 
-    await FirebaseFirestore.instance.collection("users").doc(globals.myUser!.uid).get().then(
-      (value) {
-        globals.myUser = UserModel.fromMap(value.data());
-      },
-    );
-
-    if (roomData["uids"][0] != loggedInUser.uid) {
-      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
-        (value) {
-          // print(value.metadata.isFromCache);
-          targetUserModel = UserModel.fromMap(value.data());
-        },
-      );
-    } else {
-      await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
-        (value) {
-          // print(value.metadata.isFromCache);
-          targetUserModel = UserModel.fromMap(value.data());
-        },
-      );
-    }
-    if (targetUserModel.newMessages != null) {
-      targetUserModel.newMessages?.forEach((element) {
-        if (element == widget.chatRoomId) {
-          isAlready = true;
+        await FirebaseFirestore.instance.collection("users").doc(user.uid).get().then(
+          (value) {
+            // print(value.metadata.isFromCache);
+            targetUserModel = UserModel.fromMap(value.data());
+          },
+        );
+        if (targetUserModel.newMessages != null) {
+          if (targetUserModel.newMessages!.contains(widget.chatRoomId) == false) {
+            targetUserModel.newMessages?.add(widget.chatRoomId);
+          }
+        } else {
+          targetUserModel.newMessages = [widget.chatRoomId];
         }
-      });
-      if (isAlready == false) {
-        targetUserModel.newMessages?.add(widget.chatRoomId);
-      }
-    } else {
-      targetUserModel.newMessages = [widget.chatRoomId];
-    }
-    //Make room most recent in both users
-    if (targetUserModel.recentRooms != null) {
-      for (int i = 0; i < targetUserModel.recentRooms!.length; i++) {
-        if (targetUserModel.recentRooms![i] == widget.chatRoomId) {
-          targetUserModel.recentRooms!.remove(targetUserModel.recentRooms![i]);
+        print("check1");
+        //Make room most recent in both users
+        if (targetUserModel.recentRooms != null && targetUserModel.recentRooms != []) {
+          for (int i = 0; i < targetUserModel.recentRooms!.length; i++) {
+            if (targetUserModel.recentRooms![i] == widget.chatRoomId) {
+              targetUserModel.recentRooms!.remove(targetUserModel.recentRooms![i]);
+            }
+          }
+          targetUserModel.recentRooms?.add(widget.chatRoomId);
+        } else {
+          targetUserModel.recentRooms = [widget.chatRoomId];
         }
-      }
-      targetUserModel.recentRooms?.add(widget.chatRoomId);
-    } else {
-      targetUserModel.recentRooms = [widget.chatRoomId];
-    }
-    if (globals.myUser!.recentRooms != null) {
-      for (int i = 0; i < globals.myUser!.recentRooms!.length; i++) {
-        if (globals.myUser!.recentRooms![i] == widget.chatRoomId) {
-          globals.myUser!.recentRooms!.remove(globals.myUser!.recentRooms![i]);
+        print("check2");
+        if (globals.myUser!.recentRooms != null && globals.myUser!.recentRooms != []) {
+          for (int i = 0; i < globals.myUser!.recentRooms!.length; i++) {
+            if (globals.myUser!.recentRooms![i] == widget.chatRoomId) {
+              globals.myUser!.recentRooms!.remove(globals.myUser!.recentRooms![i]);
+            }
+          }
+          globals.myUser!.recentRooms?.add(widget.chatRoomId);
+        } else {
+          globals.myUser!.recentRooms = [widget.chatRoomId];
         }
+        print("check3");
+
+        await firebaseFirestore
+            .collection("users")
+            .doc(targetUserModel.uid)
+            .set(targetUserModel.toMap());
+
+        print("check4");
+        await firebaseFirestore
+            .collection("users")
+            .doc(globals.myUser!.uid)
+            .set(globals.myUser!.toMap());
+        String title = "";
+        if (widget.isGroupChat == true) {
+          title = "${widget.chatRoomData!["groupName"]!}: ${globals.myUser!.nickname}";
+        } else {
+          title = "new message from: ${globals.myUser!.nickname}";
+        }
+
+        databaseMethods.sendNotification(title, content, targetUserModel.token!);
       }
-      globals.myUser!.recentRooms?.add(widget.chatRoomId);
-    } else {
-      globals.myUser!.recentRooms = [widget.chatRoomId];
     }
-
-    await firebaseFirestore
-        .collection("users")
-        .doc(targetUserModel.uid)
-        .set(targetUserModel.toMap());
-
-    await firebaseFirestore
-        .collection("users")
-        .doc(globals.myUser!.uid)
-        .set(globals.myUser!.toMap());
-
-    String title = "new message from: ${globals.myUser!.nickname!}!";
-
-    databaseMethods.sendNotification(title, content, targetUserModel.token!);
-    setState(() {});
   }
 
   Future sendImage() {

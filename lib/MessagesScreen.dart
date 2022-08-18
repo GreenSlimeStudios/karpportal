@@ -160,8 +160,11 @@ class _MessagesPageState extends State<MessagesPage> {
     await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ChatPage(chatRoomId: chatRoomId, chatUserDatas: userModels, isGroupChat: true)));
+            builder: (context) => ChatPage(
+                chatRoomId: chatRoomId,
+                chatUserDatas: userModels,
+                isGroupChat: true,
+                chatRoomData: data)));
 
     setState(() {});
   }
@@ -302,9 +305,8 @@ class _MessagesPageState extends State<MessagesPage> {
                 child: ClipOval(
                   //clipper: MyClipper(),
                   child: CachedNetworkImage(
-                    imageUrl: (isGroupChat)
-                        ? "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1"
-                        : targetUserModel.avatarUrl!,
+                    imageUrl:
+                        (isGroupChat) ? roomData["groupAvatarUrl"] : targetUserModel.avatarUrl!,
                     width: 55,
                     height: 55,
                     fit: BoxFit.cover,
@@ -400,7 +402,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 ),
               ],
             ),
-            Icon(Icons.add_circle),
+            const Icon(Icons.add_circle),
           ],
         ),
       ),
@@ -408,7 +410,8 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   void createGroupChat() async {
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => GroupChatCreator()));
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const GroupChatCreator()));
   }
 }
 
