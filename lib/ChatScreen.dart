@@ -488,48 +488,43 @@ class _ChatPageState extends State<ChatPage> {
             targetUserModel = UserModel.fromMap(value.data());
           },
         );
+        bool hasTargetUserChanged = false;
         if (targetUserModel.newMessages != null) {
           if (targetUserModel.newMessages!.contains(widget.chatRoomId) == false) {
             targetUserModel.newMessages?.add(widget.chatRoomId);
+            hasTargetUserChanged = true;
           }
         } else {
           targetUserModel.newMessages = [widget.chatRoomId];
+          hasTargetUserChanged = true;
         }
         print("check1");
         //Make room most recent in both users
+
         if (targetUserModel.recentRooms != null && targetUserModel.recentRooms != []) {
-          for (int i = 0; i < targetUserModel.recentRooms!.length; i++) {
-            if (targetUserModel.recentRooms![i] == widget.chatRoomId) {
-              targetUserModel.recentRooms!.remove(targetUserModel.recentRooms![i]);
-            }
+          if (targetUserModel.recentRooms![targetUserModel.recentRooms!.length - 1] !=
+              widget.chatRoomId) {
+            targetUserModel.recentRooms!.remove(widget.chatRoomId);
+            hasTargetUserChanged = true;
+            print("MOOOVE");
           }
-          targetUserModel.recentRooms?.add(widget.chatRoomId);
+          if (hasTargetUserChanged) {
+            targetUserModel.recentRooms?.add(widget.chatRoomId);
+          }
         } else {
           targetUserModel.recentRooms = [widget.chatRoomId];
+          hasTargetUserChanged = true;
         }
         print("check2");
-        if (globals.myUser!.recentRooms != null && globals.myUser!.recentRooms != []) {
-          for (int i = 0; i < globals.myUser!.recentRooms!.length; i++) {
-            if (globals.myUser!.recentRooms![i] == widget.chatRoomId) {
-              globals.myUser!.recentRooms!.remove(globals.myUser!.recentRooms![i]);
-            }
-          }
-          globals.myUser!.recentRooms?.add(widget.chatRoomId);
-        } else {
-          globals.myUser!.recentRooms = [widget.chatRoomId];
+
+        if (hasTargetUserChanged) {
+          await firebaseFirestore
+              .collection("users")
+              .doc(targetUserModel.uid)
+              .set(targetUserModel.toMap());
         }
         print("check3");
 
-        await firebaseFirestore
-            .collection("users")
-            .doc(targetUserModel.uid)
-            .set(targetUserModel.toMap());
-
-        print("check4");
-        await firebaseFirestore
-            .collection("users")
-            .doc(globals.myUser!.uid)
-            .set(globals.myUser!.toMap());
         String title = "";
         if (widget.isGroupChat == true) {
           title = "${widget.chatRoomData!["groupName"]!}: ${globals.myUser!.nickname}";
@@ -540,6 +535,32 @@ class _ChatPageState extends State<ChatPage> {
         databaseMethods.sendNotification(title, content, targetUserModel.token!);
       }
     }
+
+    var myData = await firebaseFirestore.collection('users').doc(globals.myUser!.uid).get();
+    globals.myUser = UserModel.fromMap(myData.data());
+
+    bool hasMyUserChanged = false;
+
+    if (globals.myUser!.recentRooms != null && globals.myUser!.recentRooms != []) {
+      if (globals.myUser!.recentRooms![globals.myUser!.recentRooms!.length - 1] !=
+          widget.chatRoomId) {
+        globals.myUser!.recentRooms!.remove(widget.chatRoomId);
+        hasMyUserChanged = true;
+        print("MOOOVE");
+      }
+      if (hasMyUserChanged) {
+        globals.myUser!.recentRooms?.add(widget.chatRoomId);
+      }
+    } else {
+      globals.myUser!.recentRooms = [widget.chatRoomId];
+      hasMyUserChanged = true;
+    }
+    print("check4");
+    await firebaseFirestore
+        .collection("users")
+        .doc(globals.myUser!.uid)
+        .set(globals.myUser!.toMap());
+    setState(() {});
   }
 
   Future sendImage() {

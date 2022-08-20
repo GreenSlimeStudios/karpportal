@@ -203,7 +203,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
     final roomData = await FirebaseFirestore.instance.collection('ChatRoom').doc(chatRoomId).get();
     print(roomData.metadata.isFromCache);
-    print(roomData.data());
+    // print(roomData.data());
     if (roomData.data()!["isGroupChat"] != null) {
       print("GROUP CHAT FOUND");
       isGroupChat = roomData.data()!["isGroupChat"];
@@ -305,8 +305,9 @@ class _MessagesPageState extends State<MessagesPage> {
                 child: ClipOval(
                   //clipper: MyClipper(),
                   child: CachedNetworkImage(
-                    imageUrl:
-                        (isGroupChat) ? roomData["groupAvatarUrl"] : targetUserModel.avatarUrl!,
+                    imageUrl: (isGroupChat)
+                        ? roomData.data()!["groupAvatarUrl"]
+                        : targetUserModel.avatarUrl!,
                     width: 55,
                     height: 55,
                     fit: BoxFit.cover,
