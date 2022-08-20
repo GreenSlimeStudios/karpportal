@@ -267,7 +267,7 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text((widget.isGroupChat)
-                  ? widget.chatRoomData!["groupName"]
+                  ? widget.chatRoomData!["groupName"] ?? "group chat"
                   : widget.chatUserDatas.values.toList()[0].nickname!),
               const Padding(padding: EdgeInsets.only(right: 10)),
               Hero(

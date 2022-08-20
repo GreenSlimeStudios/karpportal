@@ -306,7 +306,8 @@ class _MessagesPageState extends State<MessagesPage> {
                   //clipper: MyClipper(),
                   child: CachedNetworkImage(
                     imageUrl: (isGroupChat)
-                        ? roomData.data()!["groupAvatarUrl"]
+                        ? roomData.data()!["groupAvatarUrl"] ??
+                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fwp1990761.jpg&f=1&nofb=1"
                         : targetUserModel.avatarUrl!,
                     width: 55,
                     height: 55,
