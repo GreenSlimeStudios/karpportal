@@ -26,6 +26,7 @@ import 'package:http/http.dart' as http;
 // import 'package:media_scanner/media_scanner.dart';
 // import 'package:flutter_media_scanner/flutter_media_scanner.dart';
 
+import 'ImageActions.dart';
 import 'globals.dart' as globals;
 
 class ChatPage extends StatefulWidget {
@@ -275,7 +276,8 @@ class _ChatPageState extends State<ChatPage> {
                 child: ClipOval(
                   child: CachedNetworkImage(
                     imageUrl: (widget.isGroupChat)
-                        ? widget.chatRoomData!["groupAvatarUrl"]
+                        ? widget.chatRoomData!["groupAvatarUrl"] ??
+                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fwp1990761.jpg&f=1&nofb=1"
                         : widget.chatUserDatas.values.toList()[0].avatarUrl!,
                     width: 40,
                     height: 40,
@@ -424,38 +426,20 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   String? imageUrl;
-  final _storage = FirebaseStorage.instance;
   File? imageTemporary;
+  final _storage = FirebaseStorage.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future pickImage() async {
-    time3 = DateTime.now().toString();
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-
-      imageTemporary = File(image.path);
-      if (imageTemporary!.lengthSync() > 20000000) {
-        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
-        return;
-      }
-
-      globals.image = imageTemporary;
-    } on PlatformException catch (e) {
-      print('failed tp pick image $e');
+    String? downloadurl = await pickGaleryImage("ChatImages");
+    if (downloadurl == null) {
+      Fluttertoast.showToast(msg: 'There has been a problem while trying to upload the image');
+      return;
     }
-    Fluttertoast.showToast(msg: "Uploading image... stay on page");
-    //final ref = FirebaseStorage
-    var snapshot = await _storage
-        .ref()
-        .child('ChatImages/${loggedInUser.uid} $time3 ${widget.chatUserDatas['uid']}')
-        .putFile(imageTemporary!);
-
-    var downloadurl = await snapshot.ref.getDownloadURL();
 
     imageUrl = downloadurl;
     imageUrls.add(databaseMethods.encrypt(imageUrl!));
-    Fluttertoast.showToast(msg: "succesfully uploaded image");
+    // Fluttertoast.showToast(msg: "succesfully uploaded image");
     setState(() {});
     // isImage = true;
     // sendMessage();

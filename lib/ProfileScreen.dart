@@ -21,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'HomeScreen.dart' as home;
 
+import 'ImageActions.dart';
 import 'globals.dart' as globals;
 
 class ProfilePage extends StatefulWidget {
@@ -392,39 +393,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   String? imageUrl;
-  final _storage = FirebaseStorage.instance;
-  File? imageTemporary;
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-
-      imageTemporary = File(image.path);
-      if (imageTemporary!.lengthSync() > 5000000) {
-        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
-        return;
-      }
-      setState(() {
-        globals.image = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('failed tp pick image $e');
+    var downloadurl = await pickGaleryImage("AvatarImages");
+    if (downloadurl == null) {
+      Fluttertoast.showToast(msg: "We have encountered a problem while trying to upoad the image");
+      return;
     }
-    //final ref = FirebaseStorage
-    var snapshot = await _storage
-        .ref()
-        .child('AvatarImages/${globals.myUser!.uid}avatar')
-        .putFile(imageTemporary!);
-
-    var downloadurl = await snapshot.ref.getDownloadURL();
     setState(() {
       imageUrl = downloadurl;
     });
     globals.myUser!.avatarUrl = imageUrl;
 
-    await firebaseFirestore
+    await FirebaseFirestore.instance
         .collection("users")
         .doc(globals.myUser!.uid)
         .set(globals.myUser!.toMap());
@@ -497,7 +478,7 @@ class _ProfilePageState extends State<ProfilePage> {
       globals.myUser = loggedInUser;
       globals.authUser = user;
 
-      await firebaseFirestore
+      await FirebaseFirestore.instance
           .collection("users")
           .doc(globals.myUser!.uid)
           .set(globals.myUser!.toMap());
@@ -700,34 +681,17 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future changeBackgroundImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-
-      imageTemporary = File(image.path);
-      if (imageTemporary!.lengthSync() > 5000000) {
-        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
-        return;
-      }
-      setState(() {
-        globals.image = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('failed tp pick image $e');
+    var downloadurl = await pickGaleryImage("BackgroundImages");
+    if (downloadurl == null) {
+      Fluttertoast.showToast(msg: "We have encountered a problem while trying to upoad the image");
+      return;
     }
-    //final ref = FirebaseStorage
-    var snapshot = await _storage
-        .ref()
-        .child('BackgroundImages/${globals.myUser!.uid}-background')
-        .putFile(imageTemporary!);
-
-    var downloadurl = await snapshot.ref.getDownloadURL();
     setState(() {
       imageUrl = downloadurl;
     });
     globals.myUser!.backgroundUrl = imageUrl;
 
-    await firebaseFirestore
+    await FirebaseFirestore.instance
         .collection("users")
         .doc(globals.myUser!.uid)
         .set(globals.myUser!.toMap());

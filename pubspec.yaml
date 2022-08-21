@@ -53,6 +53,7 @@ dependencies:
   cached_network_image: ^3.2.0
   # image_downloader: ^0.31.0
   flutter_local_notifications: ^9.7.0
+  flutter_image_compress: ^1.1.1
   # firebase_core_desktop: ^1.0.1
   # firebase_auth_desktop: ^1.0.1
 

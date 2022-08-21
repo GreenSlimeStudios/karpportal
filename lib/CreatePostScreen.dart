@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/MessagesScreen.dart';
+import 'ImageActions.dart';
 import 'globals.dart' as globals;
 
 class CreatePostPage extends StatefulWidget {
@@ -230,38 +231,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   String? imageUrl;
-  final _storage = FirebaseStorage.instance;
-  File? imageTemporary;
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-
-      imageTemporary = File(image.path);
-      if (imageTemporary!.lengthSync() > 5000000) {
-        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
-        return;
-      }
-    } on PlatformException catch (e) {
-      print('failed tp pick image $e');
+    var downloadurl = await pickGaleryImage("PostImages");
+    if (downloadurl == null) {
+      Fluttertoast.showToast(msg: "We have encountered a problem while trying to upoad the image");
+      return;
     }
-    Fluttertoast.showToast(msg: "Uploading image... stay on page");
-    //final ref = FirebaseStorage
-    var snapshot = await _storage
-        .ref()
-        .child('PostImages/${globals.myUser!.uid}-${DateTime.now().millisecondsSinceEpoch}')
-        .putFile(imageTemporary!);
-
-    var downloadurl = await snapshot.ref.getDownloadURL();
     setState(() {
       imageUrl = downloadurl;
       imageURLs.add(imageUrl!);
     });
-    Fluttertoast.showToast(
-        msg: "Image uploaded successfully :) ",
-        textColor: Colors.black,
-        backgroundColor: Colors.white);
+    Fluttertoast.showToast(msg: "Image uploaded successfully :) ");
   }
 }
