@@ -13,10 +13,24 @@ class _Page1State extends State<Page1> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'Karp\nPortal',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.leagueScript(fontSize: 60, fontWeight: FontWeight.bold),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/karpportallogofinal.png', height: 120, width: 120),
+                SizedBox(height: 8),
+              ],
+            ),
+            SizedBox(width: 20),
+            Text(
+              'Karp\nPortal',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.leagueScript(fontSize: 50, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );

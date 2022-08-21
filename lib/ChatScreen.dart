@@ -109,16 +109,14 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {});
       },
     );
-    print(loggedInUser.toMap());
+    // print(loggedInUser.toMap());
     if (loggedInUser.newMessages != null) {
       //loggedInUser.newMessages?.forEach((element) {if(element == widget.chatRoomId){element.}});
       for (int i = 0; i < loggedInUser.newMessages!.length; i++) {
-        if (loggedInUser.newMessages![i].toString() == widget.chatRoomId) {
-          loggedInUser.newMessages?.remove(widget.chatRoomId);
-          await firebaseFirestore
-              .collection("users")
-              .doc(loggedInUser.uid)
-              .set(loggedInUser.toMap());
+        if (loggedInUser.newMessages!.contains(widget.chatRoomId)) {
+          await FirebaseFirestore.instance.collection('users').doc(globals.myUser!.uid).set({
+            "newMessages": FieldValue.arrayRemove([widget.chatRoomId])
+          }, SetOptions(merge: true));
         }
       }
     }

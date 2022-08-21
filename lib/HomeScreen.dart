@@ -95,20 +95,59 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: globals.primaryColor),
+              decoration: BoxDecoration(
+                color: globals.primaryColor,
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    globals.primaryColor!,
+
+                    globals.primarySwatch!
+                    // Colors.blue,
+                    // Colors.red,
+                  ],
+                ),
+              ),
               // child: Center(child: setIcon()),
-              child: Text(
-                'Karp\nPortal',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.leagueScript(fontSize: 60, fontWeight: FontWeight.bold),
+              // child:
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    'Karp\nPortal',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.leagueScript(fontSize: 40, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 20),
+                  Image.asset('assets/karpportallogofinal.png', height: 100, width: 100),
+                ],
               ),
             ),
             ListTile(
                 title: Container(
                   decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: globals.primaryColor as Color),
-                      borderRadius: BorderRadius.circular(10),
-                      color: drawerBackColor(0)),
+                    border: (globals.index != 0)
+                        ? null
+                        : Border.all(width: 2, color: globals.primarySwatch as Color),
+                    borderRadius: BorderRadius.circular(10),
+                    color: drawerBackColor(0),
+                    gradient: (globals.index == 0)
+                        ? null
+                        : LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              globals.primaryColor!,
+
+                              globals.primarySwatch!
+                              // Colors.blue,
+                              // Colors.red,
+                            ],
+                          ),
+                  ),
                   height: 40,
                   width: double.infinity,
                   child: Row(
@@ -136,8 +175,23 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Container(
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: globals.primaryColor as Color),
+                    border: (globals.index != 1)
+                        ? null
+                        : Border.all(width: 2, color: globals.primarySwatch as Color),
                     borderRadius: BorderRadius.circular(10),
+                    gradient: (globals.index == 1)
+                        ? null
+                        : LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              globals.primaryColor!,
+
+                              globals.primarySwatch!
+                              // Colors.blue,
+                              // Colors.red,
+                            ],
+                          ),
                     color: drawerBackColor(1)),
                 height: 40,
                 width: double.infinity,
@@ -165,8 +219,23 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Container(
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: globals.primaryColor as Color),
+                    border: (globals.index != 2)
+                        ? null
+                        : Border.all(width: 2, color: globals.primarySwatch as Color),
                     borderRadius: BorderRadius.circular(10),
+                    gradient: (globals.index == 2)
+                        ? null
+                        : LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              globals.primaryColor!,
+
+                              globals.primarySwatch!
+                              // Colors.blue,
+                              // Colors.red,
+                            ],
+                          ),
                     color: drawerBackColor(2)),
                 height: 40,
                 width: double.infinity,
@@ -194,8 +263,23 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Container(
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: globals.primaryColor as Color),
+                    border: (globals.index != 3)
+                        ? null
+                        : Border.all(width: 2, color: globals.primarySwatch as Color),
                     borderRadius: BorderRadius.circular(10),
+                    gradient: (globals.index == 3)
+                        ? null
+                        : LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              globals.primaryColor!,
+
+                              globals.primarySwatch!
+                              // Colors.blue,
+                              // Colors.red,
+                            ],
+                          ),
                     color: drawerBackColor(3)),
                 height: 40,
                 width: double.infinity,
@@ -223,8 +307,23 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Container(
                 decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: globals.primaryColor as Color),
+                    border: (globals.index != 4)
+                        ? null
+                        : Border.all(width: 2, color: globals.primarySwatch as Color),
                     borderRadius: BorderRadius.circular(10),
+                    gradient: (globals.index == 4)
+                        ? null
+                        : LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              globals.primaryColor!,
+
+                              globals.primarySwatch!
+                              // Colors.blue,
+                              // Colors.red,
+                            ],
+                          ),
                     color: drawerBackColor(4)),
                 height: 40,
                 width: double.infinity,
@@ -291,7 +390,7 @@ class _HomePageState extends State<HomePage> {
 
   drawerTextColor(int i) {
     if (globals.index == i) {
-      return globals.primaryColor;
+      return globals.primarySwatch;
     } else {
       return Colors.white;
     }
@@ -301,7 +400,7 @@ class _HomePageState extends State<HomePage> {
     if (globals.index == i) {
       return Colors.white;
     } else {
-      return globals.primaryColor;
+      return globals.primarySwatch;
     }
   }
 
