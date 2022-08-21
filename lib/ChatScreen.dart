@@ -352,7 +352,7 @@ class _ChatPageState extends State<ChatPage> {
                     );
             },
           ),
-          (imageUrls.isEmpty == false) ? const ImagesPreview() : Container(),
+          (imageUrls.isEmpty == false) ? ImagesPreview() : Container(),
           Container(
             alignment: Alignment.bottomCenter,
             child: Container(
