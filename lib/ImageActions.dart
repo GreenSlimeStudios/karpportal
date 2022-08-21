@@ -66,7 +66,46 @@ Future<String?> pickGaleryImage(String folder) async {
   Fluttertoast.showToast(msg: "succesfully uploaded image");
 
   return downloadurl;
-  // isImage = true;
-  // sendMessage();
-  // isImage = false;
+}
+
+Future<List<String>?> pickGaleryImages(String folder) async {
+  File? imageTemporary;
+  final storage = FirebaseStorage.instance;
+  List<String> imageURLs = [];
+
+  try {
+    final images = await ImagePicker().pickMultiImage();
+    if (images == null) return null;
+
+    // image = await compressFile(image as File) as XFile;
+    for (int i = 0; i < images.length; i++) {
+      imageTemporary = File(images[i].path);
+
+      print("FILE SIZE BEFORE COMPRESSION: ${imageTemporary.lengthSync()}");
+      // Compress the fie if its bigger that 800kb
+      if (imageTemporary.lengthSync() > 800000) {
+        imageTemporary = await compressFile(imageTemporary);
+      }
+      print("FILE SIZE AFTER COMPRESSION: ${imageTemporary.lengthSync()}");
+
+      if (imageTemporary.lengthSync() > 4000000) {
+        Fluttertoast.showToast(msg: 'bruh are you tryin to fuck up my cloud storage?');
+        return null;
+      }
+      Fluttertoast.showToast(msg: "Uploading image(${i + 1})... stay on page");
+      //final ref = FirebaseStorage
+      var snapshot = await storage
+          .ref()
+          .child(
+              '${folder}/${globals.myUser!.uid! + DateTime.now().millisecondsSinceEpoch.toString()}')
+          .putFile(imageTemporary);
+
+      var downloadurl = await snapshot.ref.getDownloadURL();
+      imageURLs.add(downloadurl);
+    }
+    Fluttertoast.showToast(msg: "succesfully uploaded images");
+    return imageURLs;
+  } on PlatformException catch (e) {
+    print('failed tp pick image $e');
+  }
 }

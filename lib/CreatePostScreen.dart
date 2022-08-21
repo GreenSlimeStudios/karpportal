@@ -233,15 +233,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
   String? imageUrl;
 
   Future pickImage() async {
-    var downloadurl = await pickGaleryImage("PostImages");
-    if (downloadurl == null) {
-      Fluttertoast.showToast(msg: "We have encountered a problem while trying to upoad the image");
+    var downloadurls = await pickGaleryImages("PostImages");
+    if (downloadurls == null) {
+      Fluttertoast.showToast(
+          msg: "We have encountered a problem while trying to upoad the image/s");
       return;
     }
-    setState(() {
+    for (String downloadurl in downloadurls) {
       imageUrl = downloadurl;
       imageURLs.add(imageUrl!);
-    });
+    }
+    setState(() {});
     Fluttertoast.showToast(msg: "Image uploaded successfully :) ");
   }
 }

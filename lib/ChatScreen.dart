@@ -431,19 +431,19 @@ class _ChatPageState extends State<ChatPage> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future pickImage() async {
-    String? downloadurl = await pickGaleryImage("ChatImages");
-    if (downloadurl == null) {
+    List<String>? downloadurls = await pickGaleryImages("ChatImages");
+
+    // String? downloadurl = await pickGaleryImage("ChatImages");
+    if (downloadurls == null && downloadurls != []) {
       Fluttertoast.showToast(msg: 'There has been a problem while trying to upload the image');
       return;
     }
-
-    imageUrl = downloadurl;
-    imageUrls.add(databaseMethods.encrypt(imageUrl!));
-    // Fluttertoast.showToast(msg: "succesfully uploaded image");
+    for (String downloadurl in downloadurls!) {
+      imageUrl = downloadurl;
+      imageUrls.add(databaseMethods.encrypt(imageUrl!));
+      // Fluttertoast.showToast(msg: "succesfully uploaded image");
+    }
     setState(() {});
-    // isImage = true;
-    // sendMessage();
-    // isImage = false;
   }
 
   static Future downloadFile(Reference ref) async {
