@@ -931,7 +931,8 @@ class _ChatMessageState extends State<ChatMessage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+          placeholder: (context, url) =>
+              Center(child: const CircularProgressIndicator(color: Colors.white)),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       );
@@ -970,11 +971,15 @@ class _ChatMessageState extends State<ChatMessage> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 5),
                 child: CachedNetworkImage(
+                  height: 200,
+                  width: 250,
+                  fit: BoxFit.cover,
                   imageUrl: databaseMethods.decrypt(data["message"], data),
-                  fit: BoxFit.fill,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(
-                          value: downloadProgress.progress, color: Colors.white),
+                  // fit: BoxFit.fill,
+                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                    child: CircularProgressIndicator(
+                        value: downloadProgress.progress, color: Colors.white),
+                  ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
@@ -1000,6 +1005,9 @@ class _ChatMessageState extends State<ChatMessage> {
                           onLongPress: () =>
                               messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
                           child: CachedNetworkImage(
+                            // height: 50,
+                            // width: 50,
+                            // fit: BoxFit.cover,
                             imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
                             progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                               child: CircularProgressIndicator(
@@ -1015,11 +1023,15 @@ class _ChatMessageState extends State<ChatMessage> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 5, bottom: 5),
                   child: CachedNetworkImage(
+                    height: 200,
+                    width: 250,
+                    fit: BoxFit.cover,
                     imageUrl: databaseMethods.decryptImageIfNeeded(url),
-                    fit: BoxFit.fill,
-                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        CircularProgressIndicator(
-                            value: downloadProgress.progress, color: Colors.white),
+                    // fit: BoxFit.fill,
+                    progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                      child: CircularProgressIndicator(
+                          value: downloadProgress.progress, color: Colors.white),
+                    ),
                     errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
