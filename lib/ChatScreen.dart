@@ -46,20 +46,23 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-final ScrollController _scrollController = ScrollController();
+final ScrollController _scrollController = ScrollController(keepScrollOffset: true);
 bool isLink = false;
 String time3 = "";
 TextEditingController messageController = TextEditingController();
 List<String> imageUrls = [];
 
 class _ChatPageState extends State<ChatPage> {
-  int messagesLimit = 40;
+  int messagesLimit = 100;
   bool hasToJumpToTop = false;
   DatabaseMethods databaseMethods = DatabaseMethods();
+
+  bool isFirstRender = true;
   r() {
     setState(() {});
   }
 
+  double maxPosition = 0;
   //Stream<QuerySnapshot>? chatMessagesStream;
 
   User? user = FirebaseAuth.instance.currentUser;
@@ -68,22 +71,25 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.atEdge) {
-        bool isTop = _scrollController.position.pixels == 0;
-        if (isTop) {
-          print('At the top');
-        } else {
-          print('At the bottom');
-          // messagesLimit += 40;
-          // setState(() {
-          //   hasToJumpToTop = true;
-          // });
-          // // _scrollController.animateTo(_scrollController.position.minScrollExtent,
-          //     duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
-        }
-      }
-    });
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.atEdge) {
+    //     bool isTop = _scrollController.position.pixels == 0;
+    //     if (isTop) {
+    //       print('At the top');
+    //     } else {
+    //       maxPosition = _scrollController.position.pixels;
+    //       print('At the bottom');
+    //       messagesLimit += 40;
+    //       setState(() {
+    //         hasToJumpToTop = true;
+    //       });
+    //       // Future.delayed(Duration(milliseconds: 1000), () {
+    //       //   _scrollController.animateTo(_scrollController.position.minScrollExtent,
+    //       //       duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+    //       // });
+    //     }
+    //   }
+    // });
 
     // FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
     //   (value) {
@@ -234,13 +240,24 @@ class _ChatPageState extends State<ChatPage> {
         duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
   }
 
+  // @override
+  // void dispose() {
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     if (hasToJumpToTop) {
       print("JUMPING TO TOP");
+      // Future.delayed(Duration(milliseconds: 500), () {
+      //   // _scrollController.jumpTo(maxPosition);
+      //   _scrollController.animateTo(maxPosition,
+      //       duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+      // });
       // _scrollController.jumpTo(100);
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+      // _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+      //     duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
       hasToJumpToTop = false;
     }
     return Scaffold(
@@ -297,57 +314,121 @@ class _ChatPageState extends State<ChatPage> {
                 .doc(widget.chatRoomId)
                 .collection("chat")
                 .orderBy('time', descending: true)
-                // .limit(messagesLimit)
+                .limit(messagesLimit)
                 .snapshots(),
             builder: (context, snapshot) {
-              return (snapshot.connectionState == ConnectionState.waiting)
-                  ? const Expanded(
-                      child: Center(child: CircularProgressIndicator(color: Colors.white)))
-                  : Expanded(
-                      child: ListView.builder(
-                        reverse: true,
-                        controller: _scrollController,
-                        itemCount: snapshot.data!.docs.length,
-                        // itemCount: 2,
+              if (isFirstRender) {
+                if (snapshot.connectionState != ConnectionState.waiting) {
+                  isFirstRender = false;
+                }
 
-                        itemBuilder: (context, index) {
-                          var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                          Map<String, dynamic>? dataAfter;
-                          Map<String, dynamic>? dataPrevious;
-                          if (index > 1)
-                            dataAfter =
-                                snapshot.data!.docs[index - 2].data() as Map<String, dynamic>;
-                          if (index != 0)
-                            dataPrevious =
-                                snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
-                          if (data != null) {
-                            return (data['sendBy'] != globals.myUser!.fullName)
-                                ? ChatMessage(
-                                    data: data,
-                                    chatRoomId: widget.chatRoomId,
-                                    chatUserDatas: widget.chatUserDatas,
-                                    isGroupChat: widget.isGroupChat,
-                                    isMyMessage: false,
-                                    dataPrevious: dataPrevious,
-                                    dataAfter: dataAfter,
-                                  )
-                                : ChatMessage(
-                                    data: data,
-                                    chatRoomId: widget.chatRoomId,
-                                    chatUserDatas: widget.chatUserDatas,
-                                    isGroupChat: widget.isGroupChat,
-                                    isMyMessage: true,
-                                    dataPrevious: dataPrevious,
-                                    dataAfter: dataAfter,
-                                  );
-                          } else {
-                            return Container(
-                              child: const Text('null'),
-                            );
-                          }
-                        },
-                      ),
-                    );
+                return (snapshot.connectionState == ConnectionState.waiting)
+                    ? const Expanded(
+                        child: Center(child: CircularProgressIndicator(color: Colors.white)))
+                    : Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            messagesLimit += 100;
+                            setState(() {});
+                          },
+                          child: ListView.builder(
+                            reverse: true,
+                            controller: _scrollController,
+                            itemCount: snapshot.data!.docs.length,
+                            // itemCount: 2,
+
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                              Map<String, dynamic>? dataAfter;
+                              Map<String, dynamic>? dataPrevious;
+                              if (index > 1)
+                                dataAfter =
+                                    snapshot.data!.docs[index - 2].data() as Map<String, dynamic>;
+                              if (index != 0)
+                                dataPrevious =
+                                    snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
+                              if (data != null) {
+                                return (data['sendBy'] != globals.myUser!.fullName)
+                                    ? ChatMessage(
+                                        data: data,
+                                        chatRoomId: widget.chatRoomId,
+                                        chatUserDatas: widget.chatUserDatas,
+                                        isGroupChat: widget.isGroupChat,
+                                        isMyMessage: false,
+                                        dataPrevious: dataPrevious,
+                                        dataAfter: dataAfter,
+                                      )
+                                    : ChatMessage(
+                                        data: data,
+                                        chatRoomId: widget.chatRoomId,
+                                        chatUserDatas: widget.chatUserDatas,
+                                        isGroupChat: widget.isGroupChat,
+                                        isMyMessage: true,
+                                        dataPrevious: dataPrevious,
+                                        dataAfter: dataAfter,
+                                      );
+                              } else {
+                                return Container(
+                                  child: const Text('null'),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      );
+              } else {
+                return Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      messagesLimit += 100;
+                      setState(() {});
+                      // return SetState();
+                    },
+                    child: ListView.builder(
+                      reverse: true,
+                      controller: _scrollController,
+                      itemCount: snapshot.data!.docs.length,
+                      // itemCount: 2,
+
+                      itemBuilder: (context, index) {
+                        var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                        Map<String, dynamic>? dataAfter;
+                        Map<String, dynamic>? dataPrevious;
+                        if (index > 1)
+                          dataAfter = snapshot.data!.docs[index - 2].data() as Map<String, dynamic>;
+                        if (index != 0)
+                          dataPrevious =
+                              snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
+                        if (data != null) {
+                          return (data['sendBy'] != globals.myUser!.fullName)
+                              ? ChatMessage(
+                                  data: data,
+                                  chatRoomId: widget.chatRoomId,
+                                  chatUserDatas: widget.chatUserDatas,
+                                  isGroupChat: widget.isGroupChat,
+                                  isMyMessage: false,
+                                  dataPrevious: dataPrevious,
+                                  dataAfter: dataAfter,
+                                )
+                              : ChatMessage(
+                                  data: data,
+                                  chatRoomId: widget.chatRoomId,
+                                  chatUserDatas: widget.chatUserDatas,
+                                  isGroupChat: widget.isGroupChat,
+                                  isMyMessage: true,
+                                  dataPrevious: dataPrevious,
+                                  dataAfter: dataAfter,
+                                );
+                        } else {
+                          return Container(
+                            child: const Text('null'),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                );
+              }
             },
           ),
           (imageUrls.isEmpty == false) ? ImagesPreview() : Container(),
@@ -482,16 +563,16 @@ class _ChatPageState extends State<ChatPage> {
         }
         print("check1");
         //Make room most recent in both users
+        List<dynamic> oldRooms = targetUserModel.recentRooms!;
 
         if (targetUserModel.recentRooms != null && targetUserModel.recentRooms != []) {
           if (targetUserModel.recentRooms![targetUserModel.recentRooms!.length - 1] !=
-              widget.chatRoomId) {
-            targetUserModel.recentRooms!.remove(widget.chatRoomId);
+              widget.chatRoomId) {}
+          targetUserModel.recentRooms!.remove(widget.chatRoomId);
+          print("MOOOVE");
+          targetUserModel.recentRooms!.add(widget.chatRoomId);
+          if (oldRooms != targetUserModel.recentRooms!) {
             hasTargetUserChanged = true;
-            print("MOOOVE");
-          }
-          if (hasTargetUserChanged) {
-            targetUserModel.recentRooms?.add(widget.chatRoomId);
           }
         } else {
           targetUserModel.recentRooms = [widget.chatRoomId];
