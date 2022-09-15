@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:karpportal/ChatScreen.dart';
 import 'package:karpportal/CreateGroupChatScreen.dart';
 import 'package:karpportal/Database.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'UserModel.dart';
 
@@ -268,6 +270,9 @@ class _MessagesPageState extends State<MessagesPage> {
           );
         }
       },
+      onLongPress: () {
+        copyRoomId(roomData.data()!["chatRoomId"]);
+      },
       child: Container(
         padding: const EdgeInsets.only(top: 10),
         child: Column(
@@ -324,6 +329,13 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
       ),
     );
+  }
+
+  copyRoomId(String? id) {
+    if (id != null) {
+      Clipboard.setData(ClipboardData(text: id));
+      Fluttertoast.showToast(msg: "Chat Room Id copied succesfully ($id)");
+    }
   }
 
   void refresh() async {
