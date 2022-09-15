@@ -17,6 +17,8 @@ bool? isDarkTheme;
 // Colors.grey.shade900;
 User? authUser;
 ThemeColor? theme;
+int localversion = 100;
+int? version;
 
 UserModel? myUser;
 

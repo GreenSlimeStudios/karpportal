@@ -42,6 +42,11 @@ class _InitUserPageState extends State<InitUserPage> {
           goToHomePage();
         },
       );
+      Map<String, dynamic> globalVars =
+          await FirebaseFirestore.instance.collection('globals').doc("globals").get().then((value) {
+        return value.data() ?? {};
+      });
+      globals.version = globalVars["version"] ?? 15;
     } on FirebaseAuthException {
       print("NOT GOOD AT ALL");
       await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));

@@ -233,6 +233,8 @@ class _ChatPageState extends State<ChatPage> {
     }
     isImage = false;
     imageUrls = [];
+
+    setState(() {});
   }
 
   scroll() {
@@ -334,10 +336,12 @@ class _ChatPageState extends State<ChatPage> {
                           child: ListView.builder(
                             reverse: true,
                             controller: _scrollController,
-                            itemCount: snapshot.data!.docs.length,
+                            itemCount: snapshot.data!.docs.length + 1,
                             // itemCount: 2,
 
                             itemBuilder: (context, index) {
+                              if (index == snapshot.data!.docs.length) return welcomeBox();
+
                               var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                               Map<String, dynamic>? dataAfter;
                               Map<String, dynamic>? dataPrevious;
@@ -387,10 +391,12 @@ class _ChatPageState extends State<ChatPage> {
                     child: ListView.builder(
                       reverse: true,
                       controller: _scrollController,
-                      itemCount: snapshot.data!.docs.length,
+                      itemCount: snapshot.data!.docs.length + 1,
                       // itemCount: 2,
 
                       itemBuilder: (context, index) {
+                        if (index == snapshot.data!.docs.length) return welcomeBox();
+
                         var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                         Map<String, dynamic>? dataAfter;
                         Map<String, dynamic>? dataPrevious;
@@ -699,6 +705,56 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
+
+  Widget welcomeBox() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+      // height: 100,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ClipOval(
+            child: CachedNetworkImage(
+                fit: BoxFit.cover,
+                height: 100,
+                width: 100,
+                imageUrl: widget.chatRoomData?["groupAvatarUrl"] ??
+                    widget.chatUserDatas.values.first.avatarUrl ??
+                    "https://cdn.tomsguide.fr/content/uploads/sites/2/2018/01/incognito-mode.jpg"),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            "${widget.chatRoomData?["groupName"] ?? widget.chatUserDatas.values.first.nickname ?? "incognito person"}",
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 2),
+          Text(
+              "${(widget.isGroupChat) ? "This is the start of the group" : "This is your start of your conversation with"} ${widget.chatRoomData?["groupName"] ?? widget.chatUserDatas.values.first.nickname ?? "incognito person"}",
+              textAlign: TextAlign.center),
+          // Text(
+          //   "All messages send in this connversation are encrypted so only the chat members can read it.",
+          //   textAlign: TextAlign.center,
+          //   style: TextStyle(color: Colors.grey),
+          // ),
+          // SizedBox(height: 10),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                "all messages encrypted",
+                style: TextStyle(color: Colors.grey),
+              ),
+              SizedBox(width: 3),
+              Icon(Icons.lock, size: 10, color: Colors.grey),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class ImagesPreview extends StatefulWidget {
@@ -892,6 +948,7 @@ class _ChatMessageState extends State<ChatMessage> {
         isExpanded = true;
       }
     }
+    setState(() {});
   }
 
   @override

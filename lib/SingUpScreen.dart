@@ -234,7 +234,7 @@ class _SingUpPageState extends State<SingUpPage> {
                           height: 35,
                           child: ElevatedButton(
                               onPressed: () {
-                                signUp(emailController.text, passwordController.text);
+                                signUp(emailController.text.trim(), passwordController.text.trim());
                               },
                               child: Text('Sing Up')),
                         ),
@@ -293,7 +293,7 @@ class _SingUpPageState extends State<SingUpPage> {
         print('///////////////////////////STARTING????????????????????????');
         await _auth
             .createUserWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text)
+                email: emailController.text.trim(), password: passwordController.text.trim())
             .then((value) => {postDetailsToFirestore()})
             .catchError((e) {
           Fluttertoast.showToast(msg: e.toString());
@@ -361,7 +361,7 @@ class _SingUpPageState extends State<SingUpPage> {
     userModel.avatarUrl =
         'https://firebasestorage.googleapis.com/v0/b/karp-portal.appspot.com/o/AvatarImages%2Fpidgeon.jpg?alt=media&token=263b59b7-beea-46c8-8ed4-4a9e94ae4a39';
 
-    List<String> loginDetailsToSave = [emailController.text, passwordController.text];
+    List<String> loginDetailsToSave = [emailController.text.trim(), passwordController.text.trim()];
     prefs.setStringList('logindetails', loginDetailsToSave);
 
     await firebaseFirestore.collection("users").doc(user.uid).set(userModel.toMap());

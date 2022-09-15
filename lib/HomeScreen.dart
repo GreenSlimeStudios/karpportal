@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
+    print("version: ${globals.version ?? "no version"}");
     FirebaseMessaging.onMessage.listen((event) {
       print("MessageRecived");
       LocalNotificationService.display(event);

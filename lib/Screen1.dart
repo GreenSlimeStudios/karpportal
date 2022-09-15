@@ -25,10 +25,18 @@ class _Page1State extends State<Page1> {
               ],
             ),
             SizedBox(width: 20),
-            Text(
-              'Karp\nPortal',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.leagueScript(fontSize: 50, fontWeight: FontWeight.bold),
+            Hero(
+              tag: 'karpPortal',
+              child: Card(
+                color: Colors.transparent,
+                elevation: 0,
+                margin: EdgeInsets.zero,
+                child: Text(
+                  'Karp\nPortal',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.leagueScript(fontSize: 50, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),
