@@ -17,15 +17,24 @@ class GroupChatCreator extends StatefulWidget {
 
 TextEditingController groupNameController = TextEditingController();
 TextEditingController groupDescriptionController = TextEditingController();
+
 final formKey = GlobalKey<FormState>();
 
 class _GroupChatCreatorState extends State<GroupChatCreator> {
+  String? imageUrl;
+  bool selected = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cretate Group Chat"),
-      ),
+      appBar: AppBar(title: const Text("Cretate Group Chat"), actions: [
+        IconButton(
+            icon: Icon(Icons.warning),
+            onPressed: () {
+              setState(() {
+                selected = !selected;
+              });
+            })
+      ]),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -34,16 +43,59 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipOval(
-                  child: Image.network(
-                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1",
-                    fit: BoxFit.fill,
-                    width: 100,
-                    height: 100,
+                Container(
+                  // margin: EdgeInsets.only(top: 20),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: globals.isDarkTheme! ? Colors.grey.shade900 : Colors.grey.shade300,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 20,
+                        left: selected ? 20 : null,
+                        right: selected ? null : 20,
+                        child: Text(groupNameController.text.trim().toUpperCase(),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
+                      Positioned(
+                        top: 10,
+                        left: 20,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 60,
+                          alignment: Alignment.center,
+                          child: AnimatedAlign(
+                            // curve: Curves.fastOutSlowIn,
+                            curve: Curves.bounceOut,
+                            duration: Duration(seconds: 1),
+                            alignment: selected ? Alignment.centerRight : Alignment.centerLeft,
+                            child: ClipOval(
+                              child: Image.network(
+                                imageUrl ??
+                                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1",
+                                fit: BoxFit.fill,
+                                width: 100,
+                                height: 100,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 10, bottom: 5, top: 10),
+                  padding: EdgeInsets.only(left: 10, bottom: 5, top: 10 + 60),
                   child: Text("GROUP NAME",
                       style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
                 ),
@@ -53,6 +105,17 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
                     hintText: "Group Name",
                     border: inactiveRoundBorder(),
                   ),
+                  validator: (val) {
+                    if (val == null || val == "") return "value can not be null";
+                    if (val.length > 25) {
+                      return "name too long";
+                    }
+                  },
+                  onChanged: (val) {
+                    setState(() {
+                      selected = !selected;
+                    });
+                  },
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10, bottom: 5, top: 10),
@@ -65,6 +128,12 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
                     hintText: "Group Description",
                     border: inactiveRoundBorder(),
                   ),
+                  validator: (val) {
+                    if (val == null || val == "") return "value can not be null";
+                    if (val.length > 200) {
+                      return "description too long";
+                    }
+                  },
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 20),
@@ -94,6 +163,10 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
   }
 
   void createGroupChat() async {
+    if (formKey.currentState?.validate() == false) {
+      return;
+    }
+
     String chatRoomId = getChatRoomId();
     print("got room id");
 
@@ -101,8 +174,6 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
     //users.sort();
     List<String> uids = [
       globals.myUser!.uid!,
-      "njsbR2mPfSPdJRAfHtKsKeksfRn2",
-      "83jnvcAHO7O0H5A284klQOhNXcs2"
     ];
     print("created list of uids");
     //uids.sort();
@@ -116,7 +187,7 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
       "groupName": groupNameController.text,
       "groupDescription": groupDescriptionController.text,
       "avatarUrl":
-          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1",
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1"
     };
     print("created chat room map");
 
@@ -126,22 +197,22 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
 
     Map<String, UserModel> userModels = {
       globals.myUser!.uid!: globals.myUser!,
-      "njsbR2mPfSPdJRAfHtKsKeksfRn2": await FirebaseFirestore.instance
-          .collection("users")
-          .doc("njsbR2mPfSPdJRAfHtKsKeksfRn2")
-          .get()
-          .then((valur) {
-        print("returning srtefan");
-        return UserModel.fromMap(valur.data());
-      }),
-      "83jnvcAHO7O0H5A284klQOhNXcs2": await FirebaseFirestore.instance
-          .collection("users")
-          .doc("83jnvcAHO7O0H5A284klQOhNXcs2")
-          .get()
-          .then((valur) {
-        print("returning gandalf");
-        return UserModel.fromMap(valur.data());
-      })
+      // "njsbR2mPfSPdJRAfHtKsKeksfRn2": await FirebaseFirestore.instance
+      //     .collection("users")
+      //     .doc("njsbR2mPfSPdJRAfHtKsKeksfRn2")
+      //     .get()
+      //     .then((valur) {
+      //   print("returning srtefan");
+      //   return UserModel.fromMap(valur.data());
+      // }),
+      // "83jnvcAHO7O0H5A284klQOhNXcs2": await FirebaseFirestore.instance
+      //     .collection("users")
+      //     .doc("83jnvcAHO7O0H5A284klQOhNXcs2")
+      //     .get()
+      //     .then((valur) {
+      //   print("returning gandalf");
+      //   return UserModel.fromMap(valur.data());
+      // })
     };
     print("created user models");
     for (String userID in uids) {
@@ -152,13 +223,17 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
     }
     print("notified users");
 
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ChatPage(chatRoomId: chatRoomId, chatUserDatas: userModels, isGroupChat: true),
-      ),
-    );
+    // await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) =>
+    //         ChatPage(chatRoomId: chatRoomId, chatUserDatas: userModels, isGroupChat: true),
+    //   ),
+    // );
+    imageUrl = "";
+    groupDescriptionController.text = "";
+    groupNameController.text = "";
+    Navigator.pop(context);
 
     setState(() {});
   }

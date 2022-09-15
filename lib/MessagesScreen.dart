@@ -81,7 +81,7 @@ class _MessagesPageState extends State<MessagesPage> {
           Expanded(
             child: ListView(
               children: [
-                // createGroupChatTab(),
+                createGroupChatTab(),
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return New Messages
@@ -307,7 +307,7 @@ class _MessagesPageState extends State<MessagesPage> {
                   child: CachedNetworkImage(
                     imageUrl: (isGroupChat)
                         ? roomData.data()!["groupAvatarUrl"] ??
-                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fwp1990761.jpg&f=1&nofb=1"
+                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1"
                         : targetUserModel.avatarUrl!,
                     width: 55,
                     height: 55,
