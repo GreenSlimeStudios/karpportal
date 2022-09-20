@@ -6,7 +6,9 @@ Karpportal is a social-media platform developed in Flutter-dart (with firebase b
 This app currently contains those features:
 ```
 - authentication
+- end to end encryption
 - ability to have a gif as an avatar image
+- custom user description
 - chat rooms
 - sending Images and gifs
 - ability to copy messages and links to images
@@ -23,8 +25,17 @@ This app currently contains those features:
 - reacting to comments
 - notifications
 - animations
+- custom menu
 - updates with one button
 - reporting bugs and feature ideas
+```
+Features that are intended in the future and activly worked on
+```
+- group chat rooms
+- following system
+- video and audio support
+- tenor implementation
+- share through karpportal
 ```
 
 | - | - | - |
