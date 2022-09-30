@@ -746,7 +746,7 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Text(
-                "all messages encrypted",
+                "all messages are encrypted",
                 style: TextStyle(color: Colors.grey),
               ),
               SizedBox(width: 3),
@@ -1355,10 +1355,14 @@ class _InviteBoxState extends State<InviteBox> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
-                height: 64, alignment: Alignment.center, child: CircularProgressIndicator());
+                height: 90, alignment: Alignment.center, child: CircularProgressIndicator());
           } else {
             if (snapshot.data != null && snapshot.data?['groupName'] == null)
-              return Text("INVALID INVITE LINK", style: TextStyle(fontWeight: FontWeight.bold));
+              return Container(
+                  height: 90,
+                  alignment: Alignment.center,
+                  child:
+                      Text("INVALID INVITE LINK", style: TextStyle(fontWeight: FontWeight.bold)));
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
