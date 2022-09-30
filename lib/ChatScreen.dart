@@ -184,6 +184,7 @@ class _ChatPageState extends State<ChatPage> {
     //time3 = DateTime.now().toString();
     if (imageUrls.isEmpty) {
       if (messageController.text.isNotEmpty) {
+        bool isInviteLink = messageController.text.startsWith('!#id!*');
         messageMap = {
           "message": databaseMethods.encrypt(messageController.text.trim()),
           "sendBy": globals.myUser!.fullName!,
@@ -192,6 +193,7 @@ class _ChatPageState extends State<ChatPage> {
           "time3": time3,
           "authorID": globals.myUser!.uid!,
           "isLink": isLink,
+          "isInvite": isInviteLink,
           // "images": imageUrls,
           "supportsEncryption": true,
         };
@@ -1076,6 +1078,9 @@ class _ChatMessageState extends State<ChatMessage> {
   }
 
   generateMessage(data) {
+    if (data['isInvite'] != null && data['isInvite']) {
+      return InviteBox(data: data);
+    }
     if (data["isImage"] != null) {
       return (data["isImage"] == false)
           ? GestureDetector(
@@ -1332,4 +1337,75 @@ class _ChatMessageState extends State<ChatMessage> {
     else
       return 0;
   }
+}
+
+class InviteBox extends StatefulWidget {
+  InviteBox({Key? key, required this.data}) : super(key: key);
+  final Map<String, dynamic> data;
+  @override
+  State<InviteBox> createState() => _InviteBoxState();
+}
+
+class _InviteBoxState extends State<InviteBox> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FutureBuilder<String>(
+        future: getRoomData(widget.data),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else {
+            if (snapshot.data == "")
+              return Text("INVALID INVITE LINK", style: TextStyle(fontWeight: FontWeight.bold));
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 5),
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5),
+                    ),
+                    color: globals.primaryColor,
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        globals.primaryColor!,
+
+                        globals.primarySwatch!
+                        // Colors.blue,
+                        // Colors.red,
+                      ],
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(snapshot.data!),
+                ),
+                TextButton(
+                    onPressed: () {},
+                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                    child:
+                        Text("Join", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
+              ],
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+Future<String> getRoomData(Map<String, dynamic> messageData) async {
+  String roomId = databaseMethods.decrypt(messageData['message'], messageData).split('!#id!*').last;
+  Map<String, dynamic>? roomData =
+      await FirebaseFirestore.instance.collection('ChatRoom').doc(roomId).get().then((value) {
+    return value.data();
+  });
+  if (roomData != null && roomData['groupName'] != null) {
+    return roomData['groupName'];
+  }
+  return "";
 }

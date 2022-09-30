@@ -333,7 +333,8 @@ class _MessagesPageState extends State<MessagesPage> {
 
   copyRoomId(String? id) {
     if (id != null) {
-      Clipboard.setData(ClipboardData(text: id));
+      String copyID = "!#id!*" + id;
+      Clipboard.setData(ClipboardData(text: copyID));
       Fluttertoast.showToast(msg: "Chat Room Id copied succesfully ($id)");
     }
   }
