@@ -1350,45 +1350,66 @@ class _InviteBoxState extends State<InviteBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: FutureBuilder<String>(
+      child: FutureBuilder<Map<String, dynamic>>(
         future: getRoomData(widget.data),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Container(
+                height: 64, alignment: Alignment.center, child: CircularProgressIndicator());
           } else {
-            if (snapshot.data == "")
+            if (snapshot.data != null && snapshot.data?['groupName'] == null)
               return Text("INVALID INVITE LINK", style: TextStyle(fontWeight: FontWeight.bold));
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5),
-                    ),
-                    color: globals.primaryColor,
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        globals.primaryColor!,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ClipOval(
+                        child: CachedNetworkImage(
+                            imageUrl: snapshot.data!['groupAvatarUrl'] ??
+                                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1",
+                            height: 40,
+                            width: 40,
+                            fit: BoxFit.cover)),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 5, bottom: 5),
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5),
+                          ),
+                          color: globals.primaryColor,
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              globals.primaryColor!,
 
-                        globals.primarySwatch!
-                        // Colors.blue,
-                        // Colors.red,
-                      ],
+                              globals.primarySwatch!
+                              // Colors.blue,
+                              // Colors.red,
+                            ],
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(snapshot.data!['groupName']),
+                      ),
                     ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(snapshot.data!),
+                  ],
                 ),
                 TextButton(
-                    onPressed: () {},
-                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                    child:
-                        Text("Join", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
+                  onPressed: () {
+                    joinGroupChat(snapshot.data!);
+                  },
+                  style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                  child: Text(
+                    "Join",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             );
           }
@@ -1396,16 +1417,26 @@ class _InviteBoxState extends State<InviteBox> {
       ),
     );
   }
+
+  void joinGroupChat(Map<String, dynamic> map) async {
+    await FirebaseFirestore.instance.collection('ChatRoom').doc(map['chatRoomId']).set({
+      'uids': FieldValue.arrayUnion([globals.myUser!.uid]),
+      'users': FieldValue.arrayUnion([globals.myUser!.fullName]),
+    }, SetOptions(merge: true));
+    await FirebaseFirestore.instance.collection('users').doc(globals.myUser!.uid).set({
+      'recentRooms': FieldValue.arrayUnion([map['chatRoomId']]),
+      'newMessages': FieldValue.arrayUnion([map['chatRoomId']])
+    }, SetOptions(merge: true));
+    Fluttertoast.showToast(msg: "succesfully joined group chat");
+  }
 }
 
-Future<String> getRoomData(Map<String, dynamic> messageData) async {
+Future<Map<String, dynamic>> getRoomData(Map<String, dynamic> messageData) async {
   String roomId = databaseMethods.decrypt(messageData['message'], messageData).split('!#id!*').last;
   Map<String, dynamic>? roomData =
       await FirebaseFirestore.instance.collection('ChatRoom').doc(roomId).get().then((value) {
     return value.data();
   });
-  if (roomData != null && roomData['groupName'] != null) {
-    return roomData['groupName'];
-  }
-  return "";
+  print("GOT ROOM DATA");
+  return roomData ?? {};
 }

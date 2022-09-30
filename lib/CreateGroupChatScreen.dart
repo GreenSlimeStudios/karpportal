@@ -186,7 +186,7 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
       "isGroupChat": true,
       "groupName": groupNameController.text,
       "groupDescription": groupDescriptionController.text,
-      "avatarUrl":
+      "groupAvatarUrl":
           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.explicit.bing.net%2Fth%3Fid%3DOIP.TolLwDCaTfUkxM3v-ZCqUgAAAA%26pid%3DApi&f=1"
     };
     print("created chat room map");
