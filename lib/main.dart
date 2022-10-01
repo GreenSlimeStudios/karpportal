@@ -44,13 +44,12 @@ void main() async {
     runApp(const MyApp());
   } else {
     WidgetsFlutterBinding.ensureInitialized();
-	if (Platform.isLinux){
-
-        print("itializing linux");
-    WidgetsFlutterBinding.ensureInitialized();
-        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-        print("done");
-	}
+    if (Platform.isLinux) {
+      print("itializing linux");
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      print("done");
+    }
     if (Platform.isIOS) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -221,6 +220,37 @@ void main() async {
       colorCustomS = Colors.orange;
       globals.primarySwatch = Colors.orange;
     }
+
+    String primaryColorString = prefs.getString('primaryColor') ?? "none";
+    String swatchColorString = prefs.getString('swatchColor') ?? "none";
+
+    globals.swatchColorID = AccentColor.Orange;
+    globals.primaryColorID = AccentColor.DeepOrange;
+
+    if (primaryColorString == Colors.orange.toString()) globals.primaryColorID = AccentColor.Orange;
+    if (primaryColorString == Colors.deepOrange.toString())
+      globals.primaryColorID = AccentColor.DeepOrange;
+    if (primaryColorString == Colors.lime.toString()) globals.primaryColorID = AccentColor.Lime;
+    if (primaryColorString == Colors.cyan.toString()) globals.primaryColorID = AccentColor.Cyan;
+    if (primaryColorString == Colors.blue.toString()) globals.primaryColorID = AccentColor.Blue;
+    if (primaryColorString == Colors.indigo.toString()) globals.primaryColorID = AccentColor.Indigo;
+    if (primaryColorString == Colors.deepPurple.toString())
+      globals.primaryColorID = AccentColor.DeepPurple;
+    if (primaryColorString == Colors.purple.toString()) globals.primaryColorID = AccentColor.Purple;
+    if (primaryColorString == Colors.pink.toString()) globals.primaryColorID = AccentColor.Pink;
+
+    if (swatchColorString == Colors.orange.toString()) globals.swatchColorID = AccentColor.Orange;
+    if (swatchColorString == Colors.deepOrange.toString())
+      globals.swatchColorID = AccentColor.DeepOrange;
+    if (swatchColorString == Colors.lime.toString()) globals.swatchColorID = AccentColor.Lime;
+    if (swatchColorString == Colors.cyan.toString()) globals.swatchColorID = AccentColor.Cyan;
+    if (swatchColorString == Colors.blue.toString()) globals.swatchColorID = AccentColor.Blue;
+    if (swatchColorString == Colors.indigo.toString()) globals.swatchColorID = AccentColor.Indigo;
+    if (swatchColorString == Colors.deepPurple.toString())
+      globals.swatchColorID = AccentColor.DeepPurple;
+    if (swatchColorString == Colors.purple.toString()) globals.swatchColorID = AccentColor.Purple;
+    if (swatchColorString == Colors.pink.toString()) globals.swatchColorID = AccentColor.Pink;
+
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     print("isgood5");
@@ -264,7 +294,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 // class MyWebApp extends StatelessWidget {
-// 	MyWebApp({Key? key}) : super(key: key); 
+// 	MyWebApp({Key? key}) : super(key: key);
 
 // 	@override
 // 	Widget build(BuildContext context){
@@ -283,115 +313,119 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'karp portal',
-      theme: (kIsWeb)?ThemeData.dark():globals.isDarkTheme!
-          ? (globals.theme == ThemeColor.Dark)
-              ? ThemeData.dark().copyWith(
-                  colorScheme: ColorScheme.fromSwatch(
-                      accentColor: globals.primarySwatch,
-                      backgroundColor: globals.themeColor!,
-                      primarySwatch: globals.primarySwatch!,
-                      brightness: Brightness.dark,
-                      cardColor: globals.themeColor!),
-                  appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade800),
+      theme: (kIsWeb)
+          ? ThemeData.dark()
+          : globals.isDarkTheme!
+              ? (globals.theme == ThemeColor.Dark)
+                  ? ThemeData.dark().copyWith(
+                      colorScheme: ColorScheme.fromSwatch(
+                          accentColor: globals.primarySwatch,
+                          backgroundColor: globals.themeColor!,
+                          primarySwatch: globals.primarySwatch!,
+                          brightness: Brightness.dark,
+                          cardColor: globals.themeColor!),
+                      appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade800),
 
-                  // accentColor: globals.primaryColor,
-                  splashColor: globals.primaryColor,
-                  scrollbarTheme: ScrollbarThemeData(
-                      trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primaryColor)),
+                      // accentColor: globals.primaryColor,
+                      splashColor: globals.primaryColor,
+                      scrollbarTheme: ScrollbarThemeData(
+                          trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
+                          thumbColor: MaterialStateProperty.all(globals.primaryColor),
+                          trackColor: MaterialStateProperty.all(globals.primaryColor)),
 
-                  // primarySwatch: globals.primarySwatch,
-                  // accentColor: globals.primarySwatch,
-                  // iconTheme: IconThemeData(color: globals.primarySwatch),
-                  // textSelectionColor: globals.primarySwatch,
-                  textSelectionTheme: TextSelectionThemeData(
-                      selectionColor: globals.primarySwatch,
-                      cursorColor: globals.primarySwatch,
-                      selectionHandleColor: globals.primarySwatch),
-                  cardTheme: CardTheme(color: globals.primarySwatch),
-                  inputDecorationTheme: InputDecorationTheme(
-                      iconColor: globals.primaryColor,
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                        borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
-                      ),
-                      fillColor: globals.primarySwatch,
-                      // filled: true,
-                      // focusedBorder: MaterialStateOutlineInputBorder(),
-                      // border: InputBorder(borderSide: BorderSide(color: globals.primarySwatch!)),
-                      focusColor: globals.primarySwatch,
-                      hoverColor: globals.primarySwatch),
-                  // textSelectionColor: globals.primarySwatch,
-                  switchTheme: SwitchThemeData(
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
-                  progressIndicatorTheme: ProgressIndicatorThemeData(color: globals.primarySwatch),
-                  primaryColor: globals.primarySwatch,
-                  primaryColorDark: globals.primarySwatch,
-                  primaryIconTheme: IconThemeData(color: globals.primarySwatch),
-                  buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
-                  elevatedButtonTheme: ElevatedButtonThemeData(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
-              : ThemeData.dark().copyWith(
-                  colorScheme: ColorScheme.fromSwatch(
-                      accentColor: globals.primarySwatch,
-                      backgroundColor: globals.themeColor!,
-                      brightness: Brightness.dark,
-                      primarySwatch: globals.primarySwatch!,
-                      cardColor: globals.themeColor!),
-                  scaffoldBackgroundColor: globals.themeColor,
-                  appBarTheme: AppBarTheme(backgroundColor: globals.themeColor),
-                  dialogTheme: DialogTheme(backgroundColor: globals.themeColor),
-                  // drawerTheme: DialogThemeData(),
-                  canvasColor: globals.themeColor,
-                  dialogBackgroundColor: globals.themeColor,
-                  cardColor: globals.themeColor,
+                      // primarySwatch: globals.primarySwatch,
+                      // accentColor: globals.primarySwatch,
+                      // iconTheme: IconThemeData(color: globals.primarySwatch),
+                      // textSelectionColor: globals.primarySwatch,
+                      textSelectionTheme: TextSelectionThemeData(
+                          selectionColor: globals.primarySwatch,
+                          cursorColor: globals.primarySwatch,
+                          selectionHandleColor: globals.primarySwatch),
+                      cardTheme: CardTheme(color: globals.primarySwatch),
+                      inputDecorationTheme: InputDecorationTheme(
+                          iconColor: globals.primaryColor,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
+                          ),
+                          fillColor: globals.primarySwatch,
+                          // filled: true,
+                          // focusedBorder: MaterialStateOutlineInputBorder(),
+                          // border: InputBorder(borderSide: BorderSide(color: globals.primarySwatch!)),
+                          focusColor: globals.primarySwatch,
+                          hoverColor: globals.primarySwatch),
+                      // textSelectionColor: globals.primarySwatch,
+                      switchTheme: SwitchThemeData(
+                          thumbColor: MaterialStateProperty.all(globals.primaryColor),
+                          trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
+                      progressIndicatorTheme:
+                          ProgressIndicatorThemeData(color: globals.primarySwatch),
+                      primaryColor: globals.primarySwatch,
+                      primaryColorDark: globals.primarySwatch,
+                      primaryIconTheme: IconThemeData(color: globals.primarySwatch),
+                      buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
+                      elevatedButtonTheme: ElevatedButtonThemeData(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
+                  : ThemeData.dark().copyWith(
+                      colorScheme: ColorScheme.fromSwatch(
+                          accentColor: globals.primarySwatch,
+                          backgroundColor: globals.themeColor!,
+                          brightness: Brightness.dark,
+                          primarySwatch: globals.primarySwatch!,
+                          cardColor: globals.themeColor!),
+                      scaffoldBackgroundColor: globals.themeColor,
+                      appBarTheme: AppBarTheme(backgroundColor: globals.themeColor),
+                      dialogTheme: DialogTheme(backgroundColor: globals.themeColor),
+                      // drawerTheme: DialogThemeData(),
+                      canvasColor: globals.themeColor,
+                      dialogBackgroundColor: globals.themeColor,
+                      cardColor: globals.themeColor,
 
-                  // accentColor: globals.primaryColor,
-                  splashColor: globals.primaryColor,
-                  scrollbarTheme: ScrollbarThemeData(
-                      trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primaryColor)),
+                      // accentColor: globals.primaryColor,
+                      splashColor: globals.primaryColor,
+                      scrollbarTheme: ScrollbarThemeData(
+                          trackBorderColor: MaterialStateProperty.all(globals.primaryColor),
+                          thumbColor: MaterialStateProperty.all(globals.primaryColor),
+                          trackColor: MaterialStateProperty.all(globals.primaryColor)),
 
-                  // primarySwatch: globals.primarySwatch,
-                  // accentColor: globals.primarySwatch,
-                  // iconTheme: IconThemeData(color: globals.primarySwatch),
-                  // textSelectionColor: globals.primarySwatch,
-                  textSelectionTheme: TextSelectionThemeData(
-                      selectionColor: globals.primarySwatch,
-                      cursorColor: globals.primarySwatch,
-                      selectionHandleColor: globals.primarySwatch),
-                  cardTheme: CardTheme(color: globals.primarySwatch),
-                  inputDecorationTheme: InputDecorationTheme(
-                      iconColor: globals.primaryColor,
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                        borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
-                      ),
-                      fillColor: globals.primarySwatch,
-                      // filled: true,
-                      // focusedBorder: MaterialStateOutlineInputBorder(),
-                      // border: InputBorder(borderSide: BorderSide(color: globals.primarySwatch!)),
-                      focusColor: globals.primarySwatch,
-                      hoverColor: globals.primarySwatch),
-                  // textSelectionColor: globals.primarySwatch,
-                  switchTheme: SwitchThemeData(
-                      thumbColor: MaterialStateProperty.all(globals.primaryColor),
-                      trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
-                  progressIndicatorTheme: ProgressIndicatorThemeData(color: globals.primarySwatch),
-                  primaryColor: globals.primarySwatch,
-                  primaryColorDark: globals.primarySwatch,
-                  primaryIconTheme: IconThemeData(color: globals.primarySwatch),
-                  buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
-                  elevatedButtonTheme: ElevatedButtonThemeData(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
-          : ThemeData(
-              primarySwatch: globals.primarySwatch,
-            ),
+                      // primarySwatch: globals.primarySwatch,
+                      // accentColor: globals.primarySwatch,
+                      // iconTheme: IconThemeData(color: globals.primarySwatch),
+                      // textSelectionColor: globals.primarySwatch,
+                      textSelectionTheme: TextSelectionThemeData(
+                          selectionColor: globals.primarySwatch,
+                          cursorColor: globals.primarySwatch,
+                          selectionHandleColor: globals.primarySwatch),
+                      cardTheme: CardTheme(color: globals.primarySwatch),
+                      inputDecorationTheme: InputDecorationTheme(
+                          iconColor: globals.primaryColor,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(color: globals.primarySwatch!, width: 3),
+                          ),
+                          fillColor: globals.primarySwatch,
+                          // filled: true,
+                          // focusedBorder: MaterialStateOutlineInputBorder(),
+                          // border: InputBorder(borderSide: BorderSide(color: globals.primarySwatch!)),
+                          focusColor: globals.primarySwatch,
+                          hoverColor: globals.primarySwatch),
+                      // textSelectionColor: globals.primarySwatch,
+                      switchTheme: SwitchThemeData(
+                          thumbColor: MaterialStateProperty.all(globals.primaryColor),
+                          trackColor: MaterialStateProperty.all(globals.primarySwatch!.shade600)),
+                      progressIndicatorTheme:
+                          ProgressIndicatorThemeData(color: globals.primarySwatch),
+                      primaryColor: globals.primarySwatch,
+                      primaryColorDark: globals.primarySwatch,
+                      primaryIconTheme: IconThemeData(color: globals.primarySwatch),
+                      buttonTheme: ButtonThemeData(buttonColor: globals.primarySwatch),
+                      elevatedButtonTheme: ElevatedButtonThemeData(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(globals.primarySwatch))))
+              : ThemeData(
+                  primarySwatch: globals.primarySwatch,
+                ),
       home: const SplashScreen(),
     );
   }

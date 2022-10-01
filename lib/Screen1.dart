@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'Stylings.dart';
 import 'globals.dart' as globals;
 
 class Page1 extends StatefulWidget {
@@ -24,7 +25,7 @@ class _Page1State extends State<Page1> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                getLogo(),
+                getKarpportalLogo(),
                 SizedBox(height: 8),
               ],
             ),
@@ -47,35 +48,4 @@ class _Page1State extends State<Page1> {
       ),
     );
   }
-}
-
-Widget getLogo() {
-  if (globals.primaryColor.toString == Colors.orange.toString()) {
-    return Image.asset('assets/karpportallogofinal.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.deepOrange.toString()) {
-    return Image.asset('assets/karpportallogofinal.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.lime.toString()) {
-    return Image.asset('assets/karpportallogofinal.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.cyan.toString()) {
-    return Image.asset('assets/karpportallogofinal_blue.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.blue.toString()) {
-    return Image.asset('assets/karpportallogofinal_blue.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.indigo.toString()) {
-    return Image.asset('assets/karpportallogofinal_purple.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.deepPurple.toString()) {
-    return Image.asset('assets/karpportallogofinal_purple.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.purple.toString()) {
-    return Image.asset('assets/karpportallogofinal_purple.png', height: 120, width: 120);
-  }
-  if (globals.primaryColor.toString == Colors.pink.toString()) {
-    return Image.asset('assets/karpportallogofinal_pink.png', height: 120, width: 120);
-  }
-  return Image.asset('assets/karpportallogofinal.png', height: 120, width: 120);
 }

@@ -19,7 +19,8 @@ User? authUser;
 ThemeColor? theme;
 int localversion = 100;
 int? version;
-
+AccentColor? primaryColorID;
+AccentColor? swatchColorID;
 UserModel? myUser;
 
 Map<String, UserModel> loadedUsers = {};

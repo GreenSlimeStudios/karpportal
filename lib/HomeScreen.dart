@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
 import 'MainScreen.dart';
+import 'Stylings.dart';
 import 'enums.dart';
 import 'globals.dart' as globals;
 
@@ -123,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                     style: GoogleFonts.leagueScript(fontSize: 40, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 20),
-                  Image.asset('assets/karpportallogofinal.png', height: 100, width: 100),
+                  Image.asset(getKarpportalLogoPath(), height: 100, width: 100),
                 ],
               ),
             ),

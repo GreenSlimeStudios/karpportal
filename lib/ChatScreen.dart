@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:karpportal/Screen1.dart';
 import 'package:karpportal/secrets/apiKeys.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -268,17 +269,24 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: (() => () {
-                    setState(() {});
-                  }),
-              icon: const Icon(Icons.refresh)),
-          IconButton(
             onPressed: () {
               //setState(() {});
               scroll();
             },
             icon: const Icon(Icons.arrow_downward_rounded),
-          )
+          ),
+          IconButton(
+            onPressed: () async {
+              await Navigator.push(context, MaterialPageRoute(builder: (context) => Page1()));
+              setState(() {});
+            },
+            icon: const Icon(Icons.more_vert),
+          ),
+          // IconButton(
+          //     onPressed: (() => () {
+          //           setState(() {});
+          //         }),
+          //     icon: const Icon(Icons.refresh)),
         ],
         foregroundColor: Colors.white,
         title: Container(
@@ -287,8 +295,8 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text((widget.isGroupChat)
-                  ? widget.chatRoomData!["groupName"] ?? "group chat"
-                  : widget.chatUserDatas.values.toList()[0].nickname!),
+                  ? crop(widget.chatRoomData!["groupName"] ?? "group chat", 15)
+                  : crop(widget.chatUserDatas.values.toList()[0].nickname!, 15)),
               const Padding(padding: EdgeInsets.only(right: 10)),
               Hero(
                 tag: widget.chatUserDatas.values.toList()[0].uid!,
@@ -757,6 +765,13 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+}
+
+crop(String s, int i) {
+  if (s.characters.length > i) {
+    return "${s.substring(0, i - 2)}..";
+  }
+  return s;
 }
 
 class ImagesPreview extends StatefulWidget {
@@ -1300,18 +1315,6 @@ class _ChatMessageState extends State<ChatMessage> {
     Navigator.pop(context);
   }
 
-  getColor() {
-    if (globals.primaryColor.toString() != globals.primarySwatch.toString()) {
-      return globals.primaryColor!;
-    } else {
-      if (globals.primaryColor.toString() != Colors.deepOrange.toString()) {
-        return Colors.deepOrange;
-      } else {
-        return Colors.orange;
-      }
-    }
-  }
-
   Widget generateAvatar(Map<String, dynamic> data) {
     if (isAvatarVisible) {
       return (isExpanded)
@@ -1325,17 +1328,29 @@ class _ChatMessageState extends State<ChatMessage> {
     }
   }
 
-  getDecoration(bool isNewMessage) {
-    return (isNewMessage)
-        ? BoxDecoration(color: getColor(), borderRadius: BorderRadius.circular(10))
-        : BoxDecoration(color: globals.primarySwatch, borderRadius: BorderRadius.circular(10));
-  }
-
   double getBottomExpansion() {
     if (isBottomStack)
       return 10;
     else
       return 0;
+  }
+}
+
+getDecoration(bool isNewMessage) {
+  return (isNewMessage)
+      ? BoxDecoration(color: getColor(), borderRadius: BorderRadius.circular(10))
+      : BoxDecoration(color: globals.primarySwatch, borderRadius: BorderRadius.circular(10));
+}
+
+getColor() {
+  if (globals.primaryColor.toString() != globals.primarySwatch.toString()) {
+    return globals.primaryColor!;
+  } else {
+    if (globals.primaryColor.toString() != Colors.deepOrange.toString()) {
+      return Colors.deepOrange;
+    } else {
+      return Colors.orange;
+    }
   }
 }
 
@@ -1381,6 +1396,7 @@ class _InviteBoxState extends State<InviteBox> {
                       child: Container(
                         margin: EdgeInsets.only(top: 5, bottom: 5),
                         padding: EdgeInsets.symmetric(vertical: 5),
+                        // decoration: getDecoration(false),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
                             Radius.circular(5),
@@ -1408,8 +1424,8 @@ class _InviteBoxState extends State<InviteBox> {
                   onPressed: () {
                     joinGroupChat(snapshot.data!);
                   },
-                  style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                  child: Text(
+                  style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                  child: const Text(
                     "Join",
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),

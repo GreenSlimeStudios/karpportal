@@ -20,6 +20,7 @@ import 'package:karpportal/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'HomeScreen.dart' as home;
+import 'enums.dart';
 
 import 'ImageActions.dart';
 import 'globals.dart' as globals;
@@ -649,6 +650,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     prefs.setString('primaryColor', color.toString());
     // print(color.shade100.toString());
+    // prefs.setString('primaryColorString', color.toString());
   }
 
   void changeSwatchColor(MaterialColor color) async {
@@ -676,8 +678,9 @@ class _ProfilePageState extends State<ProfilePage> {
     prefs.setString('shadeS9', shade800.toString());
     prefs.setString('shadeS10', shade900.toString());
 
-    prefs.setString('primaryColor', color.toString());
+    prefs.setString('swatchColor', color.toString());
     // print(color.shade100.toString());
+    // prefs.setString('swatchColorString', color.toString());
   }
 
   Future changeBackgroundImage() async {
