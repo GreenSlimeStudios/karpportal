@@ -39,7 +39,7 @@ Widget getKarpportalLogo() {
     return Image.asset('assets/karpportallogofinal_blue.png', height: 120, width: 120);
   }
   if (globals.primaryColorID == AccentColor.Indigo) {
-    return Image.asset('assets/karpportallogofinal_purple.png', height: 120, width: 120);
+    return Image.asset('assets/karpportallogofinal_blue.png', height: 120, width: 120);
   }
   if (globals.primaryColorID == AccentColor.DeepPurple) {
     return Image.asset('assets/karpportallogofinal_purple.png', height: 120, width: 120);
@@ -70,7 +70,7 @@ String getKarpportalLogoPath() {
     return 'assets/karpportallogofinal_blue.png';
   }
   if (globals.primaryColorID == AccentColor.Indigo) {
-    return 'assets/karpportallogofinal_purple.png';
+    return 'assets/karpportallogofinal_blue.png';
   }
   if (globals.primaryColorID == AccentColor.DeepPurple) {
     return 'assets/karpportallogofinal_purple.png';

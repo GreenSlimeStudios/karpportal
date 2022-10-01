@@ -27,6 +27,7 @@ import 'package:http/http.dart' as http;
 // import 'package:media_scanner/media_scanner.dart';
 // import 'package:flutter_media_scanner/flutter_media_scanner.dart';
 
+import 'ChatSettingsScreen.dart';
 import 'ImageActions.dart';
 import 'globals.dart' as globals;
 
@@ -277,7 +278,15 @@ class _ChatPageState extends State<ChatPage> {
           ),
           IconButton(
             onPressed: () async {
-              await Navigator.push(context, MaterialPageRoute(builder: (context) => Page1()));
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatSettingsPage(
+                      chatUserDatas: widget.chatUserDatas,
+                      isGroupChat: widget.isGroupChat,
+                      chatRoomData: widget.chatRoomData),
+                ),
+              );
               setState(() {});
             },
             icon: const Icon(Icons.more_vert),
