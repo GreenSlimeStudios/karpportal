@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:karpportal/HomeScreen.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/UserModel.dart';
 import 'globals.dart' as globals;
+import 'dart:io';
 
 class InitUserPage extends StatefulWidget {
   const InitUserPage({Key? key}) : super(key: key);
@@ -60,7 +62,9 @@ class _InitUserPageState extends State<InitUserPage> {
   }
 
   goToHomePage() async {
+    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     await Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    // exit(0);
     goToHomePage();
   }
 

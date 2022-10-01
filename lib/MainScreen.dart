@@ -248,7 +248,7 @@ class _PostInstanceState extends State<PostInstance> {
                                 imageUrl: widget.snapshot.data!.avatarUrl!,
                                 width: 40,
                                 height: 40,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.cover,
                                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                                     CircularProgressIndicator(value: downloadProgress.progress),
                                 errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -1067,7 +1067,7 @@ class _CommentInstanceState extends State<CommentInstance> {
                                               imageUrl: snapshot.data!.avatarUrl!,
                                               height: 25,
                                               width: 25,
-                                              fit: BoxFit.fill,
+                                              fit: BoxFit.cover,
                                               placeholder: (context, value) {
                                                 return const CircularProgressIndicator();
                                               },
