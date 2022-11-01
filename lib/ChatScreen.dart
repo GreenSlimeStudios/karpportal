@@ -184,6 +184,9 @@ class _ChatPageState extends State<ChatPage> {
     }
     Map<String, dynamic> messageMap;
     //time3 = DateTime.now().toString();
+
+    String messageID = globals.myUser!.uid! + DateTime.now().millisecondsSinceEpoch.toString();
+
     if (imageUrls.isEmpty) {
       if (messageController.text.isNotEmpty) {
         bool isInviteLink = messageController.text.startsWith('!#id!*');
@@ -198,6 +201,8 @@ class _ChatPageState extends State<ChatPage> {
           "isInvite": isInviteLink,
           // "images": imageUrls,
           "supportsEncryption": true,
+          "isDeleted": false,
+          "messageID": messageID,
         };
         databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
         print("lasagna");
@@ -219,6 +224,8 @@ class _ChatPageState extends State<ChatPage> {
         "images": imageUrls,
         "isLink": isLink,
         "supportsEncryption": true,
+        "isDeleted": false,
+        "messageID": messageID,
       };
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
@@ -1102,6 +1109,10 @@ class _ChatMessageState extends State<ChatMessage> {
   }
 
   generateMessage(data) {
+    if (data['isDeleted'] != null && data['isDeleted']) {
+      return const Text("deleted message",
+          style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic));
+    }
     if (data['isInvite'] != null && data['isInvite']) {
       return InviteBox(data: data);
     }
@@ -1244,15 +1255,17 @@ class _ChatMessageState extends State<ChatMessage> {
   void messageActions(Map<String, dynamic> data, {String? url}) {
     if (data["isImage"] != null) {
       if (data["isImage"] == true) {
-        createAlertDialog(data, context);
+        createImageOptions(data, context);
       } else {
-        copyMessage(data, "message");
+        createMessageOptions(data, context);
+        // copyMessage(data, "message");
       }
     } else {
       if (url != null) {
-        createAlertDialog(data, context, url: url);
+        createImageOptions(data, context, url: url);
       } else {
-        copyMessage(data, "message");
+        // copyMessage(data, "message");
+        createMessageOptions(data, context);
       }
     }
   }
@@ -1263,7 +1276,7 @@ class _ChatMessageState extends State<ChatMessage> {
     Fluttertoast.showToast(msg: '$message copied succesfully');
   }
 
-  createAlertDialog(Map<String, dynamic> data, BuildContext context, {String? url}) {
+  createMessageOptions(Map<String, dynamic> data, BuildContext context, {String? url}) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -1271,6 +1284,41 @@ class _ChatMessageState extends State<ChatMessage> {
           title: const Text('what do you?'),
           content: SizedBox(
             height: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    copyMessage(data, "message");
+                    Navigator.pop(context);
+                  },
+                  child: const Text('copy message'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    //copyMessage(data,"");
+                    deleteMessage(data);
+                    Navigator.pop(context);
+                    //Navigator.pop(context);
+                  },
+                  child: const Text('delete message'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  createImageOptions(Map<String, dynamic> data, BuildContext context, {String? url}) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('what do you?'),
+          content: SizedBox(
+            height: 150,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -1301,12 +1349,34 @@ class _ChatMessageState extends State<ChatMessage> {
                   },
                   child: const Text('download image'),
                 ),
+                ElevatedButton(
+                  onPressed: () {
+                    //copyMessage(data,"");
+                    deleteMessage(data);
+                    Navigator.pop(context);
+                    //Navigator.pop(context);
+                  },
+                  child: const Text('delete message'),
+                ),
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  void deleteMessage(Map<String, dynamic> data) async {
+    if (data["messageID"] == null) {
+      Fluttertoast.showToast(msg: "message doesn't support deletion (too old)");
+      return;
+    }
+    await FirebaseFirestore.instance
+        .collection("ChatRoom")
+        .doc(widget.chatRoomId)
+        .collection("chat")
+        .doc(data["messageID"])
+        .set({"isDeleted": true}, SetOptions(merge: true));
   }
 
   downloadImage(Map<String, dynamic> data, String url) async {

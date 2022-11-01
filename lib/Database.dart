@@ -49,7 +49,8 @@ class DatabaseMethods {
         .collection("ChatRoom")
         .doc(chatRoomId)
         .collection("chat")
-        .add(messageMap)
+        .doc(messageMap["messageID"])
+        .set(messageMap)
         .catchError((e) {
       print(e.toString());
     });
