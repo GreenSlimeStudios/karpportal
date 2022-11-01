@@ -234,12 +234,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Column(children: [
                       const Padding(padding: EdgeInsets.only(top: 15)),
-                      ProfileTitle(
-                          title: 'First name', param: globals.myUser!.firstName!, func: changeName),
-                      ProfileTitle(
-                          title: 'Last name',
-                          param: globals.myUser!.secondName!,
-                          func: changeSurName),
+                      // ProfileTitle(
+                      //     title: 'First name',
+                      //     param: globals.myUser!.firstName ?? "none",
+                      //     func: changeName),
+                      // ProfileTitle(
+                      //     title: 'Last name',
+                      //     param: globals.myUser!.secondName ?? "none",
+                      //     func: changeSurName),
                       ProfileTitle(
                           title: 'Email', param: globals.myUser!.email!, func: changeEmail),
                       ProfileTitle(

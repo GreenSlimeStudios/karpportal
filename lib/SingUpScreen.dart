@@ -89,42 +89,42 @@ class _SingUpPageState extends State<SingUpPage> {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 30, right: 30, top: 10),
-                    child: TextFormField(
-                      validator: (value) {
-                        RegExp regex = RegExp(r'^.{1,}$');
-                        if (value!.isEmpty) {
-                          return ("Please Enter Email");
-                        }
-                      },
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        hintText: 'Name',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                        // prefixIcon: Icon(Icons.email),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 30, right: 30, top: 10),
-                    child: TextFormField(
-                      validator: (value) {
-                        RegExp regex = RegExp(r'^.{1,}$');
-                        if (value!.isEmpty) {
-                          return ("Please Enter Surname");
-                        }
-                      },
-                      controller: surnameController,
-                      decoration: InputDecoration(
-                        hintText: 'Surname',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                        //prefixIcon: Icon(Icons.email),
-                      ),
-                    ),
-                  ),
+                  //Container(
+                  //  margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+                  //  child: TextFormField(
+                  //    validator: (value) {
+                  //      RegExp regex = RegExp(r'^.{1,}$');
+                  //      if (value!.isEmpty) {
+                  //        return ("Please Enter Email");
+                  //      }
+                  //    },
+                  //    controller: nameController,
+                  //    decoration: InputDecoration(
+                  //      hintText: 'Name',
+                  //      border: OutlineInputBorder(
+                  //          borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                  //      // prefixIcon: Icon(Icons.email),
+                  //    ),
+                  //  ),
+                  //),
+                  //Container(
+                  //  margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+                  //  child: TextFormField(
+                  //    validator: (value) {
+                  //      RegExp regex = RegExp(r'^.{1,}$');
+                  //      if (value!.isEmpty) {
+                  //        return ("Please Enter Surname");
+                  //      }
+                  //    },
+                  //    controller: surnameController,
+                  //    decoration: InputDecoration(
+                  //      hintText: 'Surname',
+                  //      border: OutlineInputBorder(
+                  //          borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                  //      //prefixIcon: Icon(Icons.email),
+                  //    ),
+                  //  ),
+                  //),
                   Container(
                     margin: EdgeInsets.only(left: 30, right: 30, top: 10),
                     child: TextFormField(
@@ -338,6 +338,8 @@ class _SingUpPageState extends State<SingUpPage> {
   }
 
   postDetailsToFirestore() async {
+    nameController.text = "brak";
+    surnameController.text = "brak";
     // calling our firestore
     // calling our user model
     // sedning these values

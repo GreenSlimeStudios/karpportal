@@ -209,7 +209,7 @@ class _SearchPageState extends State<SearchPage> {
   void createChatRoom(Map<String, dynamic> data) async {
     String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
-    List<String> users = [data['fullName'], globals.myUser!.fullName!];
+    List<String> users = [data['nickname'], globals.myUser!.nickname ?? "none"];
     //users.sort();
     List<String> uids = [data['uid'], globals.myUser!.uid!];
     //uids.sort();

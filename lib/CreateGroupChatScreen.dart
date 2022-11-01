@@ -170,7 +170,7 @@ class _GroupChatCreatorState extends State<GroupChatCreator> {
     String chatRoomId = getChatRoomId();
     print("got room id");
 
-    List<String> users = [globals.myUser!.fullName!];
+    List<String> users = [globals.myUser!.nickname ?? "none"];
     //users.sort();
     List<String> uids = [
       globals.myUser!.uid!,

@@ -192,7 +192,7 @@ class _ChatPageState extends State<ChatPage> {
         bool isInviteLink = messageController.text.startsWith('!#id!*');
         messageMap = {
           "message": databaseMethods.encrypt(messageController.text.trim()),
-          "sendBy": globals.myUser!.fullName!,
+          "sendBy": globals.myUser!.fullName ?? "none none",
           "time": DateTime.now().millisecondsSinceEpoch,
           "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
           "time3": time3,
@@ -216,7 +216,7 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       messageMap = {
         "message": databaseMethods.encrypt(messageController.text.trim()),
-        "sendBy": globals.myUser!.fullName!,
+        "sendBy": globals.myUser!.fullName ?? "none none",
         "authorID": globals.myUser!.uid!,
         "time": DateTime.now().millisecondsSinceEpoch,
         "time2": '${DateTime.now().year}/$month/$day $hour:$minute',
@@ -936,15 +936,15 @@ class _ChatMessageState extends State<ChatMessage> {
             isExpanded = true;
           }
         } else {
-          if (widget.data["sendBy"] != globals.myUser!.fullName!) {
-            if (widget.dataPrevious!["sendBy"] != globals.myUser!.fullName!) {
+          if (widget.data["sendBy"] != (globals.myUser!.fullName ?? "none none")) {
+            if (widget.dataPrevious!["sendBy"] != (globals.myUser!.fullName ?? "none none")) {
               isAvatarVisible = false;
             } else {
               isBottomStack = true;
               isExpanded = true;
             }
           } else {
-            if (widget.dataPrevious!["sendBy"] == globals.myUser!.fullName!) {
+            if (widget.dataPrevious!["sendBy"] == (globals.myUser!.fullName ?? "none none")) {
               isAvatarVisible = false;
             } else {
               isBottomStack = true;
@@ -1520,7 +1520,7 @@ class _InviteBoxState extends State<InviteBox> {
   void joinGroupChat(Map<String, dynamic> map) async {
     await FirebaseFirestore.instance.collection('ChatRoom').doc(map['chatRoomId']).set({
       'uids': FieldValue.arrayUnion([globals.myUser!.uid]),
-      'users': FieldValue.arrayUnion([globals.myUser!.fullName]),
+      'users': FieldValue.arrayUnion([globals.myUser!.nickname]),
     }, SetOptions(merge: true));
     await FirebaseFirestore.instance.collection('users').doc(globals.myUser!.uid).set({
       'recentRooms': FieldValue.arrayUnion([map['chatRoomId']]),
