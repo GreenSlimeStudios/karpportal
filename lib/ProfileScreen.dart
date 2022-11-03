@@ -5,13 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:karpportal/LoginScreen.dart';
 import 'package:karpportal/ProfileTitle.dart';
 import 'package:karpportal/SearchScreen.dart';
@@ -19,8 +15,6 @@ import 'package:karpportal/UserModel.dart';
 import 'package:karpportal/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'HomeScreen.dart' as home;
-import 'enums.dart';
 
 import 'ImageActions.dart';
 import 'globals.dart' as globals;
@@ -51,7 +45,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // @override
   // void initState() {
-  //   // TODO: implement initState
   //   super.initState();
   //   FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
   //     (value) {
@@ -62,7 +55,6 @@ class _ProfilePageState extends State<ProfilePage> {
   // }
   @override
   void initState() {
-    // TODO: implement initState
     isDarkTheme = globals.isDarkTheme!;
     super.initState();
   }
@@ -73,16 +65,16 @@ class _ProfilePageState extends State<ProfilePage> {
       //backgroundColor: Colors.grey.shade100,
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: CachedNetworkImage(
               imageUrl: getBackroundUrl(),
               colorBlendMode: BlendMode.clear,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                  width: 50, height: 50, child: Center(child: CircularProgressIndicator())),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              placeholder: (context, url) => SizedBox(
+                  width: 50, height: 50, child: const Center(child: CircularProgressIndicator())),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
           ListView(
@@ -103,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                       borderRadius: BorderRadius.circular(30),
@@ -133,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   height: 120,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                  errorWidget: (context, url, error) => const Icon(Icons.error),
                                 ),
                               ),
                             ),
@@ -164,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              constraints: BoxConstraints(maxHeight: 90, maxWidth: 200),
+                              constraints: const BoxConstraints(maxHeight: 90, maxWidth: 200),
                               child: NotificationListener<OverscrollIndicatorNotification>(
                                 onNotification: (overscroll) {
                                   overscroll.disallowIndicator();
@@ -184,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             // color: Colors.black,
                                             fontWeight: FontWeight.w400),
                                       ),
-                                      SizedBox(height: 3),
+                                      const SizedBox(height: 3),
                                       Text(
                                         (globals.myUser!.description != null)
                                             ? (globals.myUser!.description! != "")
@@ -201,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            Container(
+                            SizedBox(
                               height: 25,
                               child: ElevatedButton(
                                 onPressed: changeDescription,
@@ -219,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Padding(padding: EdgeInsets.only(top: 10)),
 
                   Container(
-                    margin: EdgeInsets.only(left: 5, right: 5),
+                    margin: const EdgeInsets.only(left: 5, right: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       color: globals.themeColor!.withOpacity(0.9),
@@ -228,12 +220,38 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                     ),
                     child: Column(children: [
                       const Padding(padding: EdgeInsets.only(top: 15)),
+
+                      // Follower actions
+                      // Container(
+                      //   padding: const EdgeInsets.all(5),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //     children: [
+                      //       Row(children: const [
+                      //         Icon(Icons.account_circle),
+                      //         SizedBox(width: 5),
+                      //         Text("0"),
+                      //       ]),
+                      //       Row(children: const [
+                      //         Icon(Icons.account_circle),
+                      //         SizedBox(width: 5),
+                      //         Text("0"),
+                      //       ]),
+                      //       Row(children: const [
+                      //         Icon(Icons.account_circle),
+                      //         SizedBox(width: 5),
+                      //         Text("0"),
+                      //       ]),
+                      //     ],
+                      //   ),
+                      // ),
+
                       // ProfileTitle(
                       //     title: 'First name',
                       //     param: globals.myUser!.firstName ?? "none",
@@ -248,66 +266,67 @@ class _ProfilePageState extends State<ProfilePage> {
                           title: 'Nickname',
                           param: globals.myUser!.nickname!,
                           func: changeNickname),
+
                       Container(
                         // margin: EdgeInsets.only(left: 20),
                         child: Column(children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ColorSwatchPick(Colors.pink),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.purple),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.deepPurple),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.indigo),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.blue),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.cyan),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.lime),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.deepOrange),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              ColorSwatchPick(Colors.orange),
+                              colorSwatchPick(Colors.pink),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.purple),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.deepPurple),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.indigo),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.blue),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.cyan),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.lime),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.deepOrange),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              colorSwatchPick(Colors.orange),
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 5)),
+                          const Padding(padding: EdgeInsets.only(top: 5)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              PrimaryColorPick(Colors.pink),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.purple),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.deepPurple),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.indigo),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.blue),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.cyan),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.lime),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.deepOrange),
-                              Padding(padding: EdgeInsets.only(right: 5)),
-                              PrimaryColorPick(Colors.orange),
+                              primaryColorPick(Colors.pink),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.purple),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.deepPurple),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.indigo),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.blue),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.cyan),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.lime),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.deepOrange),
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              primaryColorPick(Colors.orange),
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 10)),
+                          const Padding(padding: EdgeInsets.only(top: 10)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ThemeColorPick(ThemeColor.Light, Colors.white),
+                              themeColorPick(ThemeColor.Light, Colors.white),
                               Padding(padding: EdgeInsets.only(right: 5)),
-                              ThemeColorPick(ThemeColor.Dark, Colors.grey.shade900),
+                              themeColorPick(ThemeColor.Dark, Colors.grey.shade900),
                               Padding(padding: EdgeInsets.only(right: 5)),
-                              ThemeColorPick(ThemeColor.Contrast, Colors.black),
+                              themeColorPick(ThemeColor.Contrast, Colors.black),
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 10)),
+                          const Padding(padding: EdgeInsets.only(top: 15)),
                           // Row(
                           //   mainAxisAlignment: MainAxisAlignment.center,
                           //   children: [
@@ -328,7 +347,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         color: Colors.transparent, backgroundBlendMode: BlendMode.darken),
                     child: Column(
                       children: [
-                        const Padding(padding: EdgeInsets.only(top: 40)),
+                        const Padding(padding: EdgeInsets.only(top: 20)),
                         ProfileButton(
                             function: signOut,
                             icon: Icons.groups_rounded,
@@ -338,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ProfileButton(
                             function: updateKarpportal,
                             icon: Icons.download,
-                            color: Color.fromARGB(255, 64, 255, 105),
+                            color: const Color.fromARGB(255, 64, 255, 105),
                             title: 'Update Karpportal (google drive)'),
                         const Padding(padding: EdgeInsets.only(top: 5)),
                         ProfileButton(
@@ -356,10 +375,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ProfileButton(
                             function: setToken,
                             icon: Icons.token,
-                            color: Color.fromARGB(255, 64, 255, 239),
+                            color: const Color.fromARGB(255, 64, 255, 239),
                             title: 'Set Token'),
                         const Padding(padding: EdgeInsets.only(top: 5)),
-                        Padding(padding: EdgeInsets.only(bottom: 5)),
+                        const Padding(padding: EdgeInsets.only(bottom: 5)),
                         GestureDetector(
                           onTap: changeBackgroundImage,
                           child: Row(
@@ -376,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
-                        Padding(padding: EdgeInsets.only(bottom: 10)),
+                        const Padding(padding: EdgeInsets.only(bottom: 10)),
                       ],
                     ),
                   )
@@ -438,15 +457,15 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('reset email'),
-          content: Container(
+          title: const Text('reset email'),
+          content: SizedBox(
             height: 100,
             child: Column(
               children: [
                 TextField(
                   controller: newEmailController,
                 ),
-                ElevatedButton(onPressed: changeToNewEmail, child: Text('resetEmail'))
+                ElevatedButton(onPressed: changeToNewEmail, child: const Text('resetEmail'))
               ],
             ),
           ),
@@ -459,7 +478,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // EmailAuthProvider.getCredential(email: 'email', password: 'password');
     Fluttertoast.showToast(
         msg: 'if you restart the app and the email changed it means it worked :)');
-    var authUser = await FirebaseAuth.instance.currentUser;
+    var authUser = FirebaseAuth.instance.currentUser;
     try {
       await authUser
           ?.updateEmail(newEmailController.text)
@@ -501,7 +520,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget ColorSwatchPick(MaterialColor color) {
+  Widget colorSwatchPick(MaterialColor color) {
     return GestureDetector(
       onTap: () {
         changeSwatchColor(color);
@@ -537,7 +556,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget PrimaryColorPick(MaterialColor color) {
+  Widget primaryColorPick(MaterialColor color) {
     return GestureDetector(
       onTap: () {
         changePrimaryColor(color);
@@ -575,7 +594,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget ThemeColorPick(ThemeColor theme, Color backgroundColor) {
+  Widget themeColorPick(ThemeColor theme, Color backgroundColor) {
     return GestureDetector(
       onTap: () {
         changeThemeColor(theme);
@@ -764,7 +783,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (val == " ") return "tfuj stary winiary";
                     },
                     controller: reportBugTitleController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText: "title",
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey, width: 2))),
@@ -778,13 +797,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (val == " ") return "tfuj stary winiary";
                     },
                     controller: reportBugContentController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText: "content",
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey, width: 2))),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                       "Make sure you are up to date with the latest version of karpportal to check if the bug hasn't been already resolved"),
                 ],
               ),
@@ -792,7 +811,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text("OK", style: TextStyle(color: Colors.white)),
+              child: const Text("OK", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
                   Navigator.of(context).pop();
@@ -830,7 +849,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Report Idea for a new feature"),
+          title: const Text("Report Idea for a new feature"),
           content: Form(
             key: bugKey,
             child: SingleChildScrollView(
@@ -843,7 +862,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (val == " ") return "tfuj stary winiary";
                     },
                     controller: reportIdeaTitleController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText: "title",
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey, width: 2))),
@@ -857,13 +876,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (val == " ") return "tfuj stary winiary";
                     },
                     controller: reportIdeaContentController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText: "content",
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey, width: 2))),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                       "Make sure you are up to date with the latest version of karpportal to check if the feature hasn't been already implemented"),
                 ],
               ),
@@ -912,19 +931,19 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Change Description"),
+          title: const Text("Change Description"),
           content: TextFormField(
             minLines: 1,
             maxLines: 15,
             controller: descriptionController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 hintText: "enter description",
                 focusedBorder:
                     UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey, width: 2))),
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text("OK", style: TextStyle(color: Colors.white)),
+              child: const Text("OK", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 Navigator.of(context).pop();
                 await FirebaseFirestore.instance.collection("users").doc(globals.myUser!.uid).set({
@@ -943,7 +962,7 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class ProfileButton extends StatefulWidget {
-  ProfileButton(
+  const ProfileButton(
       {Key? key,
       required this.function,
       required this.icon,
@@ -962,7 +981,7 @@ class _ProfileButtonState extends State<ProfileButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 5, right: 5),
+      margin: const EdgeInsets.only(left: 5, right: 5),
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
@@ -972,7 +991,7 @@ class _ProfileButtonState extends State<ProfileButton> {
             color: Colors.black.withOpacity(0.2),
             spreadRadius: 5,
             blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3), // changes position of shadow
           ),
         ],
       ),
@@ -985,7 +1004,7 @@ class _ProfileButtonState extends State<ProfileButton> {
               widget.icon,
               color: widget.color,
             ),
-            Padding(padding: EdgeInsets.only(right: 5)),
+            const Padding(padding: EdgeInsets.only(right: 5)),
             Text(
               widget.title,
               style: TextStyle(color: widget.color),
