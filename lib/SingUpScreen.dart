@@ -64,7 +64,8 @@ class _SingUpPageState extends State<SingUpPage> {
                       child: Text(
                         'Karp\nPortal',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.leagueScript(fontSize: 60, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.leagueScript(
+                            fontSize: 60, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -75,7 +76,8 @@ class _SingUpPageState extends State<SingUpPage> {
                         if (value!.isEmpty) {
                           return ("Please Enter Email");
                         }
-                        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
+                        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                            .hasMatch(value)) {
                           return ("Please Enter a valid email");
                         }
                         return null;
@@ -84,7 +86,8 @@ class _SingUpPageState extends State<SingUpPage> {
                       decoration: InputDecoration(
                         hintText: 'email',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.0))),
                         prefixIcon: Icon(Icons.email),
                       ),
                     ),
@@ -156,13 +159,15 @@ class _SingUpPageState extends State<SingUpPage> {
                       decoration: InputDecoration(
                         hintText: 'nickname',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.0))),
                         //prefixIcon: Icon(Icons.email),
                       ),
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 5),
+                    margin: EdgeInsets.only(
+                        left: 30, right: 30, top: 10, bottom: 5),
                     child: TextFormField(
                       validator: (value) {
                         RegExp regex = RegExp(r'^.{6,}$');
@@ -179,10 +184,13 @@ class _SingUpPageState extends State<SingUpPage> {
                         prefixIcon: Icon(Icons.key),
                         hintText: 'password',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.0))),
                         // icon: Icon(Icons.email),
                         suffixIcon: IconButton(
-                            icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                            icon: Icon(_isObscure
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 _isObscure = !_isObscure;
@@ -192,7 +200,8 @@ class _SingUpPageState extends State<SingUpPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 5),
+                    margin: EdgeInsets.only(
+                        left: 30, right: 30, top: 10, bottom: 5),
                     child: TextFormField(
                       validator: (value) {
                         RegExp regex = RegExp(r'^.{6,}$');
@@ -212,10 +221,13 @@ class _SingUpPageState extends State<SingUpPage> {
                         prefixIcon: Icon(Icons.key),
                         hintText: 'confirm password',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.0))),
                         // icon: Icon(Icons.email),
                         suffixIcon: IconButton(
-                            icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                            icon: Icon(_isObscure
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 _isObscure = !_isObscure;
@@ -234,9 +246,13 @@ class _SingUpPageState extends State<SingUpPage> {
                           height: 35,
                           child: ElevatedButton(
                               onPressed: () {
-                                signUp(emailController.text.trim(), passwordController.text.trim());
+                                signUp(emailController.text.trim(),
+                                    passwordController.text.trim());
                               },
-                              child: Text('Sing Up')),
+                              child: Text(
+                                'Sign Up',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )),
                         ),
                       )),
                   Hero(
@@ -254,7 +270,7 @@ class _SingUpPageState extends State<SingUpPage> {
                             onTap: loginScreen,
                             child: Container(
                               child: Text(
-                                'Login',
+                                'Login.',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -280,7 +296,8 @@ class _SingUpPageState extends State<SingUpPage> {
         nicknameController.text != '' &&
         passwordController != '' &&
         passwordController.text == confirmPasswordController.text) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
     }
   }
 
@@ -293,7 +310,8 @@ class _SingUpPageState extends State<SingUpPage> {
         print('///////////////////////////STARTING????????????????????????');
         await _auth
             .createUserWithEmailAndPassword(
-                email: emailController.text.trim(), password: passwordController.text.trim())
+                email: emailController.text.trim(),
+                password: passwordController.text.trim())
             .then((value) => {postDetailsToFirestore()})
             .catchError((e) {
           Fluttertoast.showToast(msg: e.toString());
@@ -331,7 +349,9 @@ class _SingUpPageState extends State<SingUpPage> {
             errorMessage = "An undefined Error happened.";
         }
         Fluttertoast.showToast(
-            msg: errorMessage!, textColor: Colors.black, backgroundColor: Colors.white);
+            msg: errorMessage!,
+            textColor: Colors.black,
+            backgroundColor: Colors.white);
         print(error.code);
       }
     }
@@ -363,10 +383,16 @@ class _SingUpPageState extends State<SingUpPage> {
     userModel.avatarUrl =
         'https://firebasestorage.googleapis.com/v0/b/karp-portal.appspot.com/o/AvatarImages%2Fpidgeon.jpg?alt=media&token=263b59b7-beea-46c8-8ed4-4a9e94ae4a39';
 
-    List<String> loginDetailsToSave = [emailController.text.trim(), passwordController.text.trim()];
+    List<String> loginDetailsToSave = [
+      emailController.text.trim(),
+      passwordController.text.trim()
+    ];
     prefs.setStringList('logindetails', loginDetailsToSave);
 
-    await firebaseFirestore.collection("users").doc(user.uid).set(userModel.toMap());
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
 
     user.updateDisplayName(nicknameController.text);
 
@@ -376,7 +402,9 @@ class _SingUpPageState extends State<SingUpPage> {
         backgroundColor: Colors.white);
 
     Navigator.pushAndRemoveUntil(
-        (context), MaterialPageRoute(builder: (context) => InitUserPage()), (route) => false);
+        (context),
+        MaterialPageRoute(builder: (context) => InitUserPage()),
+        (route) => false);
   }
 
   void loginScreen() {
@@ -408,7 +436,6 @@ class _SingUpPageState extends State<SingUpPage> {
     } else {
       return true;
       //not exists
-
     }
   }
 

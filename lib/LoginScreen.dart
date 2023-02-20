@@ -7,6 +7,8 @@ import 'package:karpportal/InitUserScreen.dart';
 import 'package:karpportal/SingUpScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ResetPassword.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -56,7 +58,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+                        margin:
+                            const EdgeInsets.only(left: 30, right: 30, top: 20),
                         child: TextFormField(
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -71,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                             return null;
                           },
                           controller: emailController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: 'email',
                             border: OutlineInputBorder(
                                 borderRadius:
@@ -81,13 +84,13 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(
+                        margin: const EdgeInsets.only(
                             left: 30, right: 30, top: 10, bottom: 5),
                         child: TextFormField(
                           controller: passwordController,
                           obscureText: _isObscure,
                           validator: (value) {
-                            RegExp regex = new RegExp(r'^.{6,}$');
+                            RegExp regex = RegExp(r'^.{6,}$');
                             if (value!.isEmpty) {
                               return ("Please Enter password min 6 char");
                             }
@@ -96,9 +99,9 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.key),
+                            prefixIcon: const Icon(Icons.key),
                             hintText: 'password',
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(15.0))),
                             // icon: Icon(Icons.email),
@@ -115,20 +118,23 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(right: 30, left: 30),
+                        margin: const EdgeInsets.only(right: 30, left: 30),
                         width: double.infinity,
                         child: Hero(
                           tag: 'accountLoginButton',
                           child: Container(
-                            margin: EdgeInsets.only(top: 5),
-                            constraints:
-                                BoxConstraints(maxHeight: 35, minHeight: 35),
+                            margin: const EdgeInsets.only(top: 5),
+                            constraints: const BoxConstraints(
+                                maxHeight: 35, minHeight: 35),
                             child: ElevatedButton(
                               onPressed: () {
                                 login(emailController.text,
                                     passwordController.text);
                               },
-                              child: Text('Login'),
+                              child: const Text(
+                                'Login',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
@@ -142,13 +148,13 @@ class _LoginPageState extends State<LoginPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('don\'t have an account yet lmao '),
-                              Padding(padding: EdgeInsets.only(top: 30)),
+                              const Text('don\'t have an account yet? '),
+                              const Padding(padding: EdgeInsets.only(top: 30)),
                               GestureDetector(
                                 onTap: singUp,
                                 child: Container(
-                                  child: Text(
-                                    'Sing in',
+                                  child: const Text(
+                                    'Sing in.',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
@@ -157,7 +163,23 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                         ),
-                      )
+                      ),
+                      GestureDetector(
+                        child: const Text(
+                          'forgor password?',
+                          style: TextStyle(
+                            // color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            // decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResetPage()));
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -183,8 +205,8 @@ class _LoginPageState extends State<LoginPage> {
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
                   prefs.setStringList('logindetails', loginDetailsToSave),
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => InitUserPage())),
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const InitUserPage())),
                 });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
@@ -222,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void singUp() async {
     var info = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SingUpPage()));
+        context, MaterialPageRoute(builder: (context) => const SingUpPage()));
 
     setState(() {
       emailController.text = info[0];
