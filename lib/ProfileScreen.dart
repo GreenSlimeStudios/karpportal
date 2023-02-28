@@ -73,7 +73,9 @@ class _ProfilePageState extends State<ProfilePage> {
               colorBlendMode: BlendMode.clear,
               fit: BoxFit.cover,
               placeholder: (context, url) => SizedBox(
-                  width: 50, height: 50, child: const Center(child: CircularProgressIndicator())),
+                  width: 50,
+                  height: 50,
+                  child: const Center(child: CircularProgressIndicator())),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
@@ -83,7 +85,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+                    margin: const EdgeInsets.only(
+                        top: 10, left: 10, right: 10, bottom: 10),
                     height: 150,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -95,7 +98,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: const Offset(0, 3), // changes position of shadow
+                          offset:
+                              const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                       borderRadius: BorderRadius.circular(30),
@@ -113,8 +117,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                     maxScale: 10,
                                     child: CachedNetworkImage(
                                         imageUrl: globals.myUser!.avatarUrl!,
-                                        progressIndicatorBuilder: (context, url, progress) =>
-                                            CircularProgressIndicator(value: progress.progress)),
+                                        progressIndicatorBuilder:
+                                            (context, url, progress) =>
+                                                CircularProgressIndicator(
+                                                    value: progress.progress)),
                                   ),
                                 ),
                               ),
@@ -124,8 +130,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   width: 120,
                                   height: 120,
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
                               ),
                             ),
@@ -156,8 +164,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              constraints: const BoxConstraints(maxHeight: 90, maxWidth: 200),
-                              child: NotificationListener<OverscrollIndicatorNotification>(
+                              constraints: const BoxConstraints(
+                                  maxHeight: 90, maxWidth: 200),
+                              child: NotificationListener<
+                                  OverscrollIndicatorNotification>(
                                 onNotification: (overscroll) {
                                   overscroll.disallowIndicator();
                                   return true;
@@ -165,7 +175,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         //'big fat and very very moch of a long text',
@@ -179,7 +190,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       const SizedBox(height: 3),
                                       Text(
                                         (globals.myUser!.description != null)
-                                            ? (globals.myUser!.description! != "")
+                                            ? (globals.myUser!.description! !=
+                                                    "")
                                                 ? globals.myUser!.description!
                                                 : "No description entered mmmmmmmmmmm \n~"
                                             : "No description entered mmmmmmmmmmm \n~",
@@ -220,7 +232,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: const Offset(0, 3), // changes position of shadow
+                          offset:
+                              const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                     ),
@@ -261,7 +274,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       //     param: globals.myUser!.secondName ?? "none",
                       //     func: changeSurName),
                       ProfileTitle(
-                          title: 'Email', param: globals.myUser!.email!, func: changeEmail),
+                          title: 'Email',
+                          param: globals.myUser!.email!,
+                          func: changeEmail),
                       ProfileTitle(
                           title: 'Nickname',
                           param: globals.myUser!.nickname!,
@@ -321,7 +336,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               themeColorPick(ThemeColor.Light, Colors.white),
                               Padding(padding: EdgeInsets.only(right: 5)),
-                              themeColorPick(ThemeColor.Dark, Colors.grey.shade900),
+                              themeColorPick(
+                                  ThemeColor.Dark, Colors.grey.shade900),
                               Padding(padding: EdgeInsets.only(right: 5)),
                               themeColorPick(ThemeColor.Contrast, Colors.black),
                             ],
@@ -344,7 +360,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Container(
                     decoration: const BoxDecoration(
-                        color: Colors.transparent, backgroundBlendMode: BlendMode.darken),
+                        color: Colors.transparent,
+                        backgroundBlendMode: BlendMode.darken),
                     child: Column(
                       children: [
                         const Padding(padding: EdgeInsets.only(top: 20)),
@@ -419,7 +436,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Future pickImage() async {
     var downloadurl = await pickGaleryImage("AvatarImages");
     if (downloadurl == null) {
-      Fluttertoast.showToast(msg: "We have encountered a problem while trying to upoad the image");
+      Fluttertoast.showToast(
+          msg: "We have encountered a problem while trying to upoad the image");
       return;
     }
     setState(() {
@@ -446,7 +464,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _prefs.remove('logindetails');
     final _auth = FirebaseAuth.instance;
     _auth.signOut();
-    Navigator.push(context, MaterialPageRoute(builder: ((context) => const LoginPage())));
+    Navigator.push(
+        context, MaterialPageRoute(builder: ((context) => const LoginPage())));
   }
 
   void changeName() {}
@@ -459,13 +478,15 @@ class _ProfilePageState extends State<ProfilePage> {
         return AlertDialog(
           title: const Text('reset email'),
           content: SizedBox(
-            height: 100,
+            height: 110,
             child: Column(
               children: [
                 TextField(
                   controller: newEmailController,
                 ),
-                ElevatedButton(onPressed: changeToNewEmail, child: const Text('resetEmail'))
+                ElevatedButton(
+                    onPressed: changeToNewEmail,
+                    child: const Text('resetEmail'))
               ],
             ),
           ),
@@ -477,7 +498,8 @@ class _ProfilePageState extends State<ProfilePage> {
   changeToNewEmail() async {
     // EmailAuthProvider.getCredential(email: 'email', password: 'password');
     Fluttertoast.showToast(
-        msg: 'if you restart the app and the email changed it means it worked :)');
+        msg:
+            'if you restart the app and the email changed it means it worked :)');
     var authUser = FirebaseAuth.instance.currentUser;
     try {
       await authUser
@@ -491,7 +513,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   updateEmailInFirestore() async {
     UserModel loggedInUser = UserModel();
-    await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then((value) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) async {
       loggedInUser = UserModel.fromMap(value.data());
 
       User? user = FirebaseAuth.instance.currentUser;
@@ -516,7 +542,8 @@ class _ProfilePageState extends State<ProfilePage> {
       launch(
           'https://drive.google.com/drive/folders/1WgqMYXzfzDirmRJv7616Mb6MFBgUF9uM?usp=sharing');
     } else {
-      launch('https://drive.google.com/file/d/1p4C2rfIsIHSQbkxtieRhLnPeLT-JcWr8/view?usp=sharing');
+      launch(
+          'https://drive.google.com/file/d/1p4C2rfIsIHSQbkxtieRhLnPeLT-JcWr8/view?usp=sharing');
     }
   }
 
@@ -623,7 +650,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.center,
                   height: 8,
                   width: 8,
-                  color: (theme != ThemeColor.Light) ? Colors.white : Colors.black,
+                  color:
+                      (theme != ThemeColor.Light) ? Colors.white : Colors.black,
                 ),
               ),
             ),
@@ -707,7 +735,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Future changeBackgroundImage() async {
     var downloadurl = await pickGaleryImage("BackgroundImages");
     if (downloadurl == null) {
-      Fluttertoast.showToast(msg: "We have encountered a problem while trying to upoad the image");
+      Fluttertoast.showToast(
+          msg: "We have encountered a problem while trying to upoad the image");
       return;
     }
     setState(() {
@@ -786,7 +815,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: const InputDecoration(
                         hintText: "title",
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 2))),
                   ),
                   TextFormField(
                     minLines: 1,
@@ -800,7 +830,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: const InputDecoration(
                         hintText: "content",
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 2))),
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -815,7 +846,9 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
                   Navigator.of(context).pop();
-                  await FirebaseFirestore.instance.collection("bugReports").add({
+                  await FirebaseFirestore.instance
+                      .collection("bugReports")
+                      .add({
                     "title": reportBugTitleController.text,
                     "content": reportBugContentController.text,
                     "authorNickname": globals.myUser!.nickname,
@@ -865,7 +898,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: const InputDecoration(
                         hintText: "title",
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 2))),
                   ),
                   TextFormField(
                     minLines: 1,
@@ -879,7 +913,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: const InputDecoration(
                         hintText: "content",
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey, width: 2))),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 2))),
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -894,7 +929,9 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async {
                 if (bugKey.currentState!.validate()) {
                   Navigator.of(context).pop();
-                  await FirebaseFirestore.instance.collection("ideaReports").add({
+                  await FirebaseFirestore.instance
+                      .collection("ideaReports")
+                      .add({
                     "title": reportIdeaContentController.text,
                     "content": reportIdeaContentController.text,
                     "authorNickname": globals.myUser!.nickname,
@@ -938,15 +975,18 @@ class _ProfilePageState extends State<ProfilePage> {
             controller: descriptionController,
             decoration: const InputDecoration(
                 hintText: "enter description",
-                focusedBorder:
-                    UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey, width: 2))),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 2))),
           ),
           actions: <Widget>[
             ElevatedButton(
               child: const Text("OK", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await FirebaseFirestore.instance.collection("users").doc(globals.myUser!.uid).set({
+                await FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(globals.myUser!.uid)
+                    .set({
                   "description": descriptionController.text,
                 }, SetOptions(merge: true));
                 Fluttertoast.showToast(msg: "changed description successfully");

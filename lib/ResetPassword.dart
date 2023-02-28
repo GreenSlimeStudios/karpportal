@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'globals.dart' as globals;
 
@@ -79,7 +80,7 @@ class _ResetPageState extends State<ResetPage> {
                       constraints:
                           const BoxConstraints(maxHeight: 35, minHeight: 35),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => resetPassword(),
                         child: const Text(
                           'Reset Password',
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -97,14 +98,14 @@ class _ResetPageState extends State<ResetPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Remembered your password? '),
-                        Padding(padding: EdgeInsets.only(top: 30)),
+                        const Text('Remembered your password? '),
+                        const Padding(padding: EdgeInsets.only(top: 30)),
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
                           },
                           child: Container(
-                            child: Text(
+                            child: const Text(
                               'Login.',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
@@ -120,5 +121,18 @@ class _ResetPageState extends State<ResetPage> {
         ),
       ),
     );
+  }
+
+  void resetPassword() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    try {
+      Navigator.pop(context);
+      await _auth.sendPasswordResetEmail(email: emailController.text.trim());
+      Fluttertoast.showToast(msg: "email sent succesfully");
+    } on FirebaseAuthException {
+      Fluttertoast.showToast(msg: "dailed to send reset email");
+    }
   }
 }
