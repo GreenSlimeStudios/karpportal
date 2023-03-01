@@ -492,12 +492,12 @@ class _ChatPageState extends State<ChatPage> {
             alignment: Alignment.bottomCenter,
             child: Container(
               // color: Colors.transparent,
-              margin: const EdgeInsets.only(bottom: 5, top: 5, right: 10),
+              margin: const EdgeInsets.only(bottom: 5, top: 5, right: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 50,
+                    width: 45,
                     child: IconButton(
                       icon: Icon(
                         Icons.image,
@@ -520,7 +520,7 @@ class _ChatPageState extends State<ChatPage> {
                             hintText: 'message',
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
+                                vertical: 11, horizontal: 12),
                             // isCollapsed: true,
 
                             border: OutlineInputBorder(
@@ -534,10 +534,10 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
                   ),
-                  const Padding(padding: EdgeInsets.only(left: 5)),
+                  // const Padding(padding: EdgeInsets.only(left: 5)),
                   Container(
                     height: 40,
-                    width: 40,
+                    width: 45,
                     child: IconButton(
                       icon: Icon(
                         Icons.send,
