@@ -87,15 +87,25 @@ class _MessagesPageState extends State<MessagesPage> {
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return New Messages
-                    for (int i = 0; i < globals.myUser!.recentRooms!.length; i++)
-                      if (isNewMessage(globals.myUser!.recentRooms!.reversed.toList()[i]) == true)
-                        getRooms(globals.myUser!.recentRooms!.reversed.toList()[i]),
+                    for (int i = 0;
+                        i < globals.myUser!.recentRooms!.length;
+                        i++)
+                      if (isNewMessage(globals.myUser!.recentRooms!.reversed
+                              .toList()[i]) ==
+                          true)
+                        getRooms(
+                            globals.myUser!.recentRooms!.reversed.toList()[i]),
                 if (globals.myUser!.recentRooms != null)
                   if (globals.myUser!.recentRooms != [])
                     //Return other most recent Messages
-                    for (int i = 0; i < globals.myUser!.recentRooms!.length; i++)
-                      if (isNewMessage(globals.myUser!.recentRooms!.reversed.toList()[i]) == false)
-                        getRooms(globals.myUser!.recentRooms!.reversed.toList()[i])
+                    for (int i = 0;
+                        i < globals.myUser!.recentRooms!.length;
+                        i++)
+                      if (isNewMessage(globals.myUser!.recentRooms!.reversed
+                              .toList()[i]) ==
+                          false)
+                        getRooms(
+                            globals.myUser!.recentRooms!.reversed.toList()[i])
               ],
             ),
           )
@@ -117,7 +127,9 @@ class _MessagesPageState extends State<MessagesPage> {
               child: SizedBox(
                   height: 60,
                   width: 60,
-                  child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator())));
+                  child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: CircularProgressIndicator())));
         }
       },
     );
@@ -153,7 +165,11 @@ class _MessagesPageState extends State<MessagesPage> {
     for (String userID in data['uids']) {
       userModels[userID] = (globals.loadedUsers.containsKey(userID))
           ? globals.loadedUsers[userID]!
-          : await FirebaseFirestore.instance.collection("users").doc(userID).get().then((valur) {
+          : await FirebaseFirestore.instance
+              .collection("users")
+              .doc(userID)
+              .get()
+              .then((valur) {
               globals.loadedUsers[userID] = UserModel.fromMap(valur.data()!);
               return UserModel.fromMap(valur.data());
             });
@@ -172,7 +188,8 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   void createChatRoom(Map<String, dynamic> data) async {
-    String chatRoomId = getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
+    String chatRoomId =
+        getChatRoomId('${data['uid']}', '${globals.myUser!.uid}');
 
     List<String> users = [data['nickname'], globals.myUser!.nickname ?? "none"];
     //users.sort();
@@ -203,7 +220,10 @@ class _MessagesPageState extends State<MessagesPage> {
     bool isGroupChat = false;
     UserModel targetUserModel = UserModel();
 
-    final roomData = await FirebaseFirestore.instance.collection('ChatRoom').doc(chatRoomId).get();
+    final roomData = await FirebaseFirestore.instance
+        .collection('ChatRoom')
+        .doc(chatRoomId)
+        .get();
     print(roomData.metadata.isFromCache);
     // print(roomData.data());
     if (roomData.data()!["isGroupChat"] != null) {
@@ -216,7 +236,11 @@ class _MessagesPageState extends State<MessagesPage> {
           targetUserModel = globals.loadedUsers[roomData["uids"][0]]!;
           print("LOADED USER FROM cache");
         } else {
-          await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][0]).get().then(
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(roomData["uids"][0])
+              .get()
+              .then(
             (value) {
               print(value.metadata.isFromCache);
 
@@ -231,7 +255,11 @@ class _MessagesPageState extends State<MessagesPage> {
           targetUserModel = globals.loadedUsers[roomData["uids"][1]]!;
           print("LOADED USER FROM cache");
         } else {
-          await FirebaseFirestore.instance.collection("users").doc(roomData["uids"][1]).get().then(
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(roomData["uids"][1])
+              .get()
+              .then(
             (value) {
               print(value.metadata.isFromCache);
 
@@ -245,7 +273,10 @@ class _MessagesPageState extends State<MessagesPage> {
       // print('///////////////////////////////////////////////////');
       // print(targetUserModel.toMap());
       // print('///////////////////////////////////////////////////');
-      List<String> users = [targetUserModel.nickname ?? "none", globals.myUser!.nickname ?? "none"];
+      List<String> users = [
+        targetUserModel.nickname ?? "none",
+        globals.myUser!.nickname ?? "none"
+      ];
       //users.sort();
       List<String> uids = [targetUserModel.uid!, globals.myUser!.uid!];
       //uids.sort();
@@ -284,29 +315,44 @@ class _MessagesPageState extends State<MessagesPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (isGroupChat) ? roomData.data()!["groupName"] : targetUserModel.nickname!,
+                    (isGroupChat)
+                        ? roomData.data()!["groupName"]
+                        : targetUserModel.nickname!,
                     style: getRoomTextStyle(chatRoomId),
                   ),
                   Text(
                     (isGroupChat)
                         ? (roomData.data()!["groupDescription"] != null &&
-                                roomData.data()!["groupDescription"]!.trim() != "")
-                            ? (roomData.data()!["groupDescription"]!.trim().length < 66)
-                                ? roomData.data()!["groupDescription"]!.trim().replaceAll("\n", " ")
+                                roomData.data()!["groupDescription"]!.trim() !=
+                                    "")
+                            ? (roomData
+                                        .data()!["groupDescription"]!
+                                        .trim()
+                                        .length <
+                                    66)
+                                ? roomData
+                                    .data()!["groupDescription"]!
+                                    .trim()
+                                    .replaceAll("\n", " ")
                                 : "${roomData.data()!["groupDescription"]!.trim().replaceAll("\n", " ").substring(0, 65)}..."
                             : "karpportal enjoyer"
                         : (targetUserModel.description != null &&
                                 targetUserModel.description!.trim() != "")
                             ? (targetUserModel.description!.trim().length < 66)
-                                ? targetUserModel.description!.trim().replaceAll("\n", " ")
+                                ? targetUserModel.description!
+                                    .trim()
+                                    .replaceAll("\n", " ")
                                 : "${targetUserModel.description!.trim().replaceAll("\n", " ").substring(0, 65)}..."
                             : "karpportal enjoyer",
-                    style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w300, fontSize: 14),
                   ),
                 ],
               ),
               leading: Hero(
-                tag: (isGroupChat) ? roomData.data()!["groupDescription"] : targetUserModel.uid!,
+                tag: (isGroupChat)
+                    ? roomData.data()!["groupDescription"]
+                    : targetUserModel.uid!,
                 child: ClipOval(
                   //clipper: MyClipper(),
                   child: CachedNetworkImage(
@@ -317,13 +363,17 @@ class _MessagesPageState extends State<MessagesPage> {
                     width: 55,
                     height: 55,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
               ),
               trailing: Icon(Icons.message,
-                  color: (globals.isDarkTheme!) ? Colors.white : Colors.grey.shade900),
+                  color: (globals.isDarkTheme!)
+                      ? Colors.white
+                      : Colors.grey.shade900),
             ),
           ],
         ),
@@ -340,7 +390,11 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   void refresh() async {
-    await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then(
       (value) {
         loggedInUser = UserModel.fromMap(value.data());
         globals.myUser = loggedInUser;
@@ -353,7 +407,8 @@ class _MessagesPageState extends State<MessagesPage> {
   getRoomTextStyle(String chatRoomId) {
     bool isNewMessage = false;
 
-    if (globals.myUser!.newMessages != null && globals.myUser!.newMessages != []) {
+    if (globals.myUser!.newMessages != null &&
+        globals.myUser!.newMessages != []) {
       for (int i = 0; i < globals.myUser!.newMessages!.length; i++) {
         if (globals.myUser!.newMessages![i] == chatRoomId) {
           isNewMessage = true;
@@ -371,7 +426,8 @@ class _MessagesPageState extends State<MessagesPage> {
   bool isNewMessage(String chatRoomId) {
     bool isNewMessage = false;
 
-    if (globals.myUser!.newMessages != null && globals.myUser!.newMessages != []) {
+    if (globals.myUser!.newMessages != null &&
+        globals.myUser!.newMessages != []) {
       for (int i = 0; i < globals.myUser!.newMessages!.length; i++) {
         if (globals.myUser!.newMessages![i] == chatRoomId) {
           isNewMessage = true;
@@ -386,7 +442,7 @@ class _MessagesPageState extends State<MessagesPage> {
     return GestureDetector(
       onTap: createGroupChat,
       child: Container(
-        margin: const EdgeInsets.only(left: 20, right: 16),
+        margin: const EdgeInsets.only(left: 15, right: 16),
         height: 55,
         width: double.infinity,
         child: Row(
@@ -404,13 +460,14 @@ class _MessagesPageState extends State<MessagesPage> {
                     child: const Icon(Icons.add, size: 30),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 15),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
                     Text("Create Group Chat",
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14)),
                     Text("chat with friends all in one go",
                         style: TextStyle(fontWeight: FontWeight.w400)),
                   ],
@@ -425,8 +482,8 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   void createGroupChat() async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const GroupChatCreator()));
+    await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const GroupChatCreator()));
   }
 }
 
