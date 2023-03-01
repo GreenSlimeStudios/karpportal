@@ -48,7 +48,8 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-final ScrollController _scrollController = ScrollController(keepScrollOffset: true);
+final ScrollController _scrollController =
+    ScrollController(keepScrollOffset: true);
 bool isLink = false;
 String time3 = "";
 TextEditingController messageController = TextEditingController();
@@ -110,7 +111,11 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   removePing() async {
-    await FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then(
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then(
       (value) {
         loggedInUser = UserModel.fromMap(value.data());
 
@@ -122,7 +127,10 @@ class _ChatPageState extends State<ChatPage> {
       //loggedInUser.newMessages?.forEach((element) {if(element == widget.chatRoomId){element.}});
       for (int i = 0; i < loggedInUser.newMessages!.length; i++) {
         if (loggedInUser.newMessages!.contains(widget.chatRoomId)) {
-          await FirebaseFirestore.instance.collection('users').doc(globals.myUser!.uid).set({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(globals.myUser!.uid)
+              .set({
             "newMessages": FieldValue.arrayRemove([widget.chatRoomId])
           }, SetOptions(merge: true));
         }
@@ -185,7 +193,8 @@ class _ChatPageState extends State<ChatPage> {
     Map<String, dynamic> messageMap;
     //time3 = DateTime.now().toString();
 
-    String messageID = globals.myUser!.uid! + DateTime.now().millisecondsSinceEpoch.toString();
+    String messageID =
+        globals.myUser!.uid! + DateTime.now().millisecondsSinceEpoch.toString();
 
     if (imageUrls.isEmpty) {
       if (messageController.text.isNotEmpty) {
@@ -204,7 +213,8 @@ class _ChatPageState extends State<ChatPage> {
           "isDeleted": false,
           "messageID": messageID,
         };
-        databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
+        databaseMethods.addConversationMessages(
+            widget.chatRoomId, messageMap, isImage);
         print("lasagna");
         notifyUser(messageController.text);
         messageController.text = "";
@@ -228,9 +238,11 @@ class _ChatPageState extends State<ChatPage> {
         "messageID": messageID,
       };
 
-      databaseMethods.addConversationMessages(widget.chatRoomId, messageMap, isImage);
+      databaseMethods.addConversationMessages(
+          widget.chatRoomId, messageMap, isImage);
       if (messageController.text != "") {
-        notifyUser("image sent (${imageUrls.length})\n${messageController.text}");
+        notifyUser(
+            "image sent (${imageUrls.length})\n${messageController.text}");
       } else {
         notifyUser("image sent (${imageUrls.length})");
       }
@@ -250,7 +262,8 @@ class _ChatPageState extends State<ChatPage> {
 
   scroll() {
     _scrollController.animateTo(_scrollController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn);
   }
 
   // @override
@@ -312,7 +325,8 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               Text((widget.isGroupChat)
                   ? crop(widget.chatRoomData!["groupName"] ?? "group chat", 15)
-                  : crop(widget.chatUserDatas.values.toList()[0].nickname!, 15)),
+                  : crop(
+                      widget.chatUserDatas.values.toList()[0].nickname!, 15)),
               const Padding(padding: EdgeInsets.only(right: 10)),
               Hero(
                 tag: widget.chatUserDatas.values.toList()[0].uid!,
@@ -325,8 +339,10 @@ class _ChatPageState extends State<ChatPage> {
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
               ),
@@ -352,7 +368,9 @@ class _ChatPageState extends State<ChatPage> {
 
                 return (snapshot.connectionState == ConnectionState.waiting)
                     ? const Expanded(
-                        child: Center(child: CircularProgressIndicator(color: Colors.white)))
+                        child: Center(
+                            child:
+                                CircularProgressIndicator(color: Colors.white)))
                     : Expanded(
                         child: RefreshIndicator(
                           onRefresh: () async {
@@ -366,19 +384,22 @@ class _ChatPageState extends State<ChatPage> {
                             // itemCount: 2,
 
                             itemBuilder: (context, index) {
-                              if (index == snapshot.data!.docs.length) return welcomeBox();
+                              if (index == snapshot.data!.docs.length)
+                                return welcomeBox();
 
-                              var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                              var data = snapshot.data!.docs[index].data()
+                                  as Map<String, dynamic>;
                               Map<String, dynamic>? dataAfter;
                               Map<String, dynamic>? dataPrevious;
                               if (index > 1)
-                                dataAfter =
-                                    snapshot.data!.docs[index - 2].data() as Map<String, dynamic>;
+                                dataAfter = snapshot.data!.docs[index - 2]
+                                    .data() as Map<String, dynamic>;
                               if (index != 0)
-                                dataPrevious =
-                                    snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
+                                dataPrevious = snapshot.data!.docs[index - 1]
+                                    .data() as Map<String, dynamic>;
                               if (data != null) {
-                                return (data['sendBy'] != globals.myUser!.fullName)
+                                return (data['sendBy'] !=
+                                        globals.myUser!.fullName)
                                     ? ChatMessage(
                                         data: data,
                                         chatRoomId: widget.chatRoomId,
@@ -421,16 +442,19 @@ class _ChatPageState extends State<ChatPage> {
                       // itemCount: 2,
 
                       itemBuilder: (context, index) {
-                        if (index == snapshot.data!.docs.length) return welcomeBox();
+                        if (index == snapshot.data!.docs.length)
+                          return welcomeBox();
 
-                        var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                        var data = snapshot.data!.docs[index].data()
+                            as Map<String, dynamic>;
                         Map<String, dynamic>? dataAfter;
                         Map<String, dynamic>? dataPrevious;
                         if (index > 1)
-                          dataAfter = snapshot.data!.docs[index - 2].data() as Map<String, dynamic>;
+                          dataAfter = snapshot.data!.docs[index - 2].data()
+                              as Map<String, dynamic>;
                         if (index != 0)
-                          dataPrevious =
-                              snapshot.data!.docs[index - 1].data() as Map<String, dynamic>;
+                          dataPrevious = snapshot.data!.docs[index - 1].data()
+                              as Map<String, dynamic>;
                         if (data != null) {
                           return (data['sendBy'] != globals.myUser!.fullName)
                               ? ChatMessage(
@@ -467,40 +491,43 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             alignment: Alignment.bottomCenter,
             child: Container(
-              margin: const EdgeInsets.only(bottom: 10, right: 10),
+              color: Colors.transparent,
+              margin: const EdgeInsets.only(bottom: 5, top: 5, right: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 10),
                     width: 50,
-                    child: TextButton(
-                      onPressed: sendImage,
-                      child: Icon(
+                    child: IconButton(
+                      icon: Icon(
                         Icons.image,
                         color: globals.primarySwatch,
                       ),
+                      splashRadius: 20,
+                      onPressed: sendImage,
                     ),
                   ),
                   Container(
                     child: Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Container(
-                          child: TextField(
-                            controller: messageController,
-                            minLines: 1,
-                            maxLines: 6,
-                            //maxLength: 1000,
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.all(8),
-                              hintText: 'message',
-                              // isCollapsed: true,
+                      child: Container(
+                        child: TextField(
+                          controller: messageController,
+                          minLines: 1,
+                          maxLines: 6,
+                          //maxLength: 1000,
+                          decoration: const InputDecoration(
+                            // contentPadding: EdgeInsets.all(8),
+                            hintText: 'message',
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            // isCollapsed: true,
 
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(width: 5, color: Colors.grey),
-                                borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                              ),
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(width: 5, color: Colors.grey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15.0)),
                             ),
                           ),
                         ),
@@ -509,16 +536,15 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   const Padding(padding: EdgeInsets.only(left: 5)),
                   Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    height: 50,
-                    width: 50,
-                    child: FloatingActionButton(
-                      backgroundColor: globals.primarySwatch,
-                      onPressed: sendMessage,
-                      child: const Icon(
+                    height: 40,
+                    width: 40,
+                    child: IconButton(
+                      icon: Icon(
                         Icons.send,
-                        color: Colors.white,
+                        color: globals.primarySwatch,
                       ),
+                      splashRadius: 20,
+                      onPressed: sendMessage,
                     ),
                   )
                 ],
@@ -546,7 +572,8 @@ class _ChatPageState extends State<ChatPage> {
 
     // String? downloadurl = await pickGaleryImage("ChatImages");
     if (downloadurls == null && downloadurls != []) {
-      Fluttertoast.showToast(msg: 'There has been a problem while trying to upload the image');
+      Fluttertoast.showToast(
+          msg: 'There has been a problem while trying to upload the image');
       return;
     }
     for (String downloadurl in downloadurls!) {
@@ -568,8 +595,10 @@ class _ChatPageState extends State<ChatPage> {
     print("Notifying users");
     // return;
     isImage = false;
-    final roomData =
-        await FirebaseFirestore.instance.collection('ChatRoom').doc(widget.chatRoomId).get();
+    final roomData = await FirebaseFirestore.instance
+        .collection('ChatRoom')
+        .doc(widget.chatRoomId)
+        .get();
 
     // print(roomData.metadata.isFromCache);
 
@@ -577,7 +606,11 @@ class _ChatPageState extends State<ChatPage> {
       if (user.uid != globals.myUser!.uid!) {
         UserModel targetUserModel = UserModel();
 
-        await FirebaseFirestore.instance.collection("users").doc(user.uid).get().then(
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get()
+            .then(
           (value) {
             // print(value.metadata.isFromCache);
             targetUserModel = UserModel.fromMap(value.data());
@@ -585,7 +618,8 @@ class _ChatPageState extends State<ChatPage> {
         );
         bool hasTargetUserChanged = false;
         if (targetUserModel.newMessages != null) {
-          if (targetUserModel.newMessages!.contains(widget.chatRoomId) == false) {
+          if (targetUserModel.newMessages!.contains(widget.chatRoomId) ==
+              false) {
             targetUserModel.newMessages?.add(widget.chatRoomId);
             hasTargetUserChanged = true;
           }
@@ -597,8 +631,10 @@ class _ChatPageState extends State<ChatPage> {
         //Make room most recent in both users
         List<dynamic> oldRooms = targetUserModel.recentRooms!;
 
-        if (targetUserModel.recentRooms != null && targetUserModel.recentRooms != []) {
-          if (targetUserModel.recentRooms![targetUserModel.recentRooms!.length - 1] !=
+        if (targetUserModel.recentRooms != null &&
+            targetUserModel.recentRooms != []) {
+          if (targetUserModel
+                  .recentRooms![targetUserModel.recentRooms!.length - 1] !=
               widget.chatRoomId) {}
           targetUserModel.recentRooms!.remove(widget.chatRoomId);
           print("MOOOVE");
@@ -622,22 +658,29 @@ class _ChatPageState extends State<ChatPage> {
 
         String title = "";
         if (widget.isGroupChat == true) {
-          title = "${widget.chatRoomData!["groupName"]!}: ${globals.myUser!.nickname}";
+          title =
+              "${widget.chatRoomData!["groupName"]!}: ${globals.myUser!.nickname}";
         } else {
           title = "new message from: ${globals.myUser!.nickname}";
         }
 
-        databaseMethods.sendNotification(title, content, targetUserModel.token!);
+        databaseMethods.sendNotification(
+            title, content, targetUserModel.token!);
       }
     }
 
-    var myData = await firebaseFirestore.collection('users').doc(globals.myUser!.uid).get();
+    var myData = await firebaseFirestore
+        .collection('users')
+        .doc(globals.myUser!.uid)
+        .get();
     globals.myUser = UserModel.fromMap(myData.data());
 
     bool hasMyUserChanged = false;
 
-    if (globals.myUser!.recentRooms != null && globals.myUser!.recentRooms != []) {
-      if (globals.myUser!.recentRooms![globals.myUser!.recentRooms!.length - 1] !=
+    if (globals.myUser!.recentRooms != null &&
+        globals.myUser!.recentRooms != []) {
+      if (globals
+              .myUser!.recentRooms![globals.myUser!.recentRooms!.length - 1] !=
           widget.chatRoomId) {
         globals.myUser!.recentRooms!.remove(widget.chatRoomId);
         hasMyUserChanged = true;
@@ -710,7 +753,8 @@ class _ChatPageState extends State<ChatPage> {
                   controller: urlController,
                   decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: globals.primarySwatch!, width: 2),
+                      borderSide:
+                          BorderSide(color: globals.primarySwatch!, width: 2),
                     ),
                   ),
                 ),
@@ -823,9 +867,12 @@ class _ImagesPreviewState extends State<ImagesPreview> {
                     setState(() {});
                   },
                   child: CachedNetworkImage(
-                    imageUrl: databaseMethods.decrypt(url, {"supportsEncryption": true}),
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    imageUrl: databaseMethods
+                        .decrypt(url, {"supportsEncryption": true}),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
             ],
@@ -936,15 +983,18 @@ class _ChatMessageState extends State<ChatMessage> {
             isExpanded = true;
           }
         } else {
-          if (widget.data["sendBy"] != (globals.myUser!.fullName ?? "none none")) {
-            if (widget.dataPrevious!["sendBy"] != (globals.myUser!.fullName ?? "none none")) {
+          if (widget.data["sendBy"] !=
+              (globals.myUser!.fullName ?? "none none")) {
+            if (widget.dataPrevious!["sendBy"] !=
+                (globals.myUser!.fullName ?? "none none")) {
               isAvatarVisible = false;
             } else {
               isBottomStack = true;
               isExpanded = true;
             }
           } else {
-            if (widget.dataPrevious!["sendBy"] == (globals.myUser!.fullName ?? "none none")) {
+            if (widget.dataPrevious!["sendBy"] ==
+                (globals.myUser!.fullName ?? "none none")) {
               isAvatarVisible = false;
             } else {
               isBottomStack = true;
@@ -976,7 +1026,8 @@ class _ChatMessageState extends State<ChatMessage> {
         isExpanded = true;
       }
     } else {
-      if (DateTime.now().millisecondsSinceEpoch - widget.data["time"] > 180000) {
+      if (DateTime.now().millisecondsSinceEpoch - widget.data["time"] >
+          180000) {
         isBottomStack = true;
         isExpanded = true;
       }
@@ -993,7 +1044,8 @@ class _ChatMessageState extends State<ChatMessage> {
         setState(() {});
       },
       child: Container(
-        alignment: (widget.isMyMessage) ? Alignment.centerRight : Alignment.centerLeft,
+        alignment:
+            (widget.isMyMessage) ? Alignment.centerRight : Alignment.centerLeft,
         margin: EdgeInsets.only(
           left: 10,
           right: 10,
@@ -1005,14 +1057,17 @@ class _ChatMessageState extends State<ChatMessage> {
           clipBehavior: Clip.none,
           children: [
             if (!widget.isMyMessage)
-              Positioned(left: 0, bottom: 0, child: generateAvatar(widget.data)),
+              Positioned(
+                  left: 0, bottom: 0, child: generateAvatar(widget.data)),
             if (widget.isMyMessage)
-              Positioned(right: 0, bottom: 0, child: generateAvatar(widget.data)),
+              Positioned(
+                  right: 0, bottom: 0, child: generateAvatar(widget.data)),
             Column(
               children: [
                 Row(
-                  mainAxisAlignment:
-                      (widget.isMyMessage) ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  mainAxisAlignment: (widget.isMyMessage)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     // generateAvatar(widget.data),
@@ -1032,7 +1087,8 @@ class _ChatMessageState extends State<ChatMessage> {
                               right: 10,
                             ),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+                        padding: const EdgeInsets.only(
+                            left: 10, top: 5, right: 10, bottom: 5),
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 250),
                           child: generateMessage(widget.data),
@@ -1055,7 +1111,8 @@ class _ChatMessageState extends State<ChatMessage> {
                         children: [
                           Text(
                             widget.data['time2'].toString(),
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                            style: const TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.w200),
                           ),
                         ],
                       ),
@@ -1068,7 +1125,8 @@ class _ChatMessageState extends State<ChatMessage> {
                         children: [
                           Text(
                             widget.data['time2'].toString(),
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w200),
+                            style: const TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.w200),
                           ),
                         ],
                       ),
@@ -1087,7 +1145,8 @@ class _ChatMessageState extends State<ChatMessage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+          placeholder: (context, url) =>
+              const CircularProgressIndicator(color: Colors.white),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       );
@@ -1100,8 +1159,8 @@ class _ChatMessageState extends State<ChatMessage> {
           width: 35,
           height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) =>
-              Center(child: const CircularProgressIndicator(color: Colors.white)),
+          placeholder: (context, url) => Center(
+              child: const CircularProgressIndicator(color: Colors.white)),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       );
@@ -1123,8 +1182,8 @@ class _ChatMessageState extends State<ChatMessage> {
               child: pureText(data),
             )
           : GestureDetector(
-              onLongPress: () =>
-                  messageActions(data, url: databaseMethods.decrypt(data["message"], data)),
+              onLongPress: () => messageActions(data,
+                  url: databaseMethods.decrypt(data["message"], data)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -1132,13 +1191,17 @@ class _ChatMessageState extends State<ChatMessage> {
                     builder: (context) => InteractiveViewer(
                       maxScale: 10,
                       child: CachedNetworkImage(
-                        imageUrl: databaseMethods.decrypt(data["message"], data),
+                        imageUrl:
+                            databaseMethods.decrypt(data["message"], data),
                         //fit: BoxFit.fill,
-                        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) => Center(
                           child: CircularProgressIndicator(
-                              value: downloadProgress.progress, color: Colors.white),
+                              value: downloadProgress.progress,
+                              color: Colors.white),
                         ),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                     ),
                   ),
@@ -1152,7 +1215,8 @@ class _ChatMessageState extends State<ChatMessage> {
                   fit: BoxFit.cover,
                   imageUrl: databaseMethods.decrypt(data["message"], data),
                   // fit: BoxFit.fill,
-                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
                     child: CircularProgressIndicator(
                         value: downloadProgress.progress, color: Colors.white),
                   ),
@@ -1169,8 +1233,8 @@ class _ChatMessageState extends State<ChatMessage> {
           children: [
             for (String url in data["images"])
               GestureDetector(
-                onLongPress: () =>
-                    messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
+                onLongPress: () => messageActions(data,
+                    url: databaseMethods.decryptImageIfNeeded(url)),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -1178,18 +1242,22 @@ class _ChatMessageState extends State<ChatMessage> {
                       builder: (context) => InteractiveViewer(
                         maxScale: 10,
                         child: GestureDetector(
-                          onLongPress: () =>
-                              messageActions(data, url: databaseMethods.decryptImageIfNeeded(url)),
+                          onLongPress: () => messageActions(data,
+                              url: databaseMethods.decryptImageIfNeeded(url)),
                           child: CachedNetworkImage(
                             // height: 50,
                             // width: 50,
                             // fit: BoxFit.cover,
-                            imageUrl: databaseMethods.decryptImageIfNeeded(url), //fit: BoxFit.fill,
-                            progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                            imageUrl: databaseMethods
+                                .decryptImageIfNeeded(url), //fit: BoxFit.fill,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Center(
                               child: CircularProgressIndicator(
-                                  value: downloadProgress.progress, color: Colors.white),
+                                  value: downloadProgress.progress,
+                                  color: Colors.white),
                             ),
-                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
                           ),
                         ),
                       ),
@@ -1204,16 +1272,21 @@ class _ChatMessageState extends State<ChatMessage> {
                     fit: BoxFit.cover,
                     imageUrl: databaseMethods.decryptImageIfNeeded(url),
                     // fit: BoxFit.fill,
-                    progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) => Center(
                       child: CircularProgressIndicator(
-                          value: downloadProgress.progress, color: Colors.white),
+                          value: downloadProgress.progress,
+                          color: Colors.white),
                     ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
               ),
             if (data["message"].isNotEmpty)
-              GestureDetector(onLongPress: () => messageActions(data), child: pureText(data))
+              GestureDetector(
+                  onLongPress: () => messageActions(data),
+                  child: pureText(data))
           ],
         );
       } else {
@@ -1271,12 +1344,15 @@ class _ChatMessageState extends State<ChatMessage> {
   }
 
   copyMessage(Map<String, dynamic> data, String message, {String? url}) {
-    Clipboard.setData(
-        ClipboardData(text: (url != null) ? url : databaseMethods.decrypt(data["message"], data)));
+    Clipboard.setData(ClipboardData(
+        text: (url != null)
+            ? url
+            : databaseMethods.decrypt(data["message"], data)));
     Fluttertoast.showToast(msg: '$message copied succesfully');
   }
 
-  createMessageOptions(Map<String, dynamic> data, BuildContext context, {String? url}) {
+  createMessageOptions(Map<String, dynamic> data, BuildContext context,
+      {String? url}) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -1311,7 +1387,8 @@ class _ChatMessageState extends State<ChatMessage> {
     );
   }
 
-  createImageOptions(Map<String, dynamic> data, BuildContext context, {String? url}) {
+  createImageOptions(Map<String, dynamic> data, BuildContext context,
+      {String? url}) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -1382,7 +1459,8 @@ class _ChatMessageState extends State<ChatMessage> {
   downloadImage(Map<String, dynamic> data, String url) async {
     try {
       await ImageDownloader.downloadImage(url,
-          destination: AndroidDestinationType.directoryDownloads..subDirectory("karpportal.png"));
+          destination: AndroidDestinationType.directoryDownloads
+            ..subDirectory("karpportal.png"));
       Fluttertoast.showToast(msg: "image downloaded succesfully");
     } on PlatformException catch (error) {
       print(error);
@@ -1417,8 +1495,11 @@ class _ChatMessageState extends State<ChatMessage> {
 
 getDecoration(bool isNewMessage) {
   return (isNewMessage)
-      ? BoxDecoration(color: getColor(), borderRadius: BorderRadius.circular(10))
-      : BoxDecoration(color: globals.primarySwatch, borderRadius: BorderRadius.circular(10));
+      ? BoxDecoration(
+          color: getColor(), borderRadius: BorderRadius.circular(10))
+      : BoxDecoration(
+          color: globals.primarySwatch,
+          borderRadius: BorderRadius.circular(10));
 }
 
 getColor() {
@@ -1449,14 +1530,16 @@ class _InviteBoxState extends State<InviteBox> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
-                height: 90, alignment: Alignment.center, child: CircularProgressIndicator());
+                height: 90,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator());
           } else {
             if (snapshot.data != null && snapshot.data?['groupName'] == null)
               return Container(
                   height: 90,
                   alignment: Alignment.center,
-                  child:
-                      Text("INVALID INVITE LINK", style: TextStyle(fontWeight: FontWeight.bold)));
+                  child: Text("INVALID INVITE LINK",
+                      style: TextStyle(fontWeight: FontWeight.bold)));
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -1503,7 +1586,8 @@ class _InviteBoxState extends State<InviteBox> {
                   onPressed: () {
                     joinGroupChat(snapshot.data!);
                   },
-                  style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                  style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(Colors.white)),
                   child: const Text(
                     "Join",
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -1518,11 +1602,17 @@ class _InviteBoxState extends State<InviteBox> {
   }
 
   void joinGroupChat(Map<String, dynamic> map) async {
-    await FirebaseFirestore.instance.collection('ChatRoom').doc(map['chatRoomId']).set({
+    await FirebaseFirestore.instance
+        .collection('ChatRoom')
+        .doc(map['chatRoomId'])
+        .set({
       'uids': FieldValue.arrayUnion([globals.myUser!.uid]),
       'users': FieldValue.arrayUnion([globals.myUser!.nickname]),
     }, SetOptions(merge: true));
-    await FirebaseFirestore.instance.collection('users').doc(globals.myUser!.uid).set({
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(globals.myUser!.uid)
+        .set({
       'recentRooms': FieldValue.arrayUnion([map['chatRoomId']]),
       'newMessages': FieldValue.arrayUnion([map['chatRoomId']])
     }, SetOptions(merge: true));
@@ -1530,10 +1620,17 @@ class _InviteBoxState extends State<InviteBox> {
   }
 }
 
-Future<Map<String, dynamic>> getRoomData(Map<String, dynamic> messageData) async {
-  String roomId = databaseMethods.decrypt(messageData['message'], messageData).split('!#id!*').last;
-  Map<String, dynamic>? roomData =
-      await FirebaseFirestore.instance.collection('ChatRoom').doc(roomId).get().then((value) {
+Future<Map<String, dynamic>> getRoomData(
+    Map<String, dynamic> messageData) async {
+  String roomId = databaseMethods
+      .decrypt(messageData['message'], messageData)
+      .split('!#id!*')
+      .last;
+  Map<String, dynamic>? roomData = await FirebaseFirestore.instance
+      .collection('ChatRoom')
+      .doc(roomId)
+      .get()
+      .then((value) {
     return value.data();
   });
   print("GOT ROOM DATA");
