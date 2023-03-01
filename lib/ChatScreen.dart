@@ -491,7 +491,7 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             alignment: Alignment.bottomCenter,
             child: Container(
-              color: Colors.transparent,
+              // color: Colors.transparent,
               margin: const EdgeInsets.only(bottom: 5, top: 5, right: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

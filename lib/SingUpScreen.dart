@@ -174,6 +174,9 @@ class _SingUpPageState extends State<SingUpPage> {
                         if (value!.isEmpty) {
                           return ("Please Enter password min 6 char");
                         }
+                        if (value!.contains(".")) {
+                          return ("There cannot be a '.' character in the password");
+                        }
                         if (!regex.hasMatch(value)) {
                           return ("Please Enter valid password (min 6 character)");
                         }
