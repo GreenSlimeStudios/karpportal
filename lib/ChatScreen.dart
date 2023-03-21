@@ -144,6 +144,7 @@ class _ChatPageState extends State<ChatPage> {
   bool isImage = false;
 
   void sendMessage() {
+    messageController.text = messageController.text.trim();
     isLink = false;
     if (messageController.text.startsWith('https://')) {
       isLink = true;
@@ -492,7 +493,10 @@ class _ChatPageState extends State<ChatPage> {
             alignment: Alignment.bottomCenter,
             child: Container(
               // color: Colors.transparent,
-              margin: const EdgeInsets.only(bottom: 5, top: 5, right: 5),
+              margin: const EdgeInsets.only(
+                bottom: 5,
+                top: 5,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
